@@ -24,6 +24,8 @@ namespace WOFFRandomizer
             button3.Enabled = false;
 
             checkBox3.Enabled = false;
+            // Disable item box until item rando is ready
+            checkBox4.Enabled = false;
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
 

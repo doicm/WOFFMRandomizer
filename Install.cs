@@ -82,6 +82,7 @@ namespace WOFFRandomizer
             if (enemShuffle) Shop.putEldboxInShops(currDir, log);
             if (enemShuffle) Enemy.mirageEncsWriteCsv(currDir, sV, log, bossShuffle);
             if (enemShuffle) Mirageboard.modifyForEnemyRandoOnly(currDir);
+            if (itemShuffle) Item.treasureShuffle(currDir, sV, log);
 
             // Second WoFFCshTool run
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
