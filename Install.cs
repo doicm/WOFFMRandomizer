@@ -43,7 +43,7 @@ namespace WOFFRandomizer
             string cshThatWasProduced = Path.GetFullPath(currDir + "/" + name + ".csh");
 
             File.Copy(cshThatWasProduced, sourceCSH, true);
-            //File.Delete(csvThatWasEdited);
+            File.Delete(csvThatWasEdited);
             File.Delete(cshThatWasProduced);
         }
         public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle)
