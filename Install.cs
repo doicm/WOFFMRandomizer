@@ -36,6 +36,31 @@ namespace WOFFRandomizer
             }
         }
 
+        private static void verifyOpenAndCopyOtherFile(string basepath, string currDir, string path, string name, RichTextBox log)
+        {
+            // Make backup of file. Verify the file is there first.
+            string source = Path.GetFullPath(basepath + path + name);
+            string backup = Path.GetFullPath(basepath + path + name + "_original");
+            if (!File.Exists(source))
+            {
+                log.AppendText("Cannot locate file " + path + name + "\n");
+            }
+
+            string destinationToCopyTo = Path.GetFullPath(currDir + name);
+            // If original data exists already as a backup (if running the randomizer twice or more in a row), get the original data
+            if (File.Exists(backup))
+            {
+                // Create a copy locally for easy management
+                File.Copy(backup, destinationToCopyTo, true);
+            }
+            else
+            {
+                File.Copy(source, backup, true);
+                // Create a copy locally for easy management
+                File.Copy(source, destinationToCopyTo, true);
+            }
+        }
+
         private static void copyBackAndDelete(string basepath, string currDir, string name)
         {
             string sourceCSH = Path.GetFullPath(basepath + "/resource/finalizedCommon/mithril/system/csv/" + name + ".csh");
@@ -46,9 +71,23 @@ namespace WOFFRandomizer
             File.Delete(csvThatWasEdited);
             File.Delete(cshThatWasProduced);
         }
-        public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle)
+
+        private static void copyBackAndDeleteOtherFile(string basepath, string currDir, string path, string name, RichTextBox log)
+        {
+            string source = Path.GetFullPath(basepath + path + name);
+            string fileThatWasEdited = Path.GetFullPath(currDir + name);
+            log.AppendText(currDir + name + "\n");
+
+            File.Copy(fileThatWasEdited, source, true);
+            //File.Delete(fileThatWasEdited);
+        }
+        public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
+            Button button1, Button button2, Button button3)
         {
             string currDir = Directory.GetCurrentDirectory();
+            button1.Enabled = false;
+            button2.Enabled = false;
+            button3.Enabled = false;
 
             // clear the logs before starting
             Uninstall.clearLogs();
@@ -59,6 +98,7 @@ namespace WOFFRandomizer
             if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "character_enemy_status_list", log);
             if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "shop_list", log);
             if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "monster_place", log);
+            if (itemShuffle) verifyOpenAndCopyOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
 
             //if input is blank, get current time in unix
             if (sV.Length == 0)
@@ -72,10 +112,10 @@ namespace WOFFRandomizer
 
             // Run the WoFFCshTool by Surihia twice, one to decompress csh and convert to csv, and one to do the reverse after writing the values
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirageboard_data.csh"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "enemy_group_list.csh")); ;
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));;
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh")); ;
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh")); ;
+            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "enemy_group_list.csh"));
+            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));
+            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh"));
+            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh"));
 
             // Write the values
             if (mbShuffle) Mirageboard.mirageboard_dataWriteCsv(currDir, sV, log);
@@ -96,9 +136,13 @@ namespace WOFFRandomizer
             if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "character_enemy_status_list");
             if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "shop_list");
             if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "monster_place");
+            if (itemShuffle) copyBackAndDeleteOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
 
             log.AppendText("Finished generating seed " + sV + "!\n");
-            
+            button1.Enabled = true;
+            button2.Enabled = true;
+            button3.Enabled = true;
+
         }
     }
 }

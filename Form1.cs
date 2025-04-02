@@ -90,7 +90,7 @@ namespace WOFFRandomizer
         private void button3_Click(object sender, EventArgs e)
         {
             string basepath = textBox1.Text.Substring(0, textBox1.Text.LastIndexOf("WOFF.exe"));
-            Uninstall.Run(basepath, richTextBox1);
+            Uninstall.Run(basepath, richTextBox1, button1, button2, button3);
         }
 
         private void label5_Click(object sender, EventArgs e)
@@ -121,7 +121,8 @@ namespace WOFFRandomizer
             bool bossActive = checkBox3.Checked;
             bool itemActive = checkBox4.Checked;
 
-            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive);
+            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, button1, button2, button3);
+
 
         }
 
