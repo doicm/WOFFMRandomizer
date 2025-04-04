@@ -36,12 +36,6 @@ namespace WOFFRandomizer
     }
     internal class Mirageboard
     {
-        public static int ConsistentStringHash(string value)
-        {
-            var bytes = System.Text.Encoding.Default.GetBytes(value);
-            int stableHash = bytes.Aggregate<byte, int>(23, (acc, val) => acc * 17 + val);
-            return stableHash;
-        }
         private static void enemyRandoSetMethod(List<List<string>> listListCsv)
         {
             // Critical values are the following for Tama, Chocochick, and Sylph:
@@ -169,7 +163,7 @@ namespace WOFFRandomizer
             }
 
             // randomize the order of the nodes
-            statTuples.Shuffle(ConsistentStringHash(seedvalue));
+            statTuples.Shuffle(Shuffle.ConsistentStringHash(seedvalue));
 
             int sTIter = 0;
             // iterate through each row and place the values back in

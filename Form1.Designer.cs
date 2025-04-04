@@ -167,6 +167,7 @@
             checkBox4.TabIndex = 12;
             checkBox4.Text = "Randomize";
             checkBox4.UseVisualStyleBackColor = true;
+            checkBox4.CheckedChanged += checkBox4_CheckedChanged;
             // 
             // label5
             // 

@@ -5,11 +5,6 @@ using System.Text.Json;
 
 namespace WOFFRandomizer
 {
-    public class RandoSettings
-    {
-        public string exeFilePath { get; set; }
-    }
-
     public partial class Form1 : Form
     {
         public Form1()
@@ -25,7 +20,7 @@ namespace WOFFRandomizer
 
             checkBox3.Enabled = false;
             // Disable item box until item rando is ready
-            checkBox4.Enabled = false;
+            //checkBox4.Enabled = false;
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
 
@@ -40,6 +35,8 @@ namespace WOFFRandomizer
                 textBox1.Text = $"{deseJsonString.exeFilePath}";
             }
         }
+
+        
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -75,7 +72,7 @@ namespace WOFFRandomizer
                             "\t\"exeFilePath\": \"" + pathText + "\"" + Environment.NewLine +
                             "}";
                         System.IO.File.WriteAllText(currDir + "/settings.json", jsonText);
-                        
+
                     }
                 }
             }
@@ -161,6 +158,11 @@ namespace WOFFRandomizer
             // scroll to end whenever new logs are obtained
             richTextBox1.SelectionStart = richTextBox1.Text.Length;
             richTextBox1.ScrollToCaret();
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

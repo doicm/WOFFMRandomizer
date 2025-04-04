@@ -10,12 +10,6 @@ namespace WOFFRandomizer
 {
     internal class Boss
     {
-        public static int ConsistentStringHash(string value)
-        {
-            var bytes = System.Text.Encoding.Default.GetBytes(value);
-            int stableHash = bytes.Aggregate<byte, int>(23, (acc, val) => acc * 17 + val);
-            return stableHash;
-        }
 
         public static (List<List<string>>, List<Tuple<string, List<string>>>) fixOGLevelsAndGEXP(List<List<string>> CESLoutput,
             List<Tuple<string, List<string>>> eglList, List<List<string>> levelsGEXP, Dictionary<string, List<string>> sortedDict)
@@ -120,7 +114,7 @@ namespace WOFFRandomizer
             }
             List<string> bossKeys = new List<string>(bossDict.Keys);
             List<List<string>> bossValues = new List<List<string>>(bossData);
-            bossValues.Shuffle(ConsistentStringHash(sV));
+            bossValues.Shuffle(Shuffle.ConsistentStringHash(sV));
             // get each boss listed after shuffling and remove duplicates
             List<string> shuffled_eachBoss = new List<string>();
             Dictionary<string, List<string>> sortedDict = bossKeys.Zip(bossValues, (k, v) => new { k, v })

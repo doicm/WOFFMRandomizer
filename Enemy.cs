@@ -11,15 +11,8 @@ using System.Xml;
 
 namespace WOFFRandomizer
 {
-
     internal class Enemy
     {
-        public static int ConsistentStringHash(string value)
-        {
-            var bytes = System.Text.Encoding.Default.GetBytes(value);
-            int stableHash = bytes.Aggregate<byte, int>(23, (acc, val) => acc * 17 + val);
-            return stableHash;
-        }
         private static List<List<string>> readCsv(string path)
         {
             // Get filename
@@ -270,7 +263,7 @@ namespace WOFFRandomizer
             // create two lists, one to store original keys and another for shuffling dictionary values
             List<string> enemyKeys = new List<string>(enemiesDict.Keys);
             List<List<string>> enemyValues = new List<List<string>>(enemiesDict.Values);
-            enemyValues.Shuffle(ConsistentStringHash(sV));
+            enemyValues.Shuffle(Shuffle.ConsistentStringHash(sV));
             // create new dictionary and put values into it
             Dictionary<string, List<string>> eDictShuffled = enemyKeys.Zip(enemyValues, (k, v) => new { k, v })
                 .ToDictionary(x => x.k, x => x.v);

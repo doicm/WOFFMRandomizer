@@ -76,10 +76,9 @@ namespace WOFFRandomizer
         {
             string source = Path.GetFullPath(basepath + path + name);
             string fileThatWasEdited = Path.GetFullPath(currDir + name);
-            log.AppendText(currDir + name + "\n");
 
             File.Copy(fileThatWasEdited, source, true);
-            //File.Delete(fileThatWasEdited);
+            File.Delete(fileThatWasEdited);
         }
         public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
             Button button1, Button button2, Button button3)
@@ -122,7 +121,7 @@ namespace WOFFRandomizer
             if (enemShuffle) Shop.putEldboxInShops(currDir, log);
             if (enemShuffle) Enemy.mirageEncsWriteCsv(currDir, sV, log, bossShuffle);
             if (enemShuffle) Mirageboard.modifyForEnemyRandoOnly(currDir);
-            if (itemShuffle) Item.treasureShuffle(currDir, sV, log);
+            if (itemShuffle) Item.TreasureShuffle(currDir, sV, log);
 
             // Second WoFFCshTool run
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
