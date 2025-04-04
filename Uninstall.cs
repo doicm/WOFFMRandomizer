@@ -49,6 +49,7 @@ namespace WOFFRandomizer
             string currDir = Directory.GetCurrentDirectory();
             System.IO.File.WriteAllText(currDir + "/logs/seed.txt", "");
             System.IO.File.WriteAllText(currDir + "/logs/monster_log.txt", "");
+            System.IO.File.WriteAllText(currDir + "/logs/item_log.txt", "");
         }
         public static void Run(string basepath, RichTextBox log, Button button1, Button button2, Button button3)
         {
