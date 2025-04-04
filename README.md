@@ -3,11 +3,12 @@ Randomizer - World of Final Fantasy
 Mod Created By:	Doicm (decentdoicm)
 
 Special Thanks:	WoFF modding community for tools and information,
+various Discord servers for information on advice for programming,
 and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 ==================================================================
-0.1.0
+0.1.2
 
 Notes:
 ==================================================================
@@ -33,12 +34,9 @@ This mod is designed to work with World of Final Fantasy: Maxima
 for Steam. However, it may work without Maxima expansion, but I
 have no way of testing it. 
 
-This mod currently works with enemy and mirageboard randomization.
-It doesn't work with item randomization yet, but should soon.
-Apologies for not disabling the button and being lazy. Anyway,
-this mod randomizes random encounters, rare monster encounters,
-mirageboards and nodes, and (soon) items. What else can be
-randomized? I'm not sure yet.
+This mod contains treasure chest, random encounter, rare monster,
+boss, and mirageboard node shuffle randomization. What else can be
+randomized? Not sure yet!
 
 Instructions:
 ==================================================================
@@ -52,6 +50,9 @@ it won't come to this, but this is just in case.
 
 Changelog:
 ==================================================================
+2025-4-4 - 0.1.2 completed, implemented treasure chest rando,
+  split random encounter/rare monster/boss rando
+2025-1-4 - 0.1.1 completed, implemented boss rando
 2025-30-3 - 0.1.0 completed
 
 
