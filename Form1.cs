@@ -10,7 +10,7 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Randomizer v0.1.0";
+            this.Text = "World of Final Fantasy Randomizer v0.1.2";
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
@@ -18,9 +18,6 @@ namespace WOFFRandomizer
             button2.Enabled = false;
             button3.Enabled = false;
 
-            checkBox3.Enabled = false;
-            // Disable item box until item rando is ready
-            //checkBox4.Enabled = false;
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
 
@@ -36,7 +33,7 @@ namespace WOFFRandomizer
             }
         }
 
-        
+
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -117,8 +114,9 @@ namespace WOFFRandomizer
             bool enemActive = checkBox2.Checked;
             bool bossActive = checkBox3.Checked;
             bool itemActive = checkBox4.Checked;
+            bool rareActive = checkBox5.Checked;
 
-            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, button1, button2, button3);
+            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, button1, button2, button3);
 
 
         }
@@ -135,12 +133,12 @@ namespace WOFFRandomizer
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox2.Checked) checkBox3.Enabled = true;
-            else
-            {
-                checkBox3.Enabled = false;
-                checkBox3.Checked = false;
-            }
+            //if (checkBox2.Checked) checkBox3.Enabled = true;
+            //else
+            //{
+            //    checkBox3.Enabled = false;
+            //    checkBox3.Checked = false;
+            //}
 
         }
 
@@ -161,6 +159,11 @@ namespace WOFFRandomizer
         }
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
 
         }

@@ -47,6 +47,7 @@
             richTextBox1 = new RichTextBox();
             button4 = new Button();
             textBox2 = new TextBox();
+            checkBox5 = new CheckBox();
             SuspendLayout();
             // 
             // textBox1
@@ -91,9 +92,9 @@
             checkBox1.AutoSize = true;
             checkBox1.Location = new Point(684, 114);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(85, 19);
+            checkBox1.Size = new Size(100, 19);
             checkBox1.TabIndex = 4;
-            checkBox1.Text = "Randomize";
+            checkBox1.Text = "Shuffle Nodes";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
@@ -120,20 +121,20 @@
             checkBox2.AutoSize = true;
             checkBox2.Location = new Point(471, 114);
             checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(85, 19);
+            checkBox2.Size = new Size(138, 19);
             checkBox2.TabIndex = 7;
-            checkBox2.Text = "Randomize";
+            checkBox2.Text = "Shuffle Random Encs";
             checkBox2.UseVisualStyleBackColor = true;
             checkBox2.CheckedChanged += checkBox2_CheckedChanged;
             // 
             // checkBox3
             // 
             checkBox3.AutoSize = true;
-            checkBox3.Location = new Point(495, 140);
+            checkBox3.Location = new Point(471, 164);
             checkBox3.Name = "checkBox3";
-            checkBox3.Size = new Size(61, 19);
+            checkBox3.Size = new Size(101, 19);
             checkBox3.TabIndex = 8;
-            checkBox3.Text = "Bosses";
+            checkBox3.Text = "Shuffle Bosses";
             checkBox3.UseVisualStyleBackColor = true;
             checkBox3.CheckedChanged += checkBox3_CheckedChanged;
             // 
@@ -163,9 +164,9 @@
             checkBox4.AutoSize = true;
             checkBox4.Location = new Point(260, 114);
             checkBox4.Name = "checkBox4";
-            checkBox4.Size = new Size(85, 19);
+            checkBox4.Size = new Size(148, 19);
             checkBox4.TabIndex = 12;
-            checkBox4.Text = "Randomize";
+            checkBox4.Text = "Shuffle Treasure Chests";
             checkBox4.UseVisualStyleBackColor = true;
             checkBox4.CheckedChanged += checkBox4_CheckedChanged;
             // 
@@ -197,7 +198,7 @@
             label7.Name = "label7";
             label7.Size = new Size(197, 112);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Randomizer v0.1.0";
+            label7.Text = "World of Final Fantasy Randomizer v0.1.2";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             label7.Click += label7_Click;
             // 
@@ -239,11 +240,23 @@
             textBox2.Size = new Size(204, 23);
             textBox2.TabIndex = 18;
             // 
+            // checkBox5
+            // 
+            checkBox5.AutoSize = true;
+            checkBox5.Location = new Point(471, 139);
+            checkBox5.Name = "checkBox5";
+            checkBox5.Size = new Size(134, 19);
+            checkBox5.TabIndex = 19;
+            checkBox5.Text = "Shuffle Rare Mirages";
+            checkBox5.UseVisualStyleBackColor = true;
+            checkBox5.CheckedChanged += checkBox5_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBox5);
             Controls.Add(textBox2);
             Controls.Add(button4);
             Controls.Add(richTextBox1);
@@ -290,5 +303,6 @@
         private RichTextBox richTextBox1;
         private Button button4;
         private TextBox textBox2;
+        private CheckBox checkBox5;
     }
 }

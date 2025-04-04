@@ -80,7 +80,7 @@ namespace WOFFRandomizer
             File.Copy(fileThatWasEdited, source, true);
             File.Delete(fileThatWasEdited);
         }
-        public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
+        public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
             Button button1, Button button2, Button button3)
         {
             string currDir = Directory.GetCurrentDirectory();
@@ -90,14 +90,15 @@ namespace WOFFRandomizer
 
             // clear the logs before starting
             Uninstall.clearLogs();
-            
+
             // Verify, open, and copy the files to the proper locations for installation
-            if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "mirageboard_data", log);
-            if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "enemy_group_list", log);
-            if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "character_enemy_status_list", log);
-            if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "shop_list", log);
-            if (mbShuffle | enemShuffle) verifyOpenAndCopy(basepath, currDir, "monster_place", log);
-            if (itemShuffle) verifyOpenAndCopyOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
+            // In case other randomizer checkboxes are disabled, want to run on all of these
+            verifyOpenAndCopy(basepath, currDir, "mirageboard_data", log);
+            verifyOpenAndCopy(basepath, currDir, "enemy_group_list", log);
+            verifyOpenAndCopy(basepath, currDir, "character_enemy_status_list", log);
+            verifyOpenAndCopy(basepath, currDir, "shop_list", log);
+            verifyOpenAndCopy(basepath, currDir, "monster_place", log);
+            verifyOpenAndCopyOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
 
             //if input is blank, get current time in unix
             if (sV.Length == 0)
@@ -111,31 +112,32 @@ namespace WOFFRandomizer
 
             // Run the WoFFCshTool by Surihia twice, one to decompress csh and convert to csv, and one to do the reverse after writing the values
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirageboard_data.csh"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "enemy_group_list.csh"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "enemy_group_list.csh"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh"));
 
             // Write the values
             if (mbShuffle) Mirageboard.mirageboard_dataWriteCsv(currDir, sV, log);
             if (enemShuffle) Shop.putEldboxInShops(currDir, log);
-            if (enemShuffle) Enemy.mirageEncsWriteCsv(currDir, sV, log, bossShuffle);
+            if (enemShuffle|rareShuffle|bossShuffle) Enemy.mirageEncsWriteCsv(currDir, sV, log, enemShuffle, bossShuffle, rareShuffle);
             if (enemShuffle) Mirageboard.modifyForEnemyRandoOnly(currDir);
             if (itemShuffle) Item.TreasureShuffle(currDir, sV, log);
 
             // Second WoFFCshTool run
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "enemy_group_list.csv"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_enemy_status_list.csv"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "shop_list.csv"));
-            if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "monster_place.csv"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "enemy_group_list.csv"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_enemy_status_list.csv"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "shop_list.csv"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "monster_place.csv"));
 
-            if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "mirageboard_data");
-            if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "enemy_group_list");
-            if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "character_enemy_status_list");
-            if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "shop_list");
-            if (mbShuffle | enemShuffle) copyBackAndDelete(basepath, currDir, "monster_place");
-            if (itemShuffle) copyBackAndDeleteOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
+            // In case other randomizer checkboxes are disabled, want to run on all of these
+            copyBackAndDelete(basepath, currDir, "mirageboard_data");
+            copyBackAndDelete(basepath, currDir, "enemy_group_list");
+            copyBackAndDelete(basepath, currDir, "character_enemy_status_list");
+            copyBackAndDelete(basepath, currDir, "shop_list");
+            copyBackAndDelete(basepath, currDir, "monster_place");
+            copyBackAndDeleteOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
 
             log.AppendText("Finished generating seed " + sV + "!\n");
             button1.Enabled = true;

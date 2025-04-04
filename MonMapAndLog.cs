@@ -139,9 +139,10 @@ namespace WOFFRandomizer
             bestiaryTraversalPostShuffle(currDir, EGLoutput, 424, 449);
         }
         public static List<List<string>> modifyMonsterPlace (List<List<string>> MPoutput, 
-            List<List<string>> EGLoutput, RichTextBox log, string currDir)
+            List<List<string>> EGLoutput, RichTextBox log, string currDir, bool enemShuffle)
         {
             log.AppendText("Modifying mirage maps and monster log...\n");
+            
             // list of monsters to ignore, including Bahamutian Soldiers, so that they don't appear in the mirage list on the map
             List<string> monsToIgnoreOnMap = ["7193", "7194", "7195"];
             // list of monsters to re-include into certain areas that were excluded from randomization
@@ -259,13 +260,13 @@ namespace WOFFRandomizer
                 id++;
             }
 
-            modifyMonsterLog(monsToIgnoreOnMap, monsToReinclude, currDir);
+            modifyMonsterLog(monsToIgnoreOnMap, monsToReinclude, currDir, enemShuffle);
 
             return newMPoutput;
         }
 
         private static void modifyMonsterLog(List<string> monsToIgnoreOnMap, 
-            List<List<string>> monsToReinclude, string currDir)
+            List<List<string>> monsToReinclude, string currDir, bool enemShuffle)
         {
             List<List<string>> MPoutput = new List<List<string>>();
             string[] f = File.ReadAllLines(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
@@ -295,36 +296,44 @@ namespace WOFFRandomizer
                 currDir + "/database/enemy_names.txt"), Encoding.UTF8);
 
             // rewrite monster log
-            string toWrite = "Random encounters: \n";
+            string toWrite = "";
             bool raresStarted = false; bool bossesStarted = false;
+            if (enemShuffle) toWrite += "Random encounters: \n";
             foreach (List<string> row in MPoutput)
             {
                 // find area first
-                foreach (string areaString in linesArea)
+                // if random encounters are not randomized, skip the first part
+                if (enemShuffle)   
                 {
-                    string temp = areaString.Substring(0, 4);
-                    if (areaString.Substring(0,4) == row[0])
+                    foreach (string areaString in linesArea)
                     {
-                        toWrite += areaString.Substring(8) + ": ";
-                        // then find the enemy
-                        foreach (string enemyString in linesEnemy)
+                        string temp = areaString.Substring(0, 4);
+                        if (areaString.Substring(0, 4) == row[0])
                         {
-                            if (enemyString.Substring(0,4) == row[1])
+                            toWrite += areaString.Substring(8) + ": ";
+                            // then find the enemy
+                            foreach (string enemyString in linesEnemy)
                             {
-                                toWrite += enemyString.Substring(5) + "\n";
-                                break;
+                                if (enemyString.Substring(0, 4) == row[1])
+                                {
+                                    toWrite += enemyString.Substring(5) + "\n";
+                                    break;
+                                }
                             }
+                            break;
                         }
-                        break;
                     }
                 }
+                
+
                 // then find rare monsters to append if chapter enemy
                 if (row[0].Contains("_e"))
                 {
                     if (!raresStarted)
                     {
                         raresStarted = true;
-                        toWrite += "---\nRare monsters: \n";
+                        if (toWrite.Length > 0) toWrite += "---\n";
+                        toWrite += "Rare monsters: \n";
                     }
                     foreach (string enemyString in linesEnemy)
                     {
@@ -336,13 +345,15 @@ namespace WOFFRandomizer
                         }
                     }
                 }
+                
                 // then find bosses to append
                 else if (row[0].Contains("0406") | row[0].Contains("_0"))
                 {
                     if (!bossesStarted)
                     {
                         bossesStarted = true;
-                        toWrite += "---\nBoss fights: \n";
+                        if (toWrite.Length > 0) toWrite += "---\n";
+                        toWrite += "Boss fights: \n";
                     }
                     foreach (string enemyString in linesEnemy)
                     {

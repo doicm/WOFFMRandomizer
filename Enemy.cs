@@ -243,7 +243,8 @@ namespace WOFFRandomizer
             return EGLoutput;
         }
         
-        private static (List<List<string>>, List<List<string>>) modifyEnemies(List<List<string>> EGLoutput, 
+        // This function is for modifying random encounters
+        private static (List<List<string>>, List<List<string>>) modifyRandomEncounters(List<List<string>> EGLoutput, 
             List<List<string>> CESLoutput, string sV, RichTextBox log, string currDir)
         {
             // enemies dictionary to hold the final set of enemies
@@ -288,21 +289,18 @@ namespace WOFFRandomizer
             // Write to EGLoutput second, changing the other values
             EGLoutput = eglOutputModify(EGLoutput, eDictShuffled, currDir);
 
-            // Next, I need to randomize the rare monster encounters.
-            // Rare monsters are labeled with _ex### in enemy_group_list.csv
-            (EGLoutput, CESLoutput) = RareMon.shuffleRareMonsters(EGLoutput, CESLoutput, sV, log, currDir);
-
             return (EGLoutput, CESLoutput);
         }
-        public static void mirageEncsWriteCsv(string currDir, string sV, RichTextBox log, bool bossShuffle)
+        public static void mirageEncsWriteCsv(string currDir, string sV, RichTextBox log, bool enemShuffle, bool bossShuffle, bool rareShuffle)
         {
             List<List<string>> EGLoutput = readCsv(currDir + "/enemy_group_list.csv");
             List<List<string>> CESLoutput = readCsv(currDir + "/character_enemy_status_list.csv");
             List<List<string>> MPoutput = readCsv(currDir + "/monster_place.csv");
 
-            (EGLoutput, CESLoutput) = modifyEnemies(EGLoutput, CESLoutput, sV, log, currDir);
+            if (enemShuffle) (EGLoutput, CESLoutput) = modifyRandomEncounters(EGLoutput, CESLoutput, sV, log, currDir);
+            if (rareShuffle) (EGLoutput, CESLoutput) = RareMon.shuffleRareMonsters(EGLoutput, CESLoutput, sV, log, currDir);
             if (bossShuffle) Boss.modifyBosses(EGLoutput, CESLoutput, sV, log, currDir);
-            MPoutput = MonMapAndLog.modifyMonsterPlace(MPoutput, EGLoutput, log, currDir);
+            MPoutput = MonMapAndLog.modifyMonsterPlace(MPoutput, EGLoutput, log, currDir, enemShuffle);
 
             writeCsv(currDir + "/enemy_group_list.csv", EGLoutput);
             writeCsv(currDir + "/character_enemy_status_list.csv", CESLoutput);
