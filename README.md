@@ -52,7 +52,9 @@ Changelog:
 ==================================================================
 2025-4-4 - 0.1.2 completed, implemented treasure chest rando,
   split random encounter/rare monster/boss rando
+  
 2025-1-4 - 0.1.1 completed, implemented boss rando
+
 2025-30-3 - 0.1.0 completed
 
 
