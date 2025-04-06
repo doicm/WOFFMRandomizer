@@ -82,7 +82,7 @@ namespace WOFFRandomizer
             File.Delete(fileThatWasEdited);
         }
         public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
-            bool sizesShuffle, bool quPrizesShuffle, Button button1, Button button2, Button button3)
+            bool sizesShuffle, bool quPrizesShuffle, bool doubleExpBool, Button button1, Button button2, Button button3)
         {
             string currDir = Directory.GetCurrentDirectory();
             button1.Enabled = false;
@@ -118,7 +118,7 @@ namespace WOFFRandomizer
             // Run the WoFFCshTool by Surihia twice, one to decompress csh and convert to csv, and one to do the reverse after writing the values
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirageboard_data.csh"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "enemy_group_list.csh"));
-            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | doubleExpBool ) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_resource_list.csh"));
@@ -135,10 +135,13 @@ namespace WOFFRandomizer
             if (sizesShuffle) Sizes.SizesShuffle(currDir, basepath, sV, log);
             if (quPrizesShuffle) QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
 
+            // Apply post-QoL adjustments
+            if (doubleExpBool) DoubleExpQoL.DoubleExpGil(currDir, log);
+
             // Second WoFFCshTool run
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "enemy_group_list.csv"));
-            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_enemy_status_list.csv"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | doubleExpBool) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_enemy_status_list.csv"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "shop_list.csv"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "monster_place.csv"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_resource_list.csv"));

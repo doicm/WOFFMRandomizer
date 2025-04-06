@@ -10,7 +10,7 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Randomizer v0.1.4";
+            this.Text = "World of Final Fantasy Randomizer v0.1.5";
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
@@ -84,9 +84,10 @@ namespace WOFFRandomizer
             bool rareActive = checkBoxRareMon.Checked;
             bool sizesActive = checkBoxSizes.Checked;
             bool quPrizesActive = checkBoxQuOrArenaPrizes.Checked;
+            bool doubleExpBool = checkBoxDoubleExp.Checked;
 
             Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive,
-                quPrizesActive, button1, buttonRandomize, buttonUninstall);
+                quPrizesActive, doubleExpBool, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -145,6 +146,11 @@ namespace WOFFRandomizer
         {
             toolTipQuOrArenaPrizes.Show("This shuffles the prizes that can be obtained between the arena and intervention quests.\n NPC quests are not included. " +
                 "Repeat attempts are not included.\nThis also includes the Tama quest. ??? mementos are now displayed.", checkBoxQuOrArenaPrizes);
+        }
+
+        private void checkBoxDoubleExp_MouseHover(object sender, EventArgs e)
+        {
+            toolTipDoubleExp.Show("This doubles experience and gil earned in all battles.", checkBoxDoubleExp);
         }
     }
 }
