@@ -82,7 +82,7 @@ namespace WOFFRandomizer
             File.Delete(fileThatWasEdited);
         }
         public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
-            bool sizesShuffle, Button button1, Button button2, Button button3)
+            bool sizesShuffle, bool quPrizesShuffle, Button button1, Button button2, Button button3)
         {
             string currDir = Directory.GetCurrentDirectory();
             button1.Enabled = false;
@@ -102,6 +102,8 @@ namespace WOFFRandomizer
             verifyOpenAndCopyOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
             verifyOpenAndCopy(basepath, currDir, "character_resource_list", log);
             verifyOpenAndCopy(basepath, currDir, "command_ability_param", log);
+            verifyOpenAndCopy(basepath, currDir, "arena_reward_table_list", log);
+            verifyOpenAndCopy(basepath, currDir, "quest_data_sub_reward_table_list", log);
 
             //if input is blank, get current time in unix
             if (sV.Length == 0)
@@ -121,6 +123,8 @@ namespace WOFFRandomizer
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_resource_list.csh"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "command_ability_param.csh"));
+            if (quPrizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "arena_reward_table_list.csh"));
+            if (quPrizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "quest_data_sub_reward_table_list.csh"));
 
             // Write the values
             if (mbShuffle) Mirageboard.mirageboard_dataWriteCsv(currDir, sV, log);
@@ -129,6 +133,7 @@ namespace WOFFRandomizer
             if (enemShuffle) Mirageboard.modifyForEnemyRandoOnly(currDir);
             if (itemShuffle) Item.TreasureShuffle(currDir, sV, log);
             if (sizesShuffle) Sizes.SizesShuffle(currDir, basepath, sV, log);
+            if (quPrizesShuffle) QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
 
             // Second WoFFCshTool run
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
@@ -138,6 +143,8 @@ namespace WOFFRandomizer
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "monster_place.csv"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_resource_list.csv"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "command_ability_param.csv"));
+            if (quPrizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "arena_reward_table_list.csv"));
+            if (quPrizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "quest_data_sub_reward_table_list.csv"));
 
             // In case other randomizer checkboxes are disabled, want to run on all of these
             copyBackAndDelete(basepath, currDir, "mirageboard_data");
@@ -148,6 +155,8 @@ namespace WOFFRandomizer
             copyBackAndDeleteOtherFile(basepath, currDir, "/resource", "/script64.bin", log);
             copyBackAndDelete(basepath, currDir, "character_resource_list");
             copyBackAndDelete(basepath, currDir, "command_ability_param");
+            copyBackAndDelete(basepath, currDir, "arena_reward_table_list");
+            copyBackAndDelete(basepath, currDir, "quest_data_sub_reward_table_list");
 
             log.AppendText("Finished generating seed " + sV + "!\n");
             button1.Enabled = true;

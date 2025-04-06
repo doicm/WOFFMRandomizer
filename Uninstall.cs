@@ -50,6 +50,7 @@ namespace WOFFRandomizer
             System.IO.File.WriteAllText(currDir + "/logs/seed.txt", "");
             System.IO.File.WriteAllText(currDir + "/logs/monster_log.txt", "");
             System.IO.File.WriteAllText(currDir + "/logs/item_log.txt", "");
+            System.IO.File.WriteAllText(currDir + "/logs/quest_log.txt", "");
         }
 
         public static void Run(string basepath, RichTextBox log, Button button1, Button button2, Button button3)
@@ -66,6 +67,8 @@ namespace WOFFRandomizer
             (string sourceluaBin, string backupluaBin) = defineOtherFile(basepath, "/resource", "/script64.bin", log);
             (string sourceCRLSH, string backupCRLSH) = defineFile(basepath, "character_resource_list", log);
             (string sourceCAPSH, string backupCAPSH) = defineFile(basepath, "command_ability_param", log);
+            (string sourceARTLSH, string backupARTLSH) = defineFile(basepath, "arena_reward_table_list", log);
+            (string sourceQDSRTLSH, string backupQDSRTLSH) = defineFile(basepath, "quest_data_sub_reward_table_list", log);
 
             copyAndRemoveFile(sourceMBCSH, backupMBCSH);
             copyAndRemoveFile(sourceEGLSH, backupEGLSH);
@@ -75,6 +78,8 @@ namespace WOFFRandomizer
             copyAndRemoveFile(sourceluaBin, backupluaBin);
             copyAndRemoveFile(sourceCRLSH, backupCRLSH);
             copyAndRemoveFile(sourceCAPSH, backupCAPSH);
+            copyAndRemoveFile(sourceARTLSH, backupARTLSH);
+            copyAndRemoveFile(sourceQDSRTLSH, backupQDSRTLSH);
 
             clearLogs();
 

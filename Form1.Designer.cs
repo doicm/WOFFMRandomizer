@@ -56,6 +56,8 @@
             toolTipBosses = new ToolTip(components);
             toolTipMirageboard = new ToolTip(components);
             toolTipSizes = new ToolTip(components);
+            toolTipQuOrArenaPrizes = new ToolTip(components);
+            checkBoxQuOrArenaPrizes = new CheckBox();
             SuspendLayout();
             // 
             // textBox1
@@ -203,7 +205,7 @@
             label7.Name = "label7";
             label7.Size = new Size(197, 112);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Randomizer v0.1.3";
+            label7.Text = "World of Final Fantasy Randomizer v0.1.4";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label8
@@ -259,17 +261,29 @@
             checkBoxSizes.AutoSize = true;
             checkBoxSizes.Location = new Point(684, 139);
             checkBoxSizes.Name = "checkBoxSizes";
-            checkBoxSizes.Size = new Size(91, 19);
+            checkBoxSizes.Size = new Size(131, 19);
             checkBoxSizes.TabIndex = 20;
-            checkBoxSizes.Text = "Shuffle Sizes";
+            checkBoxSizes.Text = "Shuffle Mirage Sizes";
             checkBoxSizes.UseVisualStyleBackColor = true;
             checkBoxSizes.MouseHover += checkBoxSizes_MouseHover;
+            // 
+            // checkBoxQuOrArenaPrizes
+            // 
+            checkBoxQuOrArenaPrizes.AutoSize = true;
+            checkBoxQuOrArenaPrizes.Location = new Point(260, 139);
+            checkBoxQuOrArenaPrizes.Name = "checkBoxQuOrArenaPrizes";
+            checkBoxQuOrArenaPrizes.Size = new Size(135, 34);
+            checkBoxQuOrArenaPrizes.TabIndex = 21;
+            checkBoxQuOrArenaPrizes.Text = "Shuffle Intervention/\r\nColiseum Rewards";
+            checkBoxQuOrArenaPrizes.UseVisualStyleBackColor = true;
+            checkBoxQuOrArenaPrizes.MouseHover += checkBoxQuOrArenaPrizes_MouseHover;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBoxQuOrArenaPrizes);
             Controls.Add(checkBoxSizes);
             Controls.Add(checkBoxRareMon);
             Controls.Add(textBox2);
@@ -326,5 +340,7 @@
         private ToolTip toolTipBosses;
         private ToolTip toolTipMirageboard;
         private ToolTip toolTipSizes;
+        private ToolTip toolTipQuOrArenaPrizes;
+        private CheckBox checkBoxQuOrArenaPrizes;
     }
 }

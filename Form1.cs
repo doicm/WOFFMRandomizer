@@ -10,14 +10,13 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Randomizer v0.1.3";
+            this.Text = "World of Final Fantasy Randomizer v0.1.4";
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
             // Toggle buttons based on input WOFF executable
             buttonRandomize.Enabled = false;
             buttonUninstall.Enabled = false;
-
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
 
@@ -84,8 +83,10 @@ namespace WOFFRandomizer
             bool itemActive = checkBoxTreasures.Checked;
             bool rareActive = checkBoxRareMon.Checked;
             bool sizesActive = checkBoxSizes.Checked;
+            bool quPrizesActive = checkBoxQuOrArenaPrizes.Checked;
 
-            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive, button1, buttonRandomize, buttonUninstall);
+            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive,
+                quPrizesActive, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -138,6 +139,12 @@ namespace WOFFRandomizer
             toolTipSizes.Show("This shuffles the sizes around that mirages can be.\nThis does not include XL. This may cause some interesting behaviors with stacks.\n" +
                 "Stack ability animations are disabled to prevent crashes.\n" +
                 "WARNING: If randomizing in the middle of a playthrough, please remove mirages\nfrom all stacks and save before shuffling.", checkBoxSizes);
+        }
+
+        private void checkBoxQuOrArenaPrizes_MouseHover(object sender, EventArgs e)
+        {
+            toolTipQuOrArenaPrizes.Show("This shuffles the prizes that can be obtained between the arena and intervention quests.\n NPC quests are not included. " +
+                "Repeat attempts are not included.\nThis also includes the Tama quest. ??? mementos are now displayed.", checkBoxQuOrArenaPrizes);
         }
     }
 }
