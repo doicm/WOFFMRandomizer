@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
     internal class Shop
     {
@@ -49,16 +49,16 @@ namespace WOFFRandomizer
             output = new List<string>();
             foreach (List<string> row in listListCsv)
             {
-                output.Add(String.Join(",", row));
+                output.Add(string.Join(",", row));
             }
 
             // Write over the file
             string newFileOutput = "";
             foreach (var item in output)
             {
-                newFileOutput += String.Join(",", item) + Environment.NewLine;
+                newFileOutput += string.Join(",", item) + Environment.NewLine;
             }
-            System.IO.File.WriteAllText(currDir + "/shop_list.csv", newFileOutput);
+            File.WriteAllText(currDir + "/shop_list.csv", newFileOutput);
         }
     }
 }

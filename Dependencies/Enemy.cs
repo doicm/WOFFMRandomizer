@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
     internal class Enemy
     {
@@ -36,15 +36,15 @@ namespace WOFFRandomizer
             List<string> output = new List<string>();
             foreach (List<string> row in listListCsv)
             {
-                output.Add(String.Join(",", row));
+                output.Add(string.Join(",", row));
             }
             // Write over the file
             string newFileOutput = "";
             foreach (var item in output)
             {
-                newFileOutput += String.Join(",", item) + Environment.NewLine;
+                newFileOutput += string.Join(",", item) + Environment.NewLine;
             }
-            System.IO.File.WriteAllText(Path.GetFullPath(path), newFileOutput);
+            File.WriteAllText(Path.GetFullPath(path), newFileOutput);
         }
 
         private static (Dictionary<string, List<string>>, List<List<string>>, List<Tuple<string, string, string, string, string>>)
@@ -225,10 +225,10 @@ namespace WOFFRandomizer
                     int j = 1;
                     while (j <= 6)
                     {
-                        if (row[(4*j)+2] == key)
+                        if (row[4*j+2] == key)
                         {
-                            row[(4 * j) + 1] = eDictShuffled[key][0];
-                            row[(4 * j)] = eDictShuffled[key][1];
+                            row[4 * j + 1] = eDictShuffled[key][0];
+                            row[4 * j] = eDictShuffled[key][1];
                             if (row[1].Count() < 8)
                             {
                                 j++;

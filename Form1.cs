@@ -15,8 +15,8 @@ namespace WOFFRandomizer
             richTextBox1.ReadOnly = true;
 
             // Toggle buttons based on input WOFF executable
-            button2.Enabled = false;
-            button3.Enabled = false;
+            buttonRandomize.Enabled = false;
+            buttonUninstall.Enabled = false;
 
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
@@ -25,19 +25,12 @@ namespace WOFFRandomizer
             string currDir = Directory.GetCurrentDirectory();
             if (new FileInfo(Path.GetFullPath(currDir + "/settings.json")).Length != 0)
             {
-                button2.Enabled = true;
-                button3.Enabled = true;
+                buttonRandomize.Enabled = true;
+                buttonUninstall.Enabled = true;
                 string jsonString = File.ReadAllText(Path.GetFullPath(currDir + "/settings.json"));
                 RandoSettings deseJsonString = JsonSerializer.Deserialize<RandoSettings>(jsonString);
                 textBox1.Text = $"{deseJsonString.exeFilePath}";
             }
-        }
-
-
-
-        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -53,13 +46,13 @@ namespace WOFFRandomizer
                 {
                     MessageBox.Show("This is not WOFF.exe. Please try again.");
                     textBox1.Text = "";
-                    button2.Enabled = false;
-                    button3.Enabled = false;
+                    buttonRandomize.Enabled = false;
+                    buttonUninstall.Enabled = false;
                 }
                 else
                 {
-                    button2.Enabled = true;
-                    button3.Enabled = true;
+                    buttonRandomize.Enabled = true;
+                    buttonUninstall.Enabled = true;
                     string currDir = Directory.GetCurrentDirectory();
                     if (new FileInfo(Path.GetFullPath(currDir + "/settings.json")).Length == 0)
                     {
@@ -76,69 +69,23 @@ namespace WOFFRandomizer
 
         }
 
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
             string basepath = textBox1.Text.Substring(0, textBox1.Text.LastIndexOf("WOFF.exe"));
-            Uninstall.Run(basepath, richTextBox1, button1, button2, button3);
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
+            Uninstall.Run(basepath, richTextBox1, button1, buttonRandomize, buttonUninstall);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             string basepath = textBox1.Text.Substring(0, textBox1.Text.LastIndexOf("WOFF.exe"));
-            bool mbActive = checkBox1.Checked;
-            bool enemActive = checkBox2.Checked;
-            bool bossActive = checkBox3.Checked;
-            bool itemActive = checkBox4.Checked;
-            bool rareActive = checkBox5.Checked;
+            bool mbActive = checkBoxMirageboard.Checked;
+            bool enemActive = checkBoxRandEnc.Checked;
+            bool bossActive = checkBoxBosses.Checked;
+            bool itemActive = checkBoxTreasures.Checked;
+            bool rareActive = checkBoxRareMon.Checked;
+            bool sizesActive = checkBoxSizes.Checked;
 
-            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, button1, button2, button3);
-
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            //if (checkBox2.Checked) checkBox3.Enabled = true;
-            //else
-            //{
-            //    checkBox3.Enabled = false;
-            //    checkBox3.Checked = false;
-            //}
+            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -158,14 +105,39 @@ namespace WOFFRandomizer
             richTextBox1.ScrollToCaret();
         }
 
-        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxTreasures_MouseHover(object sender, EventArgs e)
         {
-
+            toolTipTreasures.Show("This shuffles most of the treasure chest contents in the game up to ending.\n Counts of items and some specialty items not included.", checkBoxTreasures);
         }
 
-        private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxRandEnc_MouseHover(object sender, EventArgs e)
         {
+            toolTipRandEnc.Show("This shuffles the random encounters around that appear up to ending.\nThis doesn't include postgame encounters.", checkBoxRandEnc);
+        }
 
+        private void checkBoxRareMon_MouseHover(object sender, EventArgs e)
+        {
+            toolTipRareMon.Show("This shuffles most of the rare monster battles.", checkBoxRareMon);
+        }
+
+        private void checkBoxBosses_MouseHover(object sender, EventArgs e)
+        {
+            toolTipBosses.Show("This shuffles bosses that appear during the main story, starting from Watchplains.\n" +
+                "This doesn't include some bosses such as Exnine fights.", checkBoxBosses);
+        }
+
+        private void checkBoxMirageboard_MouseHover(object sender, EventArgs e)
+        {
+            toolTipMirageboard.Show("This shuffles most of the nodes between mirageboards for mirages.\nSome nodes are excluded that are " +
+                "either not functional or cause the game to softlock.\nSome nodes may also repeat or be entirely useless, but that's how shuffling works for now.\n" +
+                "Mirage-specific ability animations have interesting effects, but should not cause crashes.", checkBoxMirageboard);
+        }
+
+        private void checkBoxSizes_MouseHover(object sender, EventArgs e)
+        {
+            toolTipSizes.Show("This shuffles the sizes around that mirages can be.\nThis does not include XL. This may cause some interesting behaviors with stacks.\n" +
+                "Stack ability animations are disabled to prevent crashes.\n" +
+                "WARNING: If randomizing in the middle of a playthrough, please remove mirages\nfrom all stacks and save before shuffling.", checkBoxSizes);
         }
     }
 }

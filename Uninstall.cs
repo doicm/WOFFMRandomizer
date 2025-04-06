@@ -51,6 +51,7 @@ namespace WOFFRandomizer
             System.IO.File.WriteAllText(currDir + "/logs/monster_log.txt", "");
             System.IO.File.WriteAllText(currDir + "/logs/item_log.txt", "");
         }
+
         public static void Run(string basepath, RichTextBox log, Button button1, Button button2, Button button3)
         {
             button1.Enabled = false;
@@ -63,6 +64,8 @@ namespace WOFFRandomizer
             (string sourceSLSH, string backupSLSH) = defineFile(basepath, "shop_list", log);
             (string sourceMPSH, string backupMPSH) = defineFile(basepath, "monster_place", log);
             (string sourceluaBin, string backupluaBin) = defineOtherFile(basepath, "/resource", "/script64.bin", log);
+            (string sourceCRLSH, string backupCRLSH) = defineFile(basepath, "character_resource_list", log);
+            (string sourceCAPSH, string backupCAPSH) = defineFile(basepath, "command_ability_param", log);
 
             copyAndRemoveFile(sourceMBCSH, backupMBCSH);
             copyAndRemoveFile(sourceEGLSH, backupEGLSH);
@@ -70,6 +73,9 @@ namespace WOFFRandomizer
             copyAndRemoveFile(sourceSLSH, backupSLSH);
             copyAndRemoveFile(sourceMPSH, backupMPSH);
             copyAndRemoveFile(sourceluaBin, backupluaBin);
+            copyAndRemoveFile(sourceCRLSH, backupCRLSH);
+            copyAndRemoveFile(sourceCAPSH, backupCAPSH);
+
             clearLogs();
 
             log.AppendText("Uninstallation complete. Thank you for playing!\n\n");

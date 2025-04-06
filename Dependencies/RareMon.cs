@@ -5,14 +5,14 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
     internal class RareMon
     {
         public static int ConsistentStringHash(string value)
         {
-            var bytes = System.Text.Encoding.Default.GetBytes(value);
-            int stableHash = bytes.Aggregate<byte, int>(23, (acc, val) => acc * 17 + val);
+            var bytes = Encoding.Default.GetBytes(value);
+            int stableHash = bytes.Aggregate(23, (acc, val) => acc * 17 + val);
             return stableHash;
         }
 
@@ -26,9 +26,9 @@ namespace WOFFRandomizer
             // get ceslIDs for each monster in group
             while (i <= 5)
             {
-                if (cerbRowData[j + (i * 4)] != "-1")
+                if (cerbRowData[j + i * 4] != "-1")
                 {
-                    string rareMonID = cerbRowData[j + (i * 4)];
+                    string rareMonID = cerbRowData[j + i * 4];
                     if (ceslIDs.Count() < 1)
                     {
                         ceslIDs.Add(rareMonID);
@@ -82,9 +82,9 @@ namespace WOFFRandomizer
                 int i = 0;
                 while (i <= 5)
                 {
-                    if (row[j + (i * 4)] != "-1")
+                    if (row[j + i * 4] != "-1")
                     {
-                        string rareMonID = row[j + (i * 4)];
+                        string rareMonID = row[j + i * 4];
                         if (eachRareMonster.Count() < 1)
                         {
                             eachRareMonster.Add(rareMonID);
@@ -138,9 +138,9 @@ namespace WOFFRandomizer
                 int i = 0;
                 while (i <= 5)
                 {
-                    if (sortedDict[key][j + (i * 4)] != "-1")
+                    if (sortedDict[key][j + i * 4] != "-1")
                     {
-                        string rareMonID = sortedDict[key][j + (i * 4)];
+                        string rareMonID = sortedDict[key][j + i * 4];
                         if (shuffled_EachRareMonster.Count() < 1)
                         {
                             shuffled_EachRareMonster.Add(rareMonID);
@@ -191,7 +191,7 @@ namespace WOFFRandomizer
                         row[81] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][4];
                         row[82] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][5];
                         lGEXPWCESLIDIter++;
-                        if (lGEXPWCESLIDIter == (levelsGEXPWithCESLID.Count - 1))
+                        if (lGEXPWCESLIDIter == levelsGEXPWithCESLID.Count - 1)
                         {
                             broken1 = true;
                             break;
@@ -226,9 +226,9 @@ namespace WOFFRandomizer
                     while (k <= 6)
                     {
                         // account for duplicates in same row
-                        if ((row[j + (k * 4)] != "-1") && (row[j + (k * 4)] != row[k * 4]) && (row[j + (k * 4)] != "0"))
+                        if (row[j + k * 4] != "-1" && row[j + k * 4] != row[k * 4] && row[j + k * 4] != "0")
                         {
-                            toWrite += row[1].Substring(0, 8) + ": " + row[j + (k * 4)] + Environment.NewLine;
+                            toWrite += row[1].Substring(0, 8) + ": " + row[j + k * 4] + Environment.NewLine;
                         }
                         k++;
                     }
@@ -239,7 +239,7 @@ namespace WOFFRandomizer
                     }
                 }
             }
-            System.IO.File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
 
             // Making an exception for Dragon Scars rare encounter, which I want to set to level 18.
             // Some folks may not know the trick to running away and getting the required item

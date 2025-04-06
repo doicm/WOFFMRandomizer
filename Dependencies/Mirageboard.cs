@@ -8,7 +8,7 @@ using System.Xml;
 // TODO
 // Identify each ability and don't make more generic abilities exclusive, possibly
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
 
     public static class ListExtensions // https://discussions.unity.com/t/c-adding-multiple-elements-to-a-list-on-one-line/80117/2
@@ -85,16 +85,16 @@ namespace WOFFRandomizer
             output = new List<string>();
             foreach (List<string> row in listListCsv)
             {
-                output.Add(String.Join(",", row));
+                output.Add(string.Join(",", row));
             }
             // Write over the file
             string newFileOutput = "";
             foreach (var item in output)
             {
-                newFileOutput += String.Join(",", item) + Environment.NewLine;
+                newFileOutput += string.Join(",", item) + Environment.NewLine;
             }
 
-            System.IO.File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
+            File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
         }
 
         private static bool ignoreRows(List<string> row)
@@ -116,7 +116,7 @@ namespace WOFFRandomizer
 
             // if the category is not in between 1-9, excluding 6 (prismariums), skip it
             // categories: 1) abilities, 2) ?, 3) passives, 4) blank space, 5) mirajewel, 7) unique abilities, 8) joyride/stroll/etc, 9) unique passives
-            int category = Int32.Parse(row[7]);
+            int category = int.Parse(row[7]);
             if (category < 1 | category > 9 | category == 6)
             {
                 return true;
@@ -188,7 +188,7 @@ namespace WOFFRandomizer
             output = new List<string>();
             foreach (List<string> row in listListCsv)
             {
-                output.Add(String.Join(",", row));
+                output.Add(string.Join(",", row));
             }
 
             return output;
@@ -210,10 +210,10 @@ namespace WOFFRandomizer
             string newFileOutput = "";
             foreach (var item in output)
             {
-                newFileOutput += String.Join(",", item) + Environment.NewLine;
+                newFileOutput += string.Join(",", item) + Environment.NewLine;
             }
 
-            System.IO.File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
+            File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
 
 
         }

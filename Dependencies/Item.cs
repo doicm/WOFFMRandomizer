@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.Logging;
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
     internal class Item
     {
@@ -47,7 +47,7 @@ namespace WOFFRandomizer
                 {
                     byte[] match = new byte[patternLength];
                     Array.Copy(bytes, i, match, 0, patternLength);
-                    if (match.SequenceEqual<byte>(pattern))
+                    if (match.SequenceEqual(pattern))
                     {
                         positions.Add(i);
                         i += patternLength - 1;
@@ -75,7 +75,7 @@ namespace WOFFRandomizer
             }
             byte[] tcIDBytes = luaFileData[start..byteArrIter];
 
-            return System.Text.Encoding.UTF8.GetString(tcIDBytes);
+            return Encoding.UTF8.GetString(tcIDBytes);
         }
 
         private static (byte[], string) GetItemID(byte[] luaFileData)
@@ -118,7 +118,7 @@ namespace WOFFRandomizer
             }
             byte[] itemIDBytes = luaFileData[start..byteArrIter];
 
-            return (itemIDBytes, System.Text.Encoding.UTF8.GetString(itemIDBytes));
+            return (itemIDBytes, Encoding.UTF8.GetString(itemIDBytes));
         }
 
         private static void EditBinaryFile(uint position, uint size, byte[] shuffledBytes,
@@ -132,12 +132,12 @@ namespace WOFFRandomizer
             byte[] byteToSearch = new byte[] { 0, 73, 116, 101, 109, 76, 105, 115, 116 };
             byte[] byteToSearchStone = new byte[] { 0, 77, 97, 103, 105, 99, 83, 116, 111, 110, 101 };
             List<int> positions = SearchBytePattern(byteToSearch, data);
-            if (System.Text.Encoding.UTF8.GetString(shuffledBytes).StartsWith("Stone")) positions = SearchBytePattern(byteToSearchStone, data);
+            if (Encoding.UTF8.GetString(shuffledBytes).StartsWith("Stone")) positions = SearchBytePattern(byteToSearchStone, data);
             barcStream.Position = position;
             // I just need the first position, and then 19 offset from that to get the ID of the item until 0
             // if it's a stone, i need 21 offset from that
             int positionToWriteTo = positions[0] + 19;
-            if (System.Text.Encoding.UTF8.GetString(shuffledBytes).StartsWith("Stone")) positionToWriteTo = positions[0] + 21;
+            if (Encoding.UTF8.GetString(shuffledBytes).StartsWith("Stone")) positionToWriteTo = positions[0] + 21;
             barcStream.Position += positionToWriteTo;
             for (int j = 0; j < shuffledBytes.Length; j++)
             {
@@ -166,7 +166,7 @@ namespace WOFFRandomizer
                     barcReader.BaseStream.Position = 0;
 
                     // read header values
-                    string barcMagic = System.Text.Encoding.UTF8.GetString(barcReader.ReadBytes(4));
+                    string barcMagic = Encoding.UTF8.GetString(barcReader.ReadBytes(4));
                     if (barcMagic != "BARC")
                     {
                         log.AppendText("Invalid BARC file.\n");
@@ -190,7 +190,7 @@ namespace WOFFRandomizer
                         byte [] luaFileData = new byte[size];
                         _ = barcStream.Read(luaFileData, 0, luaFileData.Length);
                         // convert the byte data to a string to search for the byte data
-                        string luaFileString = System.Text.Encoding.UTF8.GetString(luaFileData);
+                        string luaFileString = Encoding.UTF8.GetString(luaFileData);
 
                         // if the filedata contains searchString, then it contains information about a treasure chest
                         // however, we want to only get the first instance of each treasure, so need to check for duplicates
@@ -247,7 +247,7 @@ namespace WOFFRandomizer
                     barcReader.BaseStream.Position = 0;
 
                     // read header values
-                    string barcMagic = System.Text.Encoding.UTF8.GetString(barcReader.ReadBytes(4));
+                    string barcMagic = Encoding.UTF8.GetString(barcReader.ReadBytes(4));
                     if (barcMagic != "BARC")
                     {
                         log.AppendText("Invalid BARC file.\n");
@@ -272,7 +272,7 @@ namespace WOFFRandomizer
                         byte[] luaFileData = new byte[size];
                         _ = barcStream.Read(luaFileData, 0, luaFileData.Length);
                         // convert the byte data to a string to search for the byte data
-                        string luaFileString = System.Text.Encoding.UTF8.GetString(luaFileData);
+                        string luaFileString = Encoding.UTF8.GetString(luaFileData);
 
                         // if the filedata contains searchString, then it contains information about a treasure chest
                         // however, we want to only get the first instance of each treasure, so need to check for duplicates
@@ -339,15 +339,15 @@ namespace WOFFRandomizer
             List<(string, string)> combinedShuffledTreasureList = new List<(string, string)>();
             for (int i = 0; i < shuffledItemList.Count; i++)
             {
-                combinedShuffledTreasureList.Add((shuffledItemList[i].Item1, System.Text.Encoding.UTF8.GetString(shuffledItemList[i].Item2.Item1)));
+                combinedShuffledTreasureList.Add((shuffledItemList[i].Item1, Encoding.UTF8.GetString(shuffledItemList[i].Item2.Item1)));
             }
             for (int i = 0; i < shuffledABList.Count; i++)
             {
-                combinedShuffledTreasureList.Add((shuffledABList[i].Item1, System.Text.Encoding.UTF8.GetString(shuffledABList[i].Item2.Item1)));
+                combinedShuffledTreasureList.Add((shuffledABList[i].Item1, Encoding.UTF8.GetString(shuffledABList[i].Item2.Item1)));
             }
             for (int i = 0; i < shuffledStoneList.Count; i++)
             {
-                combinedShuffledTreasureList.Add((shuffledStoneList[i].Item1, System.Text.Encoding.UTF8.GetString(shuffledStoneList[i].Item2.Item1)));
+                combinedShuffledTreasureList.Add((shuffledStoneList[i].Item1, Encoding.UTF8.GetString(shuffledStoneList[i].Item2.Item1)));
             }
 
             combinedShuffledTreasureList.Sort((x, y) => x.Item1.CompareTo(y.Item1));
@@ -357,7 +357,7 @@ namespace WOFFRandomizer
                 toWrite += combinedShuffledTreasureList[i].Item1 + ": " + combinedShuffledTreasureList[i].Item2 + "\n";
             }
 
-            System.IO.File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
+            File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
 
             // todo - function for relabeling ITEM, STONE, and ABILITYBOOK with names from database
             // create master list from database/items.txt and database/mirajewels.txt to compare the item_log.txt with and replace
@@ -398,7 +398,7 @@ namespace WOFFRandomizer
                     }
                 }
             }
-            System.IO.File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
+            File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
         }
         public static void TreasureShuffle(string currDir, string sV, RichTextBox log)
         {

@@ -28,26 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             textBox1 = new TextBox();
             button1 = new Button();
             label1 = new Label();
             label2 = new Label();
-            checkBox1 = new CheckBox();
+            checkBoxMirageboard = new CheckBox();
             label3 = new Label();
             label4 = new Label();
-            checkBox2 = new CheckBox();
-            checkBox3 = new CheckBox();
-            button2 = new Button();
-            button3 = new Button();
-            checkBox4 = new CheckBox();
+            checkBoxRandEnc = new CheckBox();
+            checkBoxBosses = new CheckBox();
+            buttonRandomize = new Button();
+            buttonUninstall = new Button();
+            checkBoxTreasures = new CheckBox();
             label5 = new Label();
             label6 = new Label();
             label7 = new Label();
             label8 = new Label();
             richTextBox1 = new RichTextBox();
-            button4 = new Button();
+            buttonReadme = new Button();
             textBox2 = new TextBox();
-            checkBox5 = new CheckBox();
+            checkBoxRareMon = new CheckBox();
+            checkBoxSizes = new CheckBox();
+            toolTipTreasures = new ToolTip(components);
+            toolTipRandEnc = new ToolTip(components);
+            toolTipRareMon = new ToolTip(components);
+            toolTipBosses = new ToolTip(components);
+            toolTipMirageboard = new ToolTip(components);
+            toolTipSizes = new ToolTip(components);
             SuspendLayout();
             // 
             // textBox1
@@ -56,7 +64,6 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(462, 23);
             textBox1.TabIndex = 0;
-            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // button1
             // 
@@ -77,7 +84,6 @@
             label1.Size = new Size(109, 21);
             label1.TabIndex = 2;
             label1.Text = "Mirageboard";
-            label1.Click += label1_Click;
             // 
             // label2
             // 
@@ -87,16 +93,16 @@
             label2.Size = new Size(1, 300);
             label2.TabIndex = 3;
             // 
-            // checkBox1
+            // checkBoxMirageboard
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(684, 114);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(100, 19);
-            checkBox1.TabIndex = 4;
-            checkBox1.Text = "Shuffle Nodes";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            checkBoxMirageboard.AutoSize = true;
+            checkBoxMirageboard.Location = new Point(684, 114);
+            checkBoxMirageboard.Name = "checkBoxMirageboard";
+            checkBoxMirageboard.Size = new Size(100, 19);
+            checkBoxMirageboard.TabIndex = 4;
+            checkBoxMirageboard.Text = "Shuffle Nodes";
+            checkBoxMirageboard.UseVisualStyleBackColor = true;
+            checkBoxMirageboard.MouseHover += checkBoxMirageboard_MouseHover;
             // 
             // label3
             // 
@@ -116,59 +122,59 @@
             label4.TabIndex = 5;
             label4.Text = "Enemies";
             // 
-            // checkBox2
+            // checkBoxRandEnc
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(471, 114);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(138, 19);
-            checkBox2.TabIndex = 7;
-            checkBox2.Text = "Shuffle Random Encs";
-            checkBox2.UseVisualStyleBackColor = true;
-            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            checkBoxRandEnc.AutoSize = true;
+            checkBoxRandEnc.Location = new Point(471, 114);
+            checkBoxRandEnc.Name = "checkBoxRandEnc";
+            checkBoxRandEnc.Size = new Size(138, 19);
+            checkBoxRandEnc.TabIndex = 7;
+            checkBoxRandEnc.Text = "Shuffle Random Encs";
+            checkBoxRandEnc.UseVisualStyleBackColor = true;
+            checkBoxRandEnc.MouseHover += checkBoxRandEnc_MouseHover;
             // 
-            // checkBox3
+            // checkBoxBosses
             // 
-            checkBox3.AutoSize = true;
-            checkBox3.Location = new Point(471, 164);
-            checkBox3.Name = "checkBox3";
-            checkBox3.Size = new Size(101, 19);
-            checkBox3.TabIndex = 8;
-            checkBox3.Text = "Shuffle Bosses";
-            checkBox3.UseVisualStyleBackColor = true;
-            checkBox3.CheckedChanged += checkBox3_CheckedChanged;
+            checkBoxBosses.AutoSize = true;
+            checkBoxBosses.Location = new Point(471, 164);
+            checkBoxBosses.Name = "checkBoxBosses";
+            checkBoxBosses.Size = new Size(101, 19);
+            checkBoxBosses.TabIndex = 8;
+            checkBoxBosses.Text = "Shuffle Bosses";
+            checkBoxBosses.UseVisualStyleBackColor = true;
+            checkBoxBosses.MouseHover += checkBoxBosses_MouseHover;
             // 
-            // button2
+            // buttonRandomize
             // 
-            button2.Font = new Font("Segoe UI", 12F);
-            button2.Location = new Point(51, 256);
-            button2.Name = "button2";
-            button2.Size = new Size(119, 54);
-            button2.TabIndex = 9;
-            button2.Text = "Randomize";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            buttonRandomize.Font = new Font("Segoe UI", 12F);
+            buttonRandomize.Location = new Point(51, 256);
+            buttonRandomize.Name = "buttonRandomize";
+            buttonRandomize.Size = new Size(119, 54);
+            buttonRandomize.TabIndex = 9;
+            buttonRandomize.Text = "Randomize";
+            buttonRandomize.UseVisualStyleBackColor = true;
+            buttonRandomize.Click += button2_Click;
             // 
-            // button3
+            // buttonUninstall
             // 
-            button3.Location = new Point(51, 316);
-            button3.Name = "button3";
-            button3.Size = new Size(119, 23);
-            button3.TabIndex = 10;
-            button3.Text = "Uninstall";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            buttonUninstall.Location = new Point(51, 316);
+            buttonUninstall.Name = "buttonUninstall";
+            buttonUninstall.Size = new Size(119, 23);
+            buttonUninstall.TabIndex = 10;
+            buttonUninstall.Text = "Uninstall";
+            buttonUninstall.UseVisualStyleBackColor = true;
+            buttonUninstall.Click += button3_Click;
             // 
-            // checkBox4
+            // checkBoxTreasures
             // 
-            checkBox4.AutoSize = true;
-            checkBox4.Location = new Point(260, 114);
-            checkBox4.Name = "checkBox4";
-            checkBox4.Size = new Size(148, 19);
-            checkBox4.TabIndex = 12;
-            checkBox4.Text = "Shuffle Treasure Chests";
-            checkBox4.UseVisualStyleBackColor = true;
-            checkBox4.CheckedChanged += checkBox4_CheckedChanged;
+            checkBoxTreasures.AutoSize = true;
+            checkBoxTreasures.Location = new Point(260, 114);
+            checkBoxTreasures.Name = "checkBoxTreasures";
+            checkBoxTreasures.Size = new Size(148, 19);
+            checkBoxTreasures.TabIndex = 12;
+            checkBoxTreasures.Text = "Shuffle Treasure Chests";
+            checkBoxTreasures.UseVisualStyleBackColor = true;
+            checkBoxTreasures.MouseHover += checkBoxTreasures_MouseHover;
             // 
             // label5
             // 
@@ -179,7 +185,6 @@
             label5.Size = new Size(52, 21);
             label5.TabIndex = 11;
             label5.Text = "Items";
-            label5.Click += label5_Click;
             // 
             // label6
             // 
@@ -200,7 +205,6 @@
             label7.TabIndex = 14;
             label7.Text = "World of Final Fantasy Randomizer v0.1.2";
             label7.TextAlign = ContentAlignment.MiddleCenter;
-            label7.Click += label7_Click;
             // 
             // label8
             // 
@@ -210,7 +214,6 @@
             label8.Size = new Size(105, 15);
             label8.TabIndex = 15;
             label8.Text = "Created by: Doicm";
-            label8.Click += label8_Click;
             // 
             // richTextBox1
             // 
@@ -222,15 +225,15 @@
             richTextBox1.Text = "";
             richTextBox1.TextChanged += richTextBox1_TextChanged;
             // 
-            // button4
+            // buttonReadme
             // 
-            button4.Location = new Point(51, 345);
-            button4.Name = "button4";
-            button4.Size = new Size(119, 23);
-            button4.TabIndex = 17;
-            button4.Text = "Readme";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            buttonReadme.Location = new Point(51, 345);
+            buttonReadme.Name = "buttonReadme";
+            buttonReadme.Size = new Size(119, 23);
+            buttonReadme.TabIndex = 17;
+            buttonReadme.Text = "Readme";
+            buttonReadme.UseVisualStyleBackColor = true;
+            buttonReadme.Click += button4_Click;
             // 
             // textBox2
             // 
@@ -240,38 +243,50 @@
             textBox2.Size = new Size(204, 23);
             textBox2.TabIndex = 18;
             // 
-            // checkBox5
+            // checkBoxRareMon
             // 
-            checkBox5.AutoSize = true;
-            checkBox5.Location = new Point(471, 139);
-            checkBox5.Name = "checkBox5";
-            checkBox5.Size = new Size(134, 19);
-            checkBox5.TabIndex = 19;
-            checkBox5.Text = "Shuffle Rare Mirages";
-            checkBox5.UseVisualStyleBackColor = true;
-            checkBox5.CheckedChanged += checkBox5_CheckedChanged;
+            checkBoxRareMon.AutoSize = true;
+            checkBoxRareMon.Location = new Point(471, 139);
+            checkBoxRareMon.Name = "checkBoxRareMon";
+            checkBoxRareMon.Size = new Size(134, 19);
+            checkBoxRareMon.TabIndex = 19;
+            checkBoxRareMon.Text = "Shuffle Rare Mirages";
+            checkBoxRareMon.UseVisualStyleBackColor = true;
+            checkBoxRareMon.MouseHover += checkBoxRareMon_MouseHover;
+            // 
+            // checkBoxSizes
+            // 
+            checkBoxSizes.AutoSize = true;
+            checkBoxSizes.Location = new Point(684, 139);
+            checkBoxSizes.Name = "checkBoxSizes";
+            checkBoxSizes.Size = new Size(91, 19);
+            checkBoxSizes.TabIndex = 20;
+            checkBoxSizes.Text = "Shuffle Sizes";
+            checkBoxSizes.UseVisualStyleBackColor = true;
+            checkBoxSizes.MouseHover += checkBoxSizes_MouseHover;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
-            Controls.Add(checkBox5);
+            Controls.Add(checkBoxSizes);
+            Controls.Add(checkBoxRareMon);
             Controls.Add(textBox2);
-            Controls.Add(button4);
+            Controls.Add(buttonReadme);
             Controls.Add(richTextBox1);
             Controls.Add(label8);
             Controls.Add(label7);
             Controls.Add(label6);
-            Controls.Add(checkBox4);
+            Controls.Add(checkBoxTreasures);
             Controls.Add(label5);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(checkBox3);
-            Controls.Add(checkBox2);
+            Controls.Add(buttonUninstall);
+            Controls.Add(buttonRandomize);
+            Controls.Add(checkBoxBosses);
+            Controls.Add(checkBoxRandEnc);
             Controls.Add(label3);
             Controls.Add(label4);
-            Controls.Add(checkBox1);
+            Controls.Add(checkBoxMirageboard);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(button1);
@@ -288,21 +303,28 @@
         private Button button1;
         private Label label1;
         private Label label2;
-        private CheckBox checkBox1;
+        private CheckBox checkBoxMirageboard;
         private Label label3;
         private Label label4;
-        private CheckBox checkBox2;
-        private CheckBox checkBox3;
-        private Button button2;
-        private Button button3;
-        private CheckBox checkBox4;
+        private CheckBox checkBoxRandEnc;
+        private CheckBox checkBoxBosses;
+        private Button buttonRandomize;
+        private Button buttonUninstall;
+        private CheckBox checkBoxTreasures;
         private Label label5;
         private Label label6;
         private Label label7;
         private Label label8;
         private RichTextBox richTextBox1;
-        private Button button4;
+        private Button buttonReadme;
         private TextBox textBox2;
-        private CheckBox checkBox5;
+        private CheckBox checkBoxRareMon;
+        private CheckBox checkBoxSizes;
+        private ToolTip toolTipTreasures;
+        private ToolTip toolTipRandEnc;
+        private ToolTip toolTipRareMon;
+        private ToolTip toolTipBosses;
+        private ToolTip toolTipMirageboard;
+        private ToolTip toolTipSizes;
     }
 }

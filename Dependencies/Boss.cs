@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
     internal class Boss
     {
@@ -34,7 +34,7 @@ namespace WOFFRandomizer
                         row[81] = levelsGEXP[i][4];
                         row[82] = levelsGEXP[i][5];
                         i++;
-                        if (i == (levelsGEXP.Count - 1))
+                        if (i == levelsGEXP.Count - 1)
                         {
                             broken = true; 
                             break;
@@ -72,9 +72,9 @@ namespace WOFFRandomizer
                 int i = 0;
                 while (i <= 5)
                 {
-                    if (row[j + (i * 4)] != "-1")
+                    if (row[j + i * 4] != "-1")
                     {
-                        string bossID = row[j + (i * 4)];
+                        string bossID = row[j + i * 4];
                         if (eachBoss.Count() < 1)
                         {
                             eachBoss.Add(bossID);
@@ -125,9 +125,9 @@ namespace WOFFRandomizer
                 int i = 0;
                 while (i <= 5)
                 {
-                    if (sortedDict[key][j + (i * 4)] != "-1")
+                    if (sortedDict[key][j + i * 4] != "-1")
                     {
-                        string rareMonID = sortedDict[key][j + (i * 4)];
+                        string rareMonID = sortedDict[key][j + i * 4];
                         if (shuffled_eachBoss.Count() < 1)
                         {
                             shuffled_eachBoss.Add(rareMonID);
@@ -179,10 +179,10 @@ namespace WOFFRandomizer
                     while (k <= 6)
                     {
                         // account for duplicates in same row
-                        if ((row[j + (k * 4)] != "-1") && (row[j + (k * 4)] != row[k * 4]))
+                        if (row[j + k * 4] != "-1" && row[j + k * 4] != row[k * 4])
                         {
-                            if (Int32.Parse((row[j + (k * 4)])) > 1)
-                            toWrite += row[1].Substring(0, 8) + ": " + row[j + (k * 4)] + Environment.NewLine;
+                            if (int.Parse(row[j + k * 4]) > 1)
+                            toWrite += row[1].Substring(0, 8) + ": " + row[j + k * 4] + Environment.NewLine;
                         }
                         k++;
                     }
@@ -193,7 +193,7 @@ namespace WOFFRandomizer
                     }
                 }
             }
-            System.IO.File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
         }
     }
 }

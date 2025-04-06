@@ -6,7 +6,7 @@ using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WOFFRandomizer
+namespace WOFFRandomizer.Dependencies
 {
     internal class MonMapAndLog
     {
@@ -44,11 +44,11 @@ namespace WOFFRandomizer
                 while (i <= 5)
                 {
                     
-                    if (row[(i*4) + j] != "-1")
+                    if (row[i*4 + j] != "-1")
                     {
-                        if (!miragesInArea.Contains(row[(i*4) + j]))
+                        if (!miragesInArea.Contains(row[i*4 + j]))
                         {
-                            miragesInArea.Add(row[(i*4) + j]);
+                            miragesInArea.Add(row[i*4 + j]);
                         }
                     }
                     i++;
@@ -60,7 +60,7 @@ namespace WOFFRandomizer
             {
                 toWrite += areaname.Substring(0,8) + ": " + mirage + "\n";
             }
-            System.IO.File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
 
         }
         private static void randomEncountersPostShuffle(string currDir, List<List<string>> EGLoutput)
@@ -173,11 +173,11 @@ namespace WOFFRandomizer
 
             // Store then clear the text of monster_log.txt to append back later after traversing through random encounters
             string tempLog = File.ReadAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
-            System.IO.File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), "");
+            File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), "");
 
             randomEncountersPostShuffle(currDir, EGLoutput);
 
-            System.IO.File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), tempLog);
+            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), tempLog);
 
             // get the areas that aren't being randomized
             List<List<string>> nonRandomizedAreas = new List<List<string>>();
@@ -366,7 +366,7 @@ namespace WOFFRandomizer
                     }
                 }
             }
-            System.IO.File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
         }
     }
 }
