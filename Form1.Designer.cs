@@ -203,7 +203,7 @@
             label7.Name = "label7";
             label7.Size = new Size(197, 112);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Randomizer v0.1.2";
+            label7.Text = "World of Final Fantasy Randomizer v0.1.3";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label8
