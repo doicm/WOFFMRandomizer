@@ -54,7 +54,7 @@ namespace WOFFRandomizer.Dependencies
             // excluding chapter 14, since that's a mess
             // excluding order of the circle fights. they're special :)
             List<string> bossesList = ["569", "571", "573", "577", "578", "592", "598", "601", "607", "615",
-                "618", "623", "626", "627", "629", "634", "635", "644"];
+                "618", "623", "626", "627", "629", "634", "635", "643"];
             List<List<string>> bossData = new List<List<string>>();
             // iterate through EGLoutput first, grabbing the boss data
             foreach (List<string> row in EGLoutput)
