@@ -70,7 +70,8 @@ namespace WOFFRandomizer.Dependencies
             int crlIDIter = 124;
             int sSLIter = 0;
             // List of rows to skip if ID matches something that's invalid, usually a boss or XL
-            List<int> exceptionList = [150, 161, 164, 167, 180, 188, 196, 208, 211, 212, 226, 240, 253, 254, 262, 284, 292, 297, 300, 301, 305, 308, 309,
+            // Also exclude Copper Gnome and Sharqual for scales, since size affects weight
+            List<int> exceptionList = [150, 161, 164, 167, 178, 180, 188, 194, 196, 208, 211, 212, 226, 240, 253, 254, 262, 284, 292, 297, 300, 301, 305, 308, 309,
             316, 319, 329, 330, 331, 332, 333, 334, 348, 349, 350, 351, 361, 362, 363, 364, 365, 383, 387];
 
             string toWrite = "";
@@ -88,8 +89,8 @@ namespace WOFFRandomizer.Dependencies
                     crlIDIter++;
                     continue;
                 }
-                csvData[i][0] = shuffledSizesList[sSLIter].Item1.Item1;
-                csvData[i][2] = shuffledSizesList[sSLIter].Item1.Item2;
+                //csvData[i][0] = shuffledSizesList[sSLIter].Item1.Item1;
+                //csvData[i][2] = shuffledSizesList[sSLIter].Item1.Item2;
                 csvData[i][19] = shuffledSizesList[sSLIter].Item2[0];
                 //csvData[i][20] = shuffledSizesList[sSLIter].Item2[1];
                 toWrite += string.Join(",", csvData[i]) + Environment.NewLine;

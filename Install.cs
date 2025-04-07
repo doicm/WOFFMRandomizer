@@ -81,6 +81,23 @@ namespace WOFFRandomizer
             File.Copy(fileThatWasEdited, source, true);
             File.Delete(fileThatWasEdited);
         }
+
+        private static void WriteToSeedLog(string currDir, string sV, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
+            bool sizesShuffle, bool quPrizesShuffle, bool doubleExpBool)
+        {
+            string toWrite = sV + Environment.NewLine;
+            toWrite += Environment.NewLine;
+            if (mbShuffle) toWrite += "Mirageboard nodes randomized...." + Environment.NewLine;
+            if (enemShuffle) toWrite += "Random encounters randomized...." + Environment.NewLine;
+            if (rareShuffle) toWrite += "Rare mirages randomized...." + Environment.NewLine;
+            if (bossShuffle) toWrite += "Bosses randomized...." + Environment.NewLine;
+            if (itemShuffle) toWrite += "Treasure chests randomized...." + Environment.NewLine;
+            if (sizesShuffle) toWrite += "Mirage sizes randomized...." + Environment.NewLine;
+            if (quPrizesShuffle) toWrite += "Intervention quest/coliseum rewards randomized...." + Environment.NewLine;
+            if (doubleExpBool) toWrite += "Experience and gil doubled...." + Environment.NewLine;
+
+            System.IO.File.WriteAllText(currDir + "/logs/seed.txt", toWrite);
+        }
         public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
             bool sizesShuffle, bool quPrizesShuffle, bool doubleExpBool, Button button1, Button button2, Button button3)
         {
@@ -113,7 +130,7 @@ namespace WOFFRandomizer
             log.AppendText("Started generating seed " + sV + "...\n");
 
             // Write to txt file with seed name in it for reference
-            System.IO.File.WriteAllText(currDir + "/logs/seed.txt", sV);
+            WriteToSeedLog(currDir, sV, mbShuffle, enemShuffle, bossShuffle, itemShuffle, rareShuffle, sizesShuffle, quPrizesShuffle, doubleExpBool);
 
             // Run the WoFFCshTool by Surihia twice, one to decompress csh and convert to csv, and one to do the reverse after writing the values
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirageboard_data.csh"));

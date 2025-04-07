@@ -260,15 +260,14 @@ namespace WOFFRandomizer.Dependencies
             (enemiesDict, ceslRowData, levelsGEXP) = collectRandomEncounters(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, currDir);
 
             // Shuffle the keys (for random encounters) separate from the values and create a new dictionary from it
-            // it's harder in c#...
             // create two lists, one to store original keys and another for shuffling dictionary values
             List<string> enemyKeys = new List<string>(enemiesDict.Keys);
             List<List<string>> enemyValues = new List<List<string>>(enemiesDict.Values);
-            enemyValues.Shuffle(Shuffle.ConsistentStringHash(sV));
+            enemyKeys.Shuffle(Shuffle.ConsistentStringHash(sV));
             // create new dictionary and put values into it
             Dictionary<string, List<string>> eDictShuffled = enemyKeys.Zip(enemyValues, (k, v) => new { k, v })
                 .ToDictionary(x => x.k, x => x.v);
-            // put the ceslRowData back into the dictionary
+            // put the ceslRowData back into the dictionary.
             int i = 0;
             int j = 0;
             while (i < enemyKeys.Count)
@@ -284,7 +283,7 @@ namespace WOFFRandomizer.Dependencies
             
             log.AppendText("Modifying random encounters...\n");
             // Write to CESLoutput first, changing the ceslRowData
-            CESLoutput = ceslOutputModify(CESLoutput, eDictShuffled, levelsGEXP); // this is the problem
+            CESLoutput = ceslOutputModify(CESLoutput, eDictShuffled, levelsGEXP);
 
             // Write to EGLoutput second, changing the other values
             EGLoutput = eglOutputModify(EGLoutput, eDictShuffled, currDir);

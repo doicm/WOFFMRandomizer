@@ -232,19 +232,20 @@ namespace WOFFRandomizer.Dependencies
                     mpcdIter++;
                     areaIter = 1;
                     if (mpcdIter == monster_place_csv_data.Count) break;
-                    // check for monsToReinclude
-                    if (mtrIter < monsToReinclude.Count)
-                    {
-                        if (currLine == monsToReinclude[mtrIter][0])
-                        {
-                            newMPoutput.Add([id.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
-                                monster_place_csv_data[mpcdIter][1],monster_place_csv_data[mpcdIter][2], monsToReinclude[mtrIter][1],
-                                monster_place_csv_data[mpcdIter][3],"0"]);
-                            id++;
-                            areaIter++;
-                            mtrIter++;
-                        }
-                    }
+                    //// check for monsToReinclude. also check if they're already in the area so they don't get double-counted
+                    //// Actually, they're going to get double-counted either way, so let's remove this code
+                    //if (mtrIter < monsToReinclude.Count)
+                    //{
+                    //    if (currLine == monsToReinclude[mtrIter][0])
+                    //    {
+                    //        newMPoutput.Add([id.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
+                    //            monster_place_csv_data[mpcdIter][1],monster_place_csv_data[mpcdIter][2], monsToReinclude[mtrIter][1],
+                    //            monster_place_csv_data[mpcdIter][3],"0"]);
+                    //        id++;
+                    //        areaIter++;
+                    //        mtrIter++;
+                    //    }
+                    //}
                 }
                 if (monsToIgnoreOnMap.Contains(line.Substring(10))) continue;
                 if (mpcdIter == monster_place_csv_data.Count()) break;
@@ -275,19 +276,20 @@ namespace WOFFRandomizer.Dependencies
             {
                 // first entry is areaID. second entry is mirageID
                 if (monsToIgnoreOnMap.Contains(line.Substring(10))) continue;
-                // if current area is same as monsToReinclude area, sneak it in
-                if (monsToReinclude.Count > 0)
-                {
-                    if (mtrIter < monsToReinclude.Count)
-                    {
-                        if (line.Substring(4, 4) == monsToReinclude[mtrIter][0])
-                        {
-                            MPoutput.Add([monsToReinclude[mtrIter][0], monsToReinclude[mtrIter][1]]);
-                            mtrIter++;
-                        }
-                    }
+                //// if current area is same as monsToReinclude area, sneak it in
+                //// changed my mind. remove it.
+                //if (monsToReinclude.Count > 0)
+                //{
+                //    if (mtrIter < monsToReinclude.Count)
+                //    {
+                //        if (line.Substring(4, 4) == monsToReinclude[mtrIter][0])
+                //        {
+                //            MPoutput.Add([monsToReinclude[mtrIter][0], monsToReinclude[mtrIter][1]]);
+                //            mtrIter++;
+                //        }
+                //    }
                     
-                }
+                //}
                 MPoutput.Add([line.Substring(4, 4), line.Substring(10)]);
             }
             string[] linesArea = File.ReadAllLines(Path.GetFullPath(
