@@ -194,17 +194,41 @@ namespace WOFFRandomizer.Dependencies
             return output;
         }
 
+        private static List<string> ModifyCapList(List<string> output)
+        {
+            var newOutput = new List<string>();
+            // Col 47 is the AP cost
+            foreach (var row in output)
+            {
+                List<string> listCsv = row.Split(",").ToList();
+                if (Int32.Parse(listCsv[47]) > 12)
+                {
+                    listCsv[47] = "12";
+                }
+                newOutput.Add(string.Join(",", listCsv));
+            }
+
+            return newOutput;
+        }
+
         public static void mirageboard_dataWriteCsv(string currDir, string seedvalue, RichTextBox log)
         {
             // Get filename to edit
             string csvfilename = Path.Combine(currDir, "mirageboard_data.csv");
+            string capPath = Path.Combine(currDir, "command_ability_param.csv");
 
             // Put all lines of the file into a list to edit
             var csvFile = File.ReadAllLines(csvfilename, Encoding.UTF8);
             var output = new List<string>(csvFile);
 
+            var csvCapFile = File.ReadAllLines(capPath, Encoding.UTF8);
+            var outputCapFile = new List<string>(csvCapFile);
+
             // Edit the list
             output = modifyBoards(output, seedvalue);
+
+            // Reduce costs of AP for abilities above 12 to 12 (only applies to 4 abilities, I think)
+            outputCapFile = ModifyCapList(outputCapFile);
 
             // Write over the file
             string newFileOutput = "";
@@ -214,6 +238,15 @@ namespace WOFFRandomizer.Dependencies
             }
 
             File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
+
+            // Write over the file
+            string newCapFileOutput = "";
+            foreach (var item in outputCapFile)
+            {
+                newCapFileOutput += string.Join(",", item) + Environment.NewLine;
+            }
+
+            File.WriteAllText(currDir + "/command_ability_param.csv", newCapFileOutput);
 
 
         }
