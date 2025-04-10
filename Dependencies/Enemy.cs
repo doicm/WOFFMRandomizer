@@ -172,7 +172,11 @@ namespace WOFFRandomizer.Dependencies
             // exclude 375 for Behemonster. Don't want to try XLs in rotation yet. 377-378,388 (no entry) 
             (enemiesDict, ceslRowData, levelsGEXP) = bestiaryTraversal(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, 373, 392, currDir);
 
-            // Only going up to Castle Exnine for random encounters because post-game stuff is fine on its own (and may not be included in non-Maxima?)
+            // Only going up to Castle Exnine for random encounters because post-game stuff is fine on its own
+            // Except...I want the coeurls in there
+
+            // Coeurl and Lesser Coeurl. I may regret this, but I'll give it a shot.
+            (enemiesDict, ceslRowData, levelsGEXP) = bestiaryTraversal(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, 1219, 1220, currDir);
 
             return (enemiesDict, ceslRowData, levelsGEXP);
         }
@@ -183,6 +187,8 @@ namespace WOFFRandomizer.Dependencies
             List<string> eDictKeys = new List<string>(eDictShuffled.Keys);
             eDictKeys.Sort();
             int levelIter = 0;
+
+            
             foreach (string key in eDictKeys)
             {
                 // first iteration combines the data
@@ -192,11 +198,28 @@ namespace WOFFRandomizer.Dependencies
                     {
                         int colIter = 1;
                         int lenRow = row.Count;
-                        // reinsert the stored randomized values into CESLoutput
-                        while (colIter < lenRow)
+                        // There is a required fight in Chapter 2. It's normally a Mu, but if you get a really strong enemy there, you may not be able
+                        // to progress past that point, even with the level reduced. I'm going to reduce the stats along with the level by giving them
+                        // the Mu's stats, minus a few things.
+                        if (key == "117")
                         {
-                            row[colIter] = eDictShuffled[key][colIter + 1];
-                            colIter++;
+                            // name and ID
+                            row[1] = eDictShuffled[key][2];
+                            row[2] = eDictShuffled[key][3];
+                            // ability
+                            row[11] = eDictShuffled[key][12];
+                            // capture hint
+                            row[49] = eDictShuffled[key][50];
+
+                        }
+                        else
+                        {
+                            // reinsert the stored randomized values into CESLoutput
+                            while (colIter < lenRow)
+                            {
+                                row[colIter] = eDictShuffled[key][colIter + 1];
+                                colIter++;
+                            }
                         }
                         // reassign the base values of levels, exp, and gil
                         row[3] = levelsGEXP[levelIter].Item1;

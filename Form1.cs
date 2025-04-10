@@ -10,7 +10,7 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Randomizer v0.1.5";
+            this.Text = "World of Final Fantasy Randomizer v0.1.6";
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
@@ -85,9 +85,10 @@ namespace WOFFRandomizer
             bool sizesActive = checkBoxSizes.Checked;
             bool quPrizesActive = checkBoxQuOrArenaPrizes.Checked;
             bool doubleExpBool = checkBoxDoubleExp.Checked;
+            bool murkActive = checkBoxMurkrift.Checked;
 
             Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive,
-                quPrizesActive, doubleExpBool, button1, buttonRandomize, buttonUninstall);
+                quPrizesActive, murkActive, doubleExpBool, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -151,6 +152,12 @@ namespace WOFFRandomizer
         private void checkBoxDoubleExp_MouseHover(object sender, EventArgs e)
         {
             toolTipDoubleExp.Show("This doubles experience and gil earned in all battles.", checkBoxDoubleExp);
+        }
+
+        private void checkBoxMurkrift_MouseHover(object sender, EventArgs e)
+        {
+            toolTipMurkrift.Show("This shuffles the murkrift encounters with each other.\nFirst Behemoth encounter is excluded, " +
+                "as is the Nightmare rare monster fight.", checkBoxMurkrift);
         }
     }
 }

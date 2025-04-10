@@ -137,6 +137,10 @@ namespace WOFFRandomizer.Dependencies
             // Castle Exnine
             // lines 424-449
             bestiaryTraversalPostShuffle(currDir, EGLoutput, 424, 449);
+
+            // Coeurl and Lesser Coeurl
+            // lines 1171, 1172
+            bestiaryTraversalPostShuffle(currDir, EGLoutput, 1171, 1172);
         }
         public static List<List<string>> modifyMonsterPlace (List<List<string>> MPoutput, 
             List<List<string>> EGLoutput, RichTextBox log, string currDir, bool enemShuffle)
@@ -349,7 +353,7 @@ namespace WOFFRandomizer.Dependencies
                 }
                 
                 // then find bosses to append
-                else if (row[0].Contains("0406") | row[0].Contains("_0"))
+                else if (row[0].Contains("0406") | row[0].Contains("_0") | row[0] == "SEV_038")
                 {
                     if (!bossesStarted)
                     {
@@ -359,7 +363,7 @@ namespace WOFFRandomizer.Dependencies
                     }
                     foreach (string enemyString in linesEnemy)
                     {
-                        if (enemyString.Substring(0, 4) == row[1])
+                        if (enemyString.Substring(0, 4) == row[1].Substring(Math.Max(0, row[1].Length - 4)))
                         {
                             toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
                                 enemyString.Substring(5) + "\n";

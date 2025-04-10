@@ -18,6 +18,10 @@ namespace WOFFRandomizer.Dependencies
             int i = 0;
             bool broken = false;
 
+            // Make two lists, one where exp/gil is zero'd out (for adds in fights) and one where exp/gil is cut by 1/3 (for kupirates)
+            List<string> exceptionListZero = ["185", "301", "327", "328"];
+            List<string> exceptionListThird = ["196"];
+
             foreach (string key in sortedDict.Keys)
             {
                 eglList.Add(new Tuple<string, List<string>>(key, sortedDict[key]));
@@ -29,10 +33,28 @@ namespace WOFFRandomizer.Dependencies
                     if (levelsGEXP[i][6] == row[0])
                     {
                         row[3] = levelsGEXP[i][1];
-                        row[79] = levelsGEXP[i][2];
-                        row[80] = levelsGEXP[i][3];
-                        row[81] = levelsGEXP[i][4];
-                        row[82] = levelsGEXP[i][5];
+                        // Need to make some experience/gil adjustment exceptions for some fights, since some can give egregious amounts
+                        if (exceptionListZero.Contains(row[0]))
+                        {
+                            row[79] = "0";
+                            row[80] = "0";
+                            row[81] = "0";
+                            row[82] = "0";
+                        }
+                        else if (exceptionListThird.Contains(row[0]))
+                        {
+                            row[79] = (Int32.Parse(levelsGEXP[i][2]) / 3).ToString();
+                            row[80] = (Int32.Parse(levelsGEXP[i][3]) / 3).ToString();
+                            row[81] = (Int32.Parse(levelsGEXP[i][4]) / 3).ToString();
+                            row[82] = (Int32.Parse(levelsGEXP[i][5]) / 3).ToString();
+                        }
+                        else
+                        {
+                            row[79] = levelsGEXP[i][2];
+                            row[80] = levelsGEXP[i][3];
+                            row[81] = levelsGEXP[i][4];
+                            row[82] = levelsGEXP[i][5];
+                        }
                         i++;
                         if (i == levelsGEXP.Count - 1)
                         {
@@ -54,7 +76,7 @@ namespace WOFFRandomizer.Dependencies
             // excluding chapter 14, since that's a mess
             // excluding order of the circle fights. they're special :)
             List<string> bossesList = ["569", "571", "573", "577", "578", "592", "598", "601", "607", "615",
-                "618", "623", "626", "627", "629", "634", "635", "643"];
+                "618", "623", "626", "627", "629", "634", "635", "643", "692"];
             List<List<string>> bossData = new List<List<string>>();
             // iterate through EGLoutput first, grabbing the boss data
             foreach (List<string> row in EGLoutput)
@@ -182,7 +204,7 @@ namespace WOFFRandomizer.Dependencies
                         if (row[j + k * 4] != "-1" && row[j + k * 4] != row[k * 4])
                         {
                             if (int.Parse(row[j + k * 4]) > 1)
-                            toWrite += row[1].Substring(0, 8) + ": " + row[j + k * 4] + Environment.NewLine;
+                            toWrite += row[1] + ": " + row[j + k * 4] + Environment.NewLine;
                         }
                         k++;
                     }

@@ -60,6 +60,8 @@
             checkBoxQuOrArenaPrizes = new CheckBox();
             checkBoxDoubleExp = new CheckBox();
             toolTipDoubleExp = new ToolTip(components);
+            toolTipMurkrift = new ToolTip(components);
+            checkBoxMurkrift = new CheckBox();
             SuspendLayout();
             // 
             // textBox1
@@ -207,7 +209,7 @@
             label7.Name = "label7";
             label7.Size = new Size(197, 112);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Randomizer v0.1.5";
+            label7.Text = "World of Final Fantasy Randomizer v0.1.6";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label8
@@ -291,11 +293,23 @@
             checkBoxDoubleExp.UseVisualStyleBackColor = true;
             checkBoxDoubleExp.MouseHover += checkBoxDoubleExp_MouseHover;
             // 
+            // checkBoxMurkrift
+            // 
+            checkBoxMurkrift.AutoSize = true;
+            checkBoxMurkrift.Location = new Point(471, 189);
+            checkBoxMurkrift.Name = "checkBoxMurkrift";
+            checkBoxMurkrift.Size = new Size(114, 19);
+            checkBoxMurkrift.TabIndex = 23;
+            checkBoxMurkrift.Text = "Shuffle Murkrifts";
+            checkBoxMurkrift.UseVisualStyleBackColor = true;
+            checkBoxMurkrift.MouseHover += checkBoxMurkrift_MouseHover;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBoxMurkrift);
             Controls.Add(checkBoxDoubleExp);
             Controls.Add(checkBoxQuOrArenaPrizes);
             Controls.Add(checkBoxSizes);
@@ -358,5 +372,7 @@
         private CheckBox checkBoxQuOrArenaPrizes;
         private CheckBox checkBoxDoubleExp;
         private ToolTip toolTipDoubleExp;
+        private ToolTip toolTipMurkrift;
+        private CheckBox checkBoxMurkrift;
     }
 }

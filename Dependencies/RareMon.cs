@@ -186,9 +186,18 @@ namespace WOFFRandomizer.Dependencies
                     if (levelsGEXPWithCESLID[lGEXPWCESLIDIter][6] == row[0])
                     {
                         row[3] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][1];
-                        row[79] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][2];
+                        // Make exception for Kupicaroon fight, since that can give too much EXP. col 79/81 is exp. divide it by 3. gil is okay...for now
+                        if (row[0] == "200")
+                        {
+                            row[79] = (Int32.Parse(levelsGEXPWithCESLID[lGEXPWCESLIDIter][2]) / 3).ToString();
+                            row[81] = (Int32.Parse(levelsGEXPWithCESLID[lGEXPWCESLIDIter][4]) / 3).ToString();
+                        }
+                        else
+                        {
+                            row[79] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][2];
+                            row[81] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][4];
+                        }
                         row[80] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][3];
-                        row[81] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][4];
                         row[82] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][5];
                         lGEXPWCESLIDIter++;
                         if (lGEXPWCESLIDIter == levelsGEXPWithCESLID.Count - 1)
