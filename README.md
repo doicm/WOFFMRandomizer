@@ -8,7 +8,7 @@ and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 =====================================================================
-0.1.5
+0.1.6
 
 Notes:
 =====================================================================
@@ -31,8 +31,7 @@ or in Linux on the following:
 Description:
 =====================================================================
 This mod is designed to work with World of Final Fantasy: Maxima
-for Steam. However, it may work without Maxima expansion, but I
-have no way of testing it. 
+for Steam. The regular version without the expansion will not work.
 
 These are the features currently implemented for randomizing:
 
@@ -47,6 +46,9 @@ battles.
 - **Shuffle Bosses:** This shuffles bosses that appear during the
 main story, starting from Watchplains. This doesn't include some
 bosses such as Exnine fights.
+- **Shuffle Murkrifts:** This shuffles murkrift enemies except
+for Behemoth at the beginning and the rare monster fight in the
+Train Graveyard.
 - **Shuffle Nodes:** This shuffles most of the nodes between
 mirageboards for mirages. Some nodes are excluded that are either
 not functional or cause the game to softlock. Some nodes may also
@@ -79,8 +81,21 @@ If you run into issues with uninstalling, you should be able to
 restore your files by verifying your files on Steam. Hopefully
 it won't come to this, but this is just in case.
 
+For those who are stuck or need additional help, there are log
+files that will show information upon generating a randomizer seed.
+These are available in the logs directory.
+
+Please do not modify the files in the database directory, as this
+can break things.
+
 Changelog:
 =====================================================================
+2025-9-4 - 0.1.6 completed. Murkrift shuffling added. Fixed 
+mirageboard shuffling. Experience points for bosses and rare 
+monster fights adjusted. Mirageboard log added. Maxima is full
+focus, so Coeurl/Lesser Coeurl added to random encounter pool.
+Kyubi added in boss shuffle.
+
 2025-6-4 - 0.1.5 completed. Added intervention/coliseum reward
   shuffle, mirage size shuffle, and double exp/gil earn feature
 
