@@ -185,7 +185,7 @@ namespace WOFFRandomizer.Dependencies
             List<Tuple<string, string, string, string, string>> levelsGEXP)
         {
             List<string> eDictKeys = new List<string>(eDictShuffled.Keys);
-            eDictKeys.Sort();
+            eDictKeys.Sort((x,y) => Int32.Parse(x).CompareTo(Int32.Parse(y)));
             int levelIter = 0;
 
             
