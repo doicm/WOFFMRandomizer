@@ -115,7 +115,7 @@ namespace WOFFRandomizer.Dependencies
             // For use with enemy randos
             skipEnemyRandoRows.AddMany("68", "4749", "4751");
             // For use with skipping specific mirages, mostly those that don't actually exist as mirages
-            skipMirages.AddMany("7027", "7041", "7080", "7086", "7113", "7134", "7162", "8006", "7172", "7191", "7192", "7193", "7194", "7195", "8010", "8012",
+            skipMirages.AddMany("7027", "7041", "7080", "7086", "7113", "7134", "7162", "8006", "7172", "7191", "7192", "7193", "7194", "7195", "8010",
                 "8017", "8018", "8025");
 
             // if the category is not in between 1-9, excluding 6 (prismariums), skip it

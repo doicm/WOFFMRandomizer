@@ -10,192 +10,175 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class Boss
     {
-
-        public static (List<List<string>>, List<Tuple<string, List<string>>>) fixOGLevelsAndGEXP(List<List<string>> CESLoutput,
-            List<Tuple<string, List<string>>> eglList, List<List<string>> levelsGEXP, Dictionary<string, List<string>> sortedDict)
+        private static List<List<string>> CsvReadData(string path)
         {
-            // build the EGLoutput. I only want to go through the data once though
-            int i = 0;
-            bool broken = false;
-
-            // Make two lists, one where exp/gil is zero'd out (for adds in fights) and one where exp/gil is cut by 1/3 (for kupirates)
-            List<string> exceptionListZero = ["185", "301", "327", "328"];
-            List<string> exceptionListThird = ["196"];
-
-            foreach (string key in sortedDict.Keys)
+            List<List<string>> csvData = new List<List<string>>();
+            var csvFile = File.ReadAllLines(path, Encoding.UTF8);
+            var output = new List<string>(csvFile);
+            foreach (var row in output)
             {
-                eglList.Add(new Tuple<string, List<string>>(key, sortedDict[key]));
-                // iterate through CESL output again. the lGEXP needs to be assigned to it's proper monster
-                // use levelsGEXP for reference with previous and current values
-                foreach (List<string> row in CESLoutput)
+                List<string> listCsv = row.Split(",").ToList();
+                csvData.Add(listCsv);
+            }
+
+            return csvData;
+        }
+        private static void CsvWriteData(string path, List<List<string>> csvData)
+        {
+            string toWrite = "";
+            for (int i = 0; i < csvData.Count; i++)
+            {
+                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
+            }
+            File.WriteAllText(path, toWrite);
+        }
+
+        private static (List<List<string>>, List<List<string>>) GetEglDataAndlGEXPData(string eglPath, string ceslPath, List<string> eglBossIDs)
+        {
+            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> lGEXPData = new List<List<string>>();
+
+            List<List<string>> eglBossData = new List<List<string>>();
+            List<string> ceslIDs = new List<string>();
+
+            foreach (var row in eglData)
+            {
+                // If it's a boss row, add it to the boss data
+                if (eglBossIDs.Contains(row[0]))
                 {
-                    if (broken) break;
-                    if (levelsGEXP[i][6] == row[0])
+                    eglBossData.Add(row[3..]);
+                    // Also get the ceslIDs from the row
+                    int i = 0;
+                    int j = 6;
+                    string ceslID;
+                    while (i < 6)
                     {
-                        row[3] = levelsGEXP[i][1];
-                        // Need to make some experience/gil adjustment exceptions for some fights, since some can give egregious amounts
-                        if (exceptionListZero.Contains(row[0]))
+                        ceslID = row[j + (i * 4)];
+                        if (ceslID != "-1" && !ceslIDs.Contains(ceslID))
                         {
-                            row[79] = "0";
-                            row[80] = "0";
-                            row[81] = "0";
-                            row[82] = "0";
-                        }
-                        else if (exceptionListThird.Contains(row[0]))
-                        {
-                            row[79] = (Int32.Parse(levelsGEXP[i][2]) / 3).ToString();
-                            row[80] = (Int32.Parse(levelsGEXP[i][3]) / 3).ToString();
-                            row[81] = (Int32.Parse(levelsGEXP[i][4]) / 3).ToString();
-                            row[82] = (Int32.Parse(levelsGEXP[i][5]) / 3).ToString();
-                        }
-                        else
-                        {
-                            row[79] = levelsGEXP[i][2];
-                            row[80] = levelsGEXP[i][3];
-                            row[81] = levelsGEXP[i][4];
-                            row[82] = levelsGEXP[i][5];
+                            ceslIDs.Add(ceslID);
                         }
                         i++;
-                        if (i == levelsGEXP.Count - 1)
-                        {
-                            broken = true; 
-                            break;
-                        }
-                        continue;
                     }
                 }
             }
-            return (CESLoutput, eglList);
-        }
-        public static void modifyBosses(List<List<string>> EGLoutput, List<List<string>> CESLoutput,
-            string sV, RichTextBox log, string currDir)
-        {
-            log.AppendText("Shuffling bosses...\n");
-            // list of bosses based on EGL value
-            // excluding elemental trio, due to missables
-            // excluding chapter 14, since that's a mess
-            // excluding order of the circle fights. they're special :)
-            List<string> bossesList = ["569", "571", "573", "577", "578", "592", "598", "601", "607", "615",
-                "618", "623", "626", "627", "629", "634", "635", "643", "692"];
-            List<List<string>> bossData = new List<List<string>>();
-            // iterate through EGLoutput first, grabbing the boss data
-            foreach (List<string> row in EGLoutput)
-            {
-                if (bossesList.Contains(row[0]))
-                {
-                    bossData.Add(row);
-                }
-            }
-            // Get each monster in the boss fight, if applicable
-            List<string> eachBoss = new List<string>();
-            foreach (List<string> row in bossData)
-            {
-                int j = 6;
-                int i = 0;
-                while (i <= 5)
-                {
-                    if (row[j + i * 4] != "-1")
-                    {
-                        string bossID = row[j + i * 4];
-                        if (eachBoss.Count() < 1)
-                        {
-                            eachBoss.Add(bossID);
-                        }
-                        else
-                        {
-                            if (!eachBoss.Contains(bossID))
-                            {
-                                eachBoss.Add(bossID);
-                            }
-                        }
-                    }
-                    i++;
-                }
-            }
-            // iterate through CESLoutput to grab level and gil/exp. this stays in the same order. also putting current cesl id
-            // will probably need to revisit this at some point to balance levels better
-            List<List<string>> levelsGEXP = new List<List<string>>();
-            foreach (List<string> row in CESLoutput)
-            {
-                foreach (string monster in eachBoss)
-                {
-                    if (monster == row[0])
-                    {
-                        levelsGEXP.Add([monster, row[3], row[79], row[80], row[81], row[82]]);
-                        continue;
-                    }
-                }
-            }
-            // iterate through EGLoutput again, this time shuffling the boss data. put the data in a dictionary to shuffle
-            Dictionary<string, List<string>> bossDict = new Dictionary<string, List<string>>();
-            int bLIter = 0;
-            while (bLIter < bossesList.Count())
-            {
-                bossDict[bossesList[bLIter]] = bossData[bLIter];
-                bLIter++;
-            }
-            List<string> bossKeys = new List<string>(bossDict.Keys);
-            List<List<string>> bossValues = new List<List<string>>(bossData);
-            bossValues.Shuffle(Shuffle.ConsistentStringHash(sV));
-            // get each boss listed after shuffling and remove duplicates
-            List<string> shuffled_eachBoss = new List<string>();
-            Dictionary<string, List<string>> sortedDict = bossKeys.Zip(bossValues, (k, v) => new { k, v })
-                .ToDictionary(x => x.k, x => x.v);
-            foreach (string key in bossKeys)
-            {
-                int j = 6;
-                int i = 0;
-                while (i <= 5)
-                {
-                    if (sortedDict[key][j + i * 4] != "-1")
-                    {
-                        string rareMonID = sortedDict[key][j + i * 4];
-                        if (shuffled_eachBoss.Count() < 1)
-                        {
-                            shuffled_eachBoss.Add(rareMonID);
-                        }
-                        else
-                        {
-                            if (!shuffled_eachBoss.Contains(rareMonID))
-                            {
-                                shuffled_eachBoss.Add(rareMonID);
-                            }
-                        }
-                    }
-                    i++;
-                }
-            }
-            // i need to put the previous cesl ids onto the levelsGEXP list
-            // so that I can reference the levels/GEXP
-            int lGEXPIter = 0;
-            while (lGEXPIter < levelsGEXP.Count())
-            {
-                levelsGEXP[lGEXPIter].Add(shuffled_eachBoss[lGEXPIter]);
-                lGEXPIter++;
-            }
-            List<Tuple<string, List<string>>> eglList = new List<Tuple<string, List<string>>>();
-            (CESLoutput, eglList) = fixOGLevelsAndGEXP(CESLoutput, eglList, levelsGEXP, sortedDict);
-            // build the EGLoutput. I only want to go through the data once though
-            int EGLLIter = 0;
-            bool broken2 = false;
-            // make a deep copy of eglList by serializing to json
-            var jsonEglList = JsonSerializer.Serialize(eglList);
-            var deepEglList = JsonSerializer.Deserialize<List<Tuple<string, List<string>>>>(jsonEglList);
 
-            // while going through the eglList, put these values in monster_log.txt
-            string toWrite = "";
-            foreach (List<string> row in EGLoutput)
+            // Now get the lGEXPData. Make groupings of similar enemies
+            List<string> skipBossIDs = ["151", "164", "185", "272", "301", "323", "324", "327", "328", "350",
+                "351", "352", "354"]; // These are duplicate entries in terms of lGEXP
+            List<List<string>> ceslData = CsvReadData(ceslPath);
+            foreach (var row in ceslData)
             {
-                if (broken2) break;
-                if (deepEglList[EGLLIter].Item1 == row[0])
+                if (ceslIDs.Contains(row[0]) && !skipBossIDs.Contains(row[0]))
                 {
-                    int rowIter = 3;
-                    while (rowIter < row.Count())
+                    List<string> lGEXPRow = [row[3], row[79], row[80], row[81], row[82]];
+                    lGEXPData.Add(lGEXPRow);
+                }
+            }
+
+            return (eglBossData, lGEXPData);
+        }
+
+        private static List<(string, List<string>)> InsertEglData(string eglPath, List<List<string>> eglBossData, List<string> eglBossIDs,
+            List<List<string>> lGEXPData)
+        {
+            List<List<string>> eglData = CsvReadData(eglPath);
+            int eglBossDataIter = 0;
+            List<(string, List<string>)> shuffledCeslIDsWithlGEXPData = new List<(string, List<string>)>();
+            List<string> shuffledCeslIDs = new List<string>();
+            List<string> skipBossIDs = ["151", "164", "185", "272", "301", "323", "324", "327", "328", "350",
+                "351", "352", "354"]; // These are duplicate entries in terms of lGEXP
+
+            int lGEXPIter = 0;
+            foreach (var row in eglData)
+            {
+                if (eglBossIDs.Contains(row[0]))
+                {
+                    int i = 0;
+                    while (i < row.Count - 3)
                     {
-                        row[rowIter] = deepEglList[EGLLIter].Item2[rowIter];
-                        rowIter++;
+                        row[i + 3] = eglBossData[eglBossDataIter][i];
+                        i++;
                     }
-                    // write values for each rare monster in line
+                    // Get the shuffledCeslIDs to take back and use for the next part
+                    // Also get the ceslIDs from the row
+                    int j = 0;
+                    int k = 6;
+                    string ceslID;
+                    while (j < 6)
+                    {
+                        ceslID = row[k + (j * 4)];
+                        if (ceslID != "-1" && !shuffledCeslIDs.Contains(ceslID) && !skipBossIDs.Contains(ceslID))
+                        {
+                            shuffledCeslIDs.Add(ceslID);
+                            shuffledCeslIDsWithlGEXPData.Add((ceslID, lGEXPData[lGEXPIter++]));
+                        }
+                        j++;
+                    }
+                    eglBossDataIter++;
+                }
+            }
+            CsvWriteData(eglPath, eglData);
+
+            return shuffledCeslIDsWithlGEXPData;
+        }
+
+        private static void InsertlGEXPData(string ceslPath, List<(string, List<string>)> pairedCeslIDsWithlGEXP)
+        {
+            List<List<string>> ceslData = CsvReadData(ceslPath);
+            // If ID matches in a grouping, apply same lGEXPData
+            List<List<string>> bossGroupings = [["152", "151"],["165", "164"], ["184", "185"], ["271", "272"], ["300", "301"], ["322", "323", "324"],
+                ["326", "327", "328"], ["349", "350", "351"], ["353", "352"], ["355", "354"]];
+
+            // Pair the groupings with the lGEXPdata
+            foreach (var group in bossGroupings)
+            {
+                string standard = group[0];
+                List<string> standardlGEXP = pairedCeslIDsWithlGEXP.Find(x => x.Item1 == group[0]).Item2;
+                for (int i = 1; i < group.Count; i++)
+                {
+                    pairedCeslIDsWithlGEXP.Add((group[i], standardlGEXP));
+                }
+            }
+
+            // Sort the ceslIDsWithlGEXP data by ceslID so that I only have to go through the data once
+            pairedCeslIDsWithlGEXP.Sort((x, y) => Int32.Parse(x.Item1).CompareTo(Int32.Parse(y.Item1)));
+            int iter = 0;
+            foreach (var row in ceslData)
+            {
+                string ceslID = pairedCeslIDsWithlGEXP.Find(x => x.Item1 == row[0]).Item1;
+                if (ceslID != "-1" && ceslID != null)
+                {
+                    List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
+                    row[3] = lGEXP[0];
+                    row[79] = lGEXP[1];
+                    row[80] = lGEXP[2];
+                    row[81] = lGEXP[3];
+                    row[82] = lGEXP[4];
+                }
+            }
+            CsvWriteData(ceslPath, ceslData);
+        }
+
+        private static void AppendToMonsterLog(string currDir, List<string> eglBossIDs, string eglPath)
+        {
+            string logPath = Path.Combine(currDir, "logs", "monster_log.txt");
+            List<string> charsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "enemy_names.txt"))];
+
+            List<List<string>> eglData = CsvReadData(eglPath);
+
+            string currentText = File.ReadAllText(logPath);
+
+            bool broken = false;
+            int ebIDIter = 0;
+
+            if (currentText.Count() > 0) currentText += "---\n";
+            currentText += "Bosses:\n";
+            foreach (var row in eglData)
+            {
+                if (broken) break;
+                if (eglBossIDs.Contains(row[0]))
+                {
                     int j = 4;
                     int k = 0;
                     while (k <= 6)
@@ -204,18 +187,59 @@ namespace WOFFRandomizer.Dependencies
                         if (row[j + k * 4] != "-1" && row[j + k * 4] != row[k * 4])
                         {
                             if (int.Parse(row[j + k * 4]) > 1)
-                            toWrite += row[1] + ": " + row[j + k * 4] + Environment.NewLine;
+                            {
+                                // Do the searching and writing here.
+                                string chapName = row[1];
+                                if (chapName.Substring(3, 1) == "c") chapName = "Chapter " + Int32.Parse(chapName.Substring(4, 2));
+                                else chapName = "Postscript";
+                                int charID = charsDB.FindIndex(x => x.Split("\t")[0] == row[j + k * 4]);
+                                string charName = charsDB[charID].Split("\t")[1];
+                                string toAdd = chapName + ": " + charName + Environment.NewLine;
+                                currentText += toAdd;
+                            }
                         }
                         k++;
                     }
-                    EGLLIter++;
-                    if (EGLLIter == deepEglList.Count())
+                    ebIDIter++;
+                    if (ebIDIter == eglBossIDs.Count())
                     {
-                        broken2 = true;
+                        broken = true;
                     }
                 }
             }
-            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            File.WriteAllText(logPath, currentText);
+        }
+
+        public static void ModifyBosses(string sV, RichTextBox log, string currDir)
+        {
+            log.AppendText("Shuffling bosses...\n");
+
+            string eglPath = Path.Combine(currDir, "enemy_group_list.csv");
+            string ceslPath = Path.Combine(currDir, "character_enemy_status_list.csv");
+            //list of bosses based on EGL value
+            // excluding elemental trio, due to missables
+            // excluding chapter 14, since that's a mess
+            // excluding order of the circle fights. they're special :)
+            List<string> eglBossIDs = ["569", "571", "573", "577", "578", "592", "598", "601", "607", "615",
+                "618", "623", "626", "627", "629", "634", "635", "643", "692"];
+            List<List<string>> eglBossData = new List<List<string>>();
+            List<List<string>> lGEXPData = new List<List<string>>();
+
+            // Doing both at once to simplify the process
+            (eglBossData, lGEXPData) = GetEglDataAndlGEXPData(eglPath, ceslPath, eglBossIDs);
+
+            // Next, I need to shuffle the egl rows
+            eglBossData.Shuffle(Shuffle.ConsistentStringHash(sV));
+
+            // Then I reinsert the egl data back into the file
+            List<(string, List<string>)> pairedCeslIDsWithlGEXP = InsertEglData(eglPath, eglBossData, eglBossIDs, lGEXPData);
+
+            // I also modify the cesl data to reflect the correct lGEXP
+            InsertlGEXPData(ceslPath, pairedCeslIDsWithlGEXP);
+
+            // Append to the monster log with levels for each murkrift. Try to get locations, if possible
+            AppendToMonsterLog(currDir, eglBossIDs, eglPath);
+
         }
     }
 }

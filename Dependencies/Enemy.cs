@@ -8,43 +8,33 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.VisualBasic.Logging;
 
 namespace WOFFRandomizer.Dependencies
 {
     internal class Enemy
     {
-        private static List<List<string>> readCsv(string path)
+        private static List<List<string>> CsvReadData(string path)
         {
-            // Get filename
-            string csvfilename = Path.GetFullPath(path);
-            // Put all lines of the file into a list to edit
-            var csvFile = File.ReadAllLines(csvfilename, Encoding.UTF8);
+            List<List<string>> csvData = new List<List<string>>();
+            var csvFile = File.ReadAllLines(path, Encoding.UTF8);
             var output = new List<string>(csvFile);
-            // Convert each row string to a row list
-            List<List<string>> listListCsv = new List<List<string>>();
             foreach (var row in output)
             {
                 List<string> listCsv = row.Split(",").ToList();
-                listListCsv.Add(listCsv);
+                csvData.Add(listCsv);
             }
-            return listListCsv;
-        }
 
-        private static void writeCsv(string path, List<List<string>> listListCsv)
+            return csvData;
+        }
+        private static void CsvWriteData(string path, List<List<string>> csvData)
         {
-            // convert List<List<string>>listListCsv back to List<string> output
-            List<string> output = new List<string>();
-            foreach (List<string> row in listListCsv)
+            string toWrite = "";
+            for (int i = 0; i < csvData.Count; i++)
             {
-                output.Add(string.Join(",", row));
+                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
             }
-            // Write over the file
-            string newFileOutput = "";
-            foreach (var item in output)
-            {
-                newFileOutput += string.Join(",", item) + Environment.NewLine;
-            }
-            File.WriteAllText(Path.GetFullPath(path), newFileOutput);
+            File.WriteAllText(path, toWrite);
         }
 
         private static (Dictionary<string, List<string>>, List<List<string>>, List<Tuple<string, string, string, string, string>>)
@@ -210,7 +200,6 @@ namespace WOFFRandomizer.Dependencies
                             row[11] = eDictShuffled[key][12];
                             // capture hint
                             row[49] = eDictShuffled[key][50];
-
                         }
                         else
                         {
@@ -265,11 +254,35 @@ namespace WOFFRandomizer.Dependencies
             }
             return EGLoutput;
         }
-        
-        // This function is for modifying random encounters
-        private static (List<List<string>>, List<List<string>>) modifyRandomEncounters(List<List<string>> EGLoutput, 
-            List<List<string>> CESLoutput, string sV, RichTextBox log, string currDir)
+
+        private static void WriteToMonsterLog(string currDir)
         {
+            string mlogPath = Path.Combine(currDir, "logs", "monster_log.txt");
+            string[] f = File.ReadAllLines(mlogPath, Encoding.UTF8);
+            List<string> areasDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "areas.txt"))];
+            List<string> charsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "enemy_names.txt"))];
+
+            // rewrite monster log
+            string toWrite = "Random Encounters:\n";
+            foreach (string line in f)
+            {
+                int areaID = areasDB.FindIndex(x => x.Split("\t")[0] == line.Substring(4, 4));
+                int charID = charsDB.FindIndex(x => x.Split("\t")[0] == line.Substring(10));
+                string areaName = areasDB[areaID].Split("\t")[1];
+                string charName = charsDB[charID].Split("\t")[1];
+                toWrite += areaName + ": " + charName + Environment.NewLine;
+            }
+            File.WriteAllText(mlogPath, toWrite);
+        }
+
+        // This function is for modifying random encounters
+        private static List<List<string>> ModifyRandomEncounters(List<List<string>> MPoutput, string sV, RichTextBox log, string currDir)
+        {
+            string eglPath = Path.Combine(currDir, "enemy_group_list.csv");
+            string ceslPath = Path.Combine(currDir, "character_enemy_status_list.csv");
+
+            List<List<string>> EGLoutput = CsvReadData(eglPath);
+            List<List<string>> CESLoutput = CsvReadData(ceslPath);
             // enemies dictionary to hold the final set of enemies
             Dictionary<string, List<string>> enemiesDict = new Dictionary<string, List<string>>();
             // ceslRowData list to hold the ceslRowData in order and to apply to the enemies dictionary after randomization
@@ -279,7 +292,7 @@ namespace WOFFRandomizer.Dependencies
             // avoid duplicates
             // for example, all Mu 1's <-> all Copper Gnome 2's with ceslRowData remaining
             // This is for random encounters
-            log.AppendText("Collecting random encounters...\n");
+            log.AppendText("Shuffling random encounters...\n");
             (enemiesDict, ceslRowData, levelsGEXP) = collectRandomEncounters(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, currDir);
 
             // Shuffle the keys (for random encounters) separate from the values and create a new dictionary from it
@@ -304,29 +317,37 @@ namespace WOFFRandomizer.Dependencies
                 i++;
             }
             
-            log.AppendText("Modifying random encounters...\n");
             // Write to CESLoutput first, changing the ceslRowData
             CESLoutput = ceslOutputModify(CESLoutput, eDictShuffled, levelsGEXP);
 
             // Write to EGLoutput second, changing the other values
             EGLoutput = eglOutputModify(EGLoutput, eDictShuffled, currDir);
 
-            return (EGLoutput, CESLoutput);
+            CsvWriteData(eglPath, EGLoutput);
+            CsvWriteData(ceslPath, CESLoutput);
+
+            // Write to log for random encounters only. Going to do this separately now for each random/rare/boss
+            // As part of this, need to write to monster_place.csv
+            log.AppendText("Modifying mirage maps....\n");
+            MPoutput = MonMap.ModifyMonsterPlaceAndMonsterLog(MPoutput, EGLoutput, currDir);
+            // Read and modify the current values in the monster_log
+            WriteToMonsterLog(currDir);
+
+            return (MPoutput);
         }
         public static void mirageEncsWriteCsv(string currDir, string sV, RichTextBox log, bool enemShuffle, bool bossShuffle, bool rareShuffle)
         {
-            List<List<string>> EGLoutput = readCsv(currDir + "/enemy_group_list.csv");
-            List<List<string>> CESLoutput = readCsv(currDir + "/character_enemy_status_list.csv");
-            List<List<string>> MPoutput = readCsv(currDir + "/monster_place.csv");
+            //List<List<string>> EGLoutput = readCsv(currDir + "/enemy_group_list.csv");
+            //List<List<string>> CESLoutput = readCsv(currDir + "/character_enemy_status_list.csv");
+            List<List<string>> MPoutput = CsvReadData(currDir + "/monster_place.csv");
 
-            if (enemShuffle) (EGLoutput, CESLoutput) = modifyRandomEncounters(EGLoutput, CESLoutput, sV, log, currDir);
-            if (rareShuffle) (EGLoutput, CESLoutput) = RareMon.shuffleRareMonsters(EGLoutput, CESLoutput, sV, log, currDir);
-            if (bossShuffle) Boss.modifyBosses(EGLoutput, CESLoutput, sV, log, currDir);
-            MPoutput = MonMapAndLog.modifyMonsterPlace(MPoutput, EGLoutput, log, currDir, enemShuffle);
+            if (enemShuffle) (MPoutput) = ModifyRandomEncounters(MPoutput, sV, log, currDir);
+            if (rareShuffle) RareMon.ShuffleRareMonsters(sV, log, currDir);
+            if (bossShuffle) Boss.ModifyBosses(sV, log, currDir);
 
-            writeCsv(currDir + "/enemy_group_list.csv", EGLoutput);
-            writeCsv(currDir + "/character_enemy_status_list.csv", CESLoutput);
-            writeCsv(currDir + "/monster_place.csv", MPoutput);
+            //writeCsv(currDir + "/enemy_group_list.csv", EGLoutput);
+            //writeCsv(currDir + "/character_enemy_status_list.csv", CESLoutput);
+            CsvWriteData(currDir + "/monster_place.csv", MPoutput);
         }
     }
 }

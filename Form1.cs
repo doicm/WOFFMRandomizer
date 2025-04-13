@@ -10,7 +10,7 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Randomizer v0.1.6";
+            this.Text = "World of Final Fantasy Maxima Randomizer v0.1.6";
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
@@ -86,9 +86,10 @@ namespace WOFFRandomizer
             bool quPrizesActive = checkBoxQuOrArenaPrizes.Checked;
             bool doubleExpBool = checkBoxDoubleExp.Checked;
             bool murkActive = checkBoxMurkrift.Checked;
+            bool statActive = checkBoxStats.Checked;
 
             Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive,
-                quPrizesActive, murkActive, doubleExpBool, button1, buttonRandomize, buttonUninstall);
+                quPrizesActive, murkActive, statActive, doubleExpBool, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -157,7 +158,13 @@ namespace WOFFRandomizer
         private void checkBoxMurkrift_MouseHover(object sender, EventArgs e)
         {
             toolTipMurkrift.Show("This shuffles the murkrift encounters with each other.\nFirst Behemoth encounter is excluded, " +
-                "as is the Nightmare rare monster fight.", checkBoxMurkrift);
+                "as is the Nightmare rare monster fight\nand most of the airship murkrifts (level 60 ones).", checkBoxMurkrift);
+        }
+
+        private void checkBoxStats_MouseHover(object sender, EventArgs e)
+        {
+            toolTipStats.Show("This randomizes the stats and growths that each mirage has.\nThis may affect enemies as well as mirage allies.\n" +
+                "This only randomizes HP, Str, Def, Mag, MDef, and Agi.", checkBoxStats);
         }
     }
 }

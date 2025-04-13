@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WOFFRandomizer.Dependencies
 {
-    internal class MonMapAndLog
+    internal class MonMap
     {
         private static List<List<string>> addToNonRandomizedAreas(List<List<string>> nonRandomizedAreas,
             List<List<string>> MPoutput, int start, int end)
@@ -139,13 +139,13 @@ namespace WOFFRandomizer.Dependencies
             bestiaryTraversalPostShuffle(currDir, EGLoutput, 424, 449);
 
             // Coeurl and Lesser Coeurl
-            // lines 1171, 1172
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 1171, 1172);
+            // lines 1171, 1172. ...numbers are a bit off, but this adjustment should work?
+            bestiaryTraversalPostShuffle(currDir, EGLoutput, 1146, 1147);
         }
-        public static List<List<string>> modifyMonsterPlace (List<List<string>> MPoutput, 
-            List<List<string>> EGLoutput, RichTextBox log, string currDir, bool enemShuffle)
+        public static List<List<string>> ModifyMonsterPlaceAndMonsterLog (List<List<string>> MPoutput, 
+            List<List<string>> EGLoutput, string currDir)
         {
-            log.AppendText("Modifying mirage maps and monster log...\n");
+            //log.AppendText("Modifying mirage maps and monster log...\n");
             
             // list of monsters to ignore, including Bahamutian Soldiers, so that they don't appear in the mirage list on the map
             List<string> monsToIgnoreOnMap = ["7193", "7194", "7195"];
@@ -235,7 +235,7 @@ namespace WOFFRandomizer.Dependencies
                     prevLine = currLine;
                     mpcdIter++;
                     areaIter = 1;
-                    if (mpcdIter == monster_place_csv_data.Count) break;
+                    if (mpcdIter == monster_place_csv_data.Count) break; // post game doesn't have monster_place data, so skipped
                     //// check for monsToReinclude. also check if they're already in the area so they don't get double-counted
                     //// Actually, they're going to get double-counted either way, so let's remove this code
                     //if (mtrIter < monsToReinclude.Count)
@@ -264,115 +264,112 @@ namespace WOFFRandomizer.Dependencies
                 areaIter++;
                 id++;
             }
-
-            modifyMonsterLog(monsToIgnoreOnMap, monsToReinclude, currDir, enemShuffle);
-
             return newMPoutput;
         }
 
-        private static void modifyMonsterLog(List<string> monsToIgnoreOnMap, 
-            List<List<string>> monsToReinclude, string currDir, bool enemShuffle)
-        {
-            List<List<string>> MPoutput = new List<List<string>>();
-            string[] f = File.ReadAllLines(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
-            int mtrIter = 0;
-            foreach (string line in f)
-            {
-                // first entry is areaID. second entry is mirageID
-                if (monsToIgnoreOnMap.Contains(line.Substring(10))) continue;
-                //// if current area is same as monsToReinclude area, sneak it in
-                //// changed my mind. remove it.
-                //if (monsToReinclude.Count > 0)
-                //{
-                //    if (mtrIter < monsToReinclude.Count)
-                //    {
-                //        if (line.Substring(4, 4) == monsToReinclude[mtrIter][0])
-                //        {
-                //            MPoutput.Add([monsToReinclude[mtrIter][0], monsToReinclude[mtrIter][1]]);
-                //            mtrIter++;
-                //        }
-                //    }
+        //private static void modifyMonsterLog(List<string> monsToIgnoreOnMap, 
+        //    List<List<string>> monsToReinclude, string currDir, bool enemShuffle)
+        //{
+        //    List<List<string>> MPoutput = new List<List<string>>();
+        //    string[] f = File.ReadAllLines(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
+        //    int mtrIter = 0;
+        //    foreach (string line in f)
+        //    {
+        //        // first entry is areaID. second entry is mirageID
+        //        if (monsToIgnoreOnMap.Contains(line.Substring(10))) continue;
+        //        //// if current area is same as monsToReinclude area, sneak it in
+        //        //// changed my mind. remove it.
+        //        //if (monsToReinclude.Count > 0)
+        //        //{
+        //        //    if (mtrIter < monsToReinclude.Count)
+        //        //    {
+        //        //        if (line.Substring(4, 4) == monsToReinclude[mtrIter][0])
+        //        //        {
+        //        //            MPoutput.Add([monsToReinclude[mtrIter][0], monsToReinclude[mtrIter][1]]);
+        //        //            mtrIter++;
+        //        //        }
+        //        //    }
                     
-                //}
-                MPoutput.Add([line.Substring(4, 4), line.Substring(10)]);
-            }
-            string[] linesArea = File.ReadAllLines(Path.GetFullPath(
-                currDir + "/database/areas.txt"), Encoding.UTF8);
-            string[] linesEnemy = File.ReadAllLines(Path.GetFullPath(
-                currDir + "/database/enemy_names.txt"), Encoding.UTF8);
+        //        //}
+        //        MPoutput.Add([line.Substring(4, 4), line.Substring(10)]);
+        //    }
+        //    string[] linesArea = File.ReadAllLines(Path.GetFullPath(
+        //        currDir + "/database/areas.txt"), Encoding.UTF8);
+        //    string[] linesEnemy = File.ReadAllLines(Path.GetFullPath(
+        //        currDir + "/database/enemy_names.txt"), Encoding.UTF8);
 
-            // rewrite monster log
-            string toWrite = "";
-            bool raresStarted = false; bool bossesStarted = false;
-            if (enemShuffle) toWrite += "Random encounters: \n";
-            foreach (List<string> row in MPoutput)
-            {
-                // find area first
-                // if random encounters are not randomized, skip the first part
-                if (enemShuffle)   
-                {
-                    foreach (string areaString in linesArea)
-                    {
-                        string temp = areaString.Substring(0, 4);
-                        if (areaString.Substring(0, 4) == row[0])
-                        {
-                            toWrite += areaString.Substring(8) + ": ";
-                            // then find the enemy
-                            foreach (string enemyString in linesEnemy)
-                            {
-                                if (enemyString.Substring(0, 4) == row[1])
-                                {
-                                    toWrite += enemyString.Substring(5) + "\n";
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
+        //    // rewrite monster log
+        //    string toWrite = "";
+        //    bool raresStarted = false; bool bossesStarted = false;
+        //    if (enemShuffle) toWrite += "Random encounters: \n";
+        //    foreach (List<string> row in MPoutput)
+        //    {
+        //        // find area first
+        //        // if random encounters are not randomized, skip the first part
+        //        if (enemShuffle)   
+        //        {
+        //            foreach (string areaString in linesArea)
+        //            {
+        //                string temp = areaString.Substring(0, 4);
+        //                if (areaString.Substring(0, 4) == row[0])
+        //                {
+        //                    toWrite += areaString.Substring(8) + ": ";
+        //                    // then find the enemy
+        //                    foreach (string enemyString in linesEnemy)
+        //                    {
+        //                        if (enemyString.Substring(0, 4) == row[1])
+        //                        {
+        //                            toWrite += enemyString.Substring(5) + "\n";
+        //                            break;
+        //                        }
+        //                    }
+        //                    break;
+        //                }
+        //            }
+        //        }
                 
 
-                // then find rare monsters to append if chapter enemy
-                if (row[0].Contains("_e"))
-                {
-                    if (!raresStarted)
-                    {
-                        raresStarted = true;
-                        if (toWrite.Length > 0) toWrite += "---\n";
-                        toWrite += "Rare monsters: \n";
-                    }
-                    foreach (string enemyString in linesEnemy)
-                    {
-                        if (enemyString.Substring(0, 4) == row[1])
-                        {
-                            toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
-                                enemyString.Substring(5) + "\n";
-                            break;
-                        }
-                    }
-                }
+        //        // then find rare monsters to append if chapter enemy
+        //        if (row[0].Contains("_e"))
+        //        {
+        //            if (!raresStarted)
+        //            {
+        //                raresStarted = true;
+        //                if (toWrite.Length > 0) toWrite += "---\n";
+        //                toWrite += "Rare monsters: \n";
+        //            }
+        //            foreach (string enemyString in linesEnemy)
+        //            {
+        //                if (enemyString.Substring(0, 4) == row[1])
+        //                {
+        //                    toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
+        //                        enemyString.Substring(5) + "\n";
+        //                    break;
+        //                }
+        //            }
+        //        }
                 
-                // then find bosses to append
-                else if (row[0].Contains("0406") | row[0].Contains("_0") | row[0] == "SEV_038")
-                {
-                    if (!bossesStarted)
-                    {
-                        bossesStarted = true;
-                        if (toWrite.Length > 0) toWrite += "---\n";
-                        toWrite += "Boss fights: \n";
-                    }
-                    foreach (string enemyString in linesEnemy)
-                    {
-                        if (enemyString.Substring(0, 4) == row[1].Substring(Math.Max(0, row[1].Length - 4)))
-                        {
-                            toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
-                                enemyString.Substring(5) + "\n";
-                            break;
-                        }
-                    }
-                }
-            }
-            File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
-        }
+        //        // then find bosses to append
+        //        else if (row[0].Contains("0406") | row[0].Contains("_0") | row[0] == "SEV_038")
+        //        {
+        //            if (!bossesStarted)
+        //            {
+        //                bossesStarted = true;
+        //                if (toWrite.Length > 0) toWrite += "---\n";
+        //                toWrite += "Boss fights: \n";
+        //            }
+        //            foreach (string enemyString in linesEnemy)
+        //            {
+        //                if (enemyString.Substring(0, 4) == row[1].Substring(Math.Max(0, row[1].Length - 4)))
+        //                {
+        //                    toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
+        //                        enemyString.Substring(5) + "\n";
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    }
+            //File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+        //}
     }
 }

@@ -83,7 +83,7 @@ namespace WOFFRandomizer
         }
 
         private static void WriteToSeedLog(string currDir, string sV, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
-            bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, bool doubleExpBool)
+            bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, bool statShuffle, bool doubleExpBool)
         {
             string toWrite = sV + Environment.NewLine;
             toWrite += Environment.NewLine;
@@ -95,12 +95,13 @@ namespace WOFFRandomizer
             if (itemShuffle) toWrite += "Treasure chests randomized...." + Environment.NewLine;
             if (sizesShuffle) toWrite += "Mirage sizes randomized...." + Environment.NewLine;
             if (quPrizesShuffle) toWrite += "Intervention quest/coliseum rewards randomized...." + Environment.NewLine;
+            if (statShuffle) toWrite += "Mirage stats randomized...." + Environment.NewLine;
             if (doubleExpBool) toWrite += "Experience and gil doubled...." + Environment.NewLine;
 
             System.IO.File.WriteAllText(currDir + "/logs/seed.txt", toWrite);
         }
         public static void Run(string basepath, string sV, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, bool rareShuffle,
-            bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, bool doubleExpBool, Button button1, Button button2, Button button3)
+            bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, bool statShuffle, bool doubleExpBool, Button button1, Button button2, Button button3)
         {
             string currDir = Directory.GetCurrentDirectory();
             button1.Enabled = false;
@@ -122,16 +123,19 @@ namespace WOFFRandomizer
             verifyOpenAndCopy(basepath, currDir, "command_ability_param", log);
             verifyOpenAndCopy(basepath, currDir, "arena_reward_table_list", log);
             verifyOpenAndCopy(basepath, currDir, "quest_data_sub_reward_table_list", log);
+            verifyOpenAndCopy(basepath, currDir, "character_list", log);
 
             //if input is blank, get current time in unix
             if (sV.Length == 0)
             {
                 sV = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             }
+            log.SelectionFont = new Font(log.Font, FontStyle.Regular);
             log.AppendText("Started generating seed " + sV + "...\n");
 
             // Write to txt file with seed name in it for reference
-            WriteToSeedLog(currDir, sV, mbShuffle, enemShuffle, bossShuffle, itemShuffle, rareShuffle, sizesShuffle, quPrizesShuffle, murkShuffle, doubleExpBool);
+            WriteToSeedLog(currDir, sV, mbShuffle, enemShuffle, bossShuffle, itemShuffle, rareShuffle, sizesShuffle, quPrizesShuffle, 
+                murkShuffle, statShuffle, doubleExpBool);
 
             // Run the WoFFCshTool by Surihia twice, one to decompress csh and convert to csv, and one to do the reverse after writing the values
             if (mbShuffle | enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirageboard_data.csh"));
@@ -143,6 +147,7 @@ namespace WOFFRandomizer
             if (sizesShuffle | mbShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "command_ability_param.csh"));
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "arena_reward_table_list.csh"));
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "quest_data_sub_reward_table_list.csh"));
+            if (statShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_list.csh"));
 
             // Write the values
             if (mbShuffle) Mirageboard.mirageboard_dataWriteCsv(currDir, sV, log);
@@ -153,6 +158,7 @@ namespace WOFFRandomizer
             if (itemShuffle) Item.TreasureShuffle(currDir, sV, log);
             if (sizesShuffle) Sizes.SizesShuffle(currDir, basepath, sV, log);
             if (quPrizesShuffle) QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
+            if (statShuffle) Stats.RandomizeMirageStats(currDir, sV, log);
 
             // Apply post-QoL adjustments
             if (doubleExpBool) DoubleExpQoL.DoubleExpGil(currDir, log);
@@ -167,6 +173,7 @@ namespace WOFFRandomizer
             if (sizesShuffle | mbShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "command_ability_param.csv"));
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "arena_reward_table_list.csv"));
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "quest_data_sub_reward_table_list.csv"));
+            if (statShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_list.csv"));
 
             // In case other randomizer checkboxes are disabled, want to run on all of these
             copyBackAndDelete(basepath, currDir, "mirageboard_data");
@@ -179,7 +186,9 @@ namespace WOFFRandomizer
             copyBackAndDelete(basepath, currDir, "command_ability_param");
             copyBackAndDelete(basepath, currDir, "arena_reward_table_list");
             copyBackAndDelete(basepath, currDir, "quest_data_sub_reward_table_list");
+            copyBackAndDelete(basepath, currDir, "character_list");
 
+            log.SelectionFont = new Font(log.Font, FontStyle.Bold);
             log.AppendText("Finished generating seed " + sV + "!\n");
             button1.Enabled = true;
             button2.Enabled = true;

@@ -9,39 +9,36 @@ namespace WOFFRandomizer
 {
     public class Uninstall
     {
-        private static (string, string) defineFile(string basepath, string name, RichTextBox log)
+        private static void DefineCopyAndRemoveFile(string basepath, string name)
         {
             string sourceCSH = Path.GetFullPath(basepath + "/resource/finalizedCommon/mithril/system/csv/" + name + ".csh");
             string backupCSH = Path.GetFullPath(basepath + "/resource/finalizedCommon/mithril/system/csv/" + name + "_original.csh");
 
             if (!File.Exists(backupCSH))
             {
-                return ("", "");
+                return;
             }
-            return (sourceCSH, backupCSH);
+            else if (sourceCSH != "")
+            {
+                File.Copy(backupCSH, sourceCSH, true);
+                File.Delete(backupCSH);
+            }
         }
 
-        private static (string, string) defineOtherFile(string basepath, string path, string name, RichTextBox log)
+        private static void DefineCopyAndRemoveOtherFile(string basepath, string path, string name)
         {
             string source = Path.GetFullPath(basepath + path + name);
             string backup = Path.GetFullPath(basepath + path + name + "_original");
 
             if (!File.Exists(backup))
             {
-                return ("", "");
+                return;
             }
-            return (source, backup);
-        }
-
-        private static void copyAndRemoveFile(string source, string backup)
-        {
-            // Simple way to handle if file is already uninstalled.
-            if (source != "")
+            else if (source != "")
             {
                 File.Copy(backup, source, true);
                 File.Delete(backup);
             }
-            
         }
 
         public static void clearLogs()
@@ -59,27 +56,17 @@ namespace WOFFRandomizer
             button2.Enabled = false;
             button3.Enabled = false;
 
-            (string sourceMBCSH, string backupMBCSH) = defineFile(basepath, "mirageboard_data", log);
-            (string sourceEGLSH, string backupEGLSH) = defineFile(basepath, "enemy_group_list", log);
-            (string sourceCESLSH, string backupCESLSH) = defineFile(basepath, "character_enemy_status_list", log);
-            (string sourceSLSH, string backupSLSH) = defineFile(basepath, "shop_list", log);
-            (string sourceMPSH, string backupMPSH) = defineFile(basepath, "monster_place", log);
-            (string sourceluaBin, string backupluaBin) = defineOtherFile(basepath, "/resource", "/script64.bin", log);
-            (string sourceCRLSH, string backupCRLSH) = defineFile(basepath, "character_resource_list", log);
-            (string sourceCAPSH, string backupCAPSH) = defineFile(basepath, "command_ability_param", log);
-            (string sourceARTLSH, string backupARTLSH) = defineFile(basepath, "arena_reward_table_list", log);
-            (string sourceQDSRTLSH, string backupQDSRTLSH) = defineFile(basepath, "quest_data_sub_reward_table_list", log);
-
-            copyAndRemoveFile(sourceMBCSH, backupMBCSH);
-            copyAndRemoveFile(sourceEGLSH, backupEGLSH);
-            copyAndRemoveFile(sourceCESLSH, backupCESLSH);
-            copyAndRemoveFile(sourceSLSH, backupSLSH);
-            copyAndRemoveFile(sourceMPSH, backupMPSH);
-            copyAndRemoveFile(sourceluaBin, backupluaBin);
-            copyAndRemoveFile(sourceCRLSH, backupCRLSH);
-            copyAndRemoveFile(sourceCAPSH, backupCAPSH);
-            copyAndRemoveFile(sourceARTLSH, backupARTLSH);
-            copyAndRemoveFile(sourceQDSRTLSH, backupQDSRTLSH);
+            DefineCopyAndRemoveFile(basepath, "mirageboard_data");
+            DefineCopyAndRemoveFile(basepath, "enemy_group_list");
+            DefineCopyAndRemoveFile(basepath, "character_enemy_status_list");
+            DefineCopyAndRemoveFile(basepath, "shop_list");
+            DefineCopyAndRemoveFile(basepath, "monster_place");
+            DefineCopyAndRemoveOtherFile(basepath, "/resource", "/script64.bin");
+            DefineCopyAndRemoveFile(basepath, "character_resource_list");
+            DefineCopyAndRemoveFile(basepath, "command_ability_param");
+            DefineCopyAndRemoveFile(basepath, "arena_reward_table_list");
+            DefineCopyAndRemoveFile(basepath, "quest_data_sub_reward_table_list");
+            DefineCopyAndRemoveFile(basepath, "character_list");
 
             clearLogs();
 

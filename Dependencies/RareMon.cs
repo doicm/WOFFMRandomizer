@@ -9,253 +9,206 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class RareMon
     {
-        public static int ConsistentStringHash(string value)
+        private static (List<List<string>>, List<List<string>>) GetEglDataAndlGEXPData(string eglPath, string ceslPath, List<string> eglRareIDs)
         {
-            var bytes = Encoding.Default.GetBytes(value);
-            int stableHash = bytes.Aggregate(23, (acc, val) => acc * 17 + val);
-            return stableHash;
-        }
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
+            List<List<string>> lGEXPData = new List<List<string>>();
 
-        private static List<List<string>> dragonScarsSetLevel(List<List<string>> EGLoutput, List<List<string>> CESLoutput)
-        {
-            string dragonScarsLevelToSet = "18";
+            List<List<string>> eglRareData = new List<List<string>>();
             List<string> ceslIDs = new List<string>();
-            List<string> cerbRowData = EGLoutput[595];
-            int j = 6;
-            int i = 0;
-            // get ceslIDs for each monster in group
-            while (i <= 5)
+
+            foreach (var row in eglData)
             {
-                if (cerbRowData[j + i * 4] != "-1")
+                // If it's a rare monster row, add it to the rare monster data
+                if (eglRareIDs.Contains(row[0]))
                 {
-                    string rareMonID = cerbRowData[j + i * 4];
-                    if (ceslIDs.Count() < 1)
+                    eglRareData.Add(row[3..]);
+                    // Also get the ceslIDs from the row
+                    int i = 0;
+                    int j = 6;
+                    string ceslID;
+                    while (i < 6)
                     {
-                        ceslIDs.Add(rareMonID);
-                    }
-                    else
-                    {
-                        if (!ceslIDs.Contains(rareMonID))
+                        ceslID = row[j + (i * 4)];
+                        if (ceslID != "-1" && !ceslIDs.Contains(ceslID))
                         {
-                            ceslIDs.Add(rareMonID);
-
+                            ceslIDs.Add(ceslID);
                         }
+                        i++;
                     }
                 }
-                i++;
             }
 
-            // change levels to the dragonScarsLevelToSet for each monster in group
-            foreach (string id in ceslIDs)
+            // Now get the lGEXPData. Make groupings of similar enemies
+            List<string> skipRareIDs = ["237", "575"]; // These are duplicate entries in terms of lGEXP
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
+            foreach (var row in ceslData)
             {
-                foreach (List<string> row in CESLoutput)
+                if (ceslIDs.Contains(row[0]) && !skipRareIDs.Contains(row[0]))
                 {
-                    if (row[0] == id)
-                    {
-                        row[3] = dragonScarsLevelToSet;
-                        break;
-                    }
+                    List<string> lGEXPRow = [row[3], row[79], row[80], row[81], row[82]];
+                    lGEXPData.Add(lGEXPRow);
                 }
             }
-            return CESLoutput;
+
+            return (eglRareData, lGEXPData);
         }
-        public static (List<List<string>>, List<List<string>>) shuffleRareMonsters(List<List<string>> EGLoutput, 
-            List<List<string>> CESLoutput, string sV, RichTextBox log, string currDir)
+
+        private static List<(string, List<string>)> InsertEglData(string eglPath, List<List<string>> eglRareData, List<string> eglRareIDs,
+            List<List<string>> lGEXPData)
         {
-            log.AppendText("Shuffling rare monsters...\n");
-            List<string> rareMonsterList = ["570", "572", "576", "582", "595", "599", "606", "613", "617", "620", "624", "636", "642", "645"];
-            // malboro menace + princess flan kinda throw off the level balance, but oh well. same with the gigan cacti
-            List<List<string>> rareMonsterData = new List<List<string>>();
-            // iterate through EGLoutput first, grabbing the rare monster data
-            foreach (List<string> row in EGLoutput)
-            {
-                if (rareMonsterList.Contains(row[0]))
-                {
-                    rareMonsterData.Add(row);
-                }
-            }
-            // Get each monster in the rare encounter, if applicable
-            List<string> eachRareMonster = new List<string>();
-            foreach (List<string> row in rareMonsterData)
-            {
-                int j = 6;
-                int i = 0;
-                while (i <= 5)
-                {
-                    if (row[j + i * 4] != "-1")
-                    {
-                        string rareMonID = row[j + i * 4];
-                        if (eachRareMonster.Count() < 1)
-                        {
-                            eachRareMonster.Add(rareMonID);
-                        }
-                        else
-                        {
-                            if (!eachRareMonster.Contains(rareMonID))
-                            {
-                                eachRareMonster.Add(rareMonID);
-                            }
-                        }
-                    }
-                    i++;
-                }
-            }
-            // iterate through CESLoutput to grab level and gil/exp. this stays in the same order. also putting current cesl id
-            List<Tuple<string, string, string, string, string, string>> levelsGEXP = new List<Tuple<string, string, string, string, string, string>>();
-            foreach (List<string> row in CESLoutput)
-            {
-                foreach (string monster in eachRareMonster)
-                {
-                    if (monster == row[0])
-                    {
-                        // Last entry is blank for now; that'll hold the shuffled cesl id later
-                        levelsGEXP.Add(new Tuple<string, string, string, string, string, string>
-                            (monster, row[3], row[79], row[80], row[81], row[82]));
-                        continue;
-                    }
-                }
-            }
-            // iterate through EGLoutput again, this time shuffling the rare monster data. store rare monsters in dictionary
-            Dictionary<string, List<string>> rareDict = new Dictionary<string, List<string>>();
-            int rmlIter = 0;
-            while (rmlIter < rareMonsterList.Count)
-            {
-                rareDict[rareMonsterList[rmlIter]] = rareMonsterData[rmlIter];
-                rmlIter++;
-            }
-            // create two lists, one to store original keys and another for shuffling dictionary values
-            List<string> rareKeys = new List<string>(rareDict.Keys);
-            List<List<string>> rareValues = new List<List<string>>(rareMonsterData);
-            rareValues.Shuffle(ConsistentStringHash(sV));
-            // get each rare monster listed after shuffling and remove duplicates
-            List<string> shuffled_EachRareMonster = new List<string>();
-            // create new dictionary and put values into it
-            Dictionary<string, List<string>> sortedDict = rareKeys.Zip(rareValues, (k, v) => new { k, v })
-                .ToDictionary(x => x.k, x => x.v);
-            foreach (string key in rareKeys)
-            {
-                int j = 6;
-                int i = 0;
-                while (i <= 5)
-                {
-                    if (sortedDict[key][j + i * 4] != "-1")
-                    {
-                        string rareMonID = sortedDict[key][j + i * 4];
-                        if (shuffled_EachRareMonster.Count() < 1)
-                        {
-                            shuffled_EachRareMonster.Add(rareMonID);
-                        }
-                        else
-                        {
-                            if (!shuffled_EachRareMonster.Contains(rareMonID))
-                            {
-                                shuffled_EachRareMonster.Add(rareMonID);
-                            }
-                        }
-                    }
-                    i++;
-                }
-            }
-            // I need to put the previous cesl ids onto the levelsGEXP list
-            // so that I can reference the levels/GEXP
-            // In csharp, I need to create a new tuple for this to add to the list
-            // since they're all strings, I'll just do a list of list of strings
-            List<List<string>> levelsGEXPWithCESLID = new List<List<string>>();
-            int ceslidIter = 0;
-            foreach (Tuple<string, string, string, string, string, string> levelGEXP in levelsGEXP)
-            {
-                levelsGEXPWithCESLID.Add([levelGEXP.Item1, levelGEXP.Item2, levelGEXP.Item3,
-                    levelGEXP.Item4, levelGEXP.Item5, levelGEXP.Item6, shuffled_EachRareMonster[ceslidIter]]);
-                ceslidIter++;
-            }
-            int lGEXPWCESLIDIter = 0;
-            bool broken1 = false;
-            List<Tuple<string, List<string>>> eglList = new List<Tuple<string, List<string>>>();
-            foreach (string key in sortedDict.Keys)
-            {
-                eglList.Add(new Tuple<string, List<string>>(key, sortedDict[key]));
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
+            int eglRareDataIter = 0;
+            List<(string, List<string>)> shuffledCeslIDsWithlGEXPData = new List<(string, List<string>)>();
+            List<string> shuffledCeslIDs = new List<string>();
+            List<string> skipRareIDs = ["237", "575"]; // These are duplicate entries in terms of lGEXP
 
-                // iterate through CESL output again. the lGEXP needs to be assigned to its proper monster
-                // use levelsGEXP for reference with previous and current values
-                foreach (List<string> row in CESLoutput)
+            int lGEXPIter = 0;
+            foreach (var row in eglData)
+            {
+                if (eglRareIDs.Contains(row[0]))
                 {
-                    if (broken1)
+                    int i = 0;
+                    while (i < row.Count - 3)
                     {
-                        break;
+                        row[i + 3] = eglRareData[eglRareDataIter][i];
+                        i++;
                     }
-                    if (levelsGEXPWithCESLID[lGEXPWCESLIDIter][6] == row[0])
+                    // Get the shuffledCeslIDs to take back and use for the next part
+                    // Also get the ceslIDs from the row
+                    int j = 0;
+                    int k = 6;
+                    string ceslID;
+                    while (j < 6)
                     {
-                        row[3] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][1];
-                        // Make exception for Kupicaroon fight, since that can give too much EXP. col 79/81 is exp. divide it by 3. gil is okay...for now
-                        if (row[0] == "200")
+                        ceslID = row[k + (j * 4)];
+                        if (ceslID != "-1" && !shuffledCeslIDs.Contains(ceslID) && !skipRareIDs.Contains(ceslID))
                         {
-                            row[79] = (Int32.Parse(levelsGEXPWithCESLID[lGEXPWCESLIDIter][2]) / 3).ToString();
-                            row[81] = (Int32.Parse(levelsGEXPWithCESLID[lGEXPWCESLIDIter][4]) / 3).ToString();
+                            shuffledCeslIDs.Add(ceslID);
+                            shuffledCeslIDsWithlGEXPData.Add((ceslID, lGEXPData[lGEXPIter++]));
                         }
-                        else
-                        {
-                            row[79] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][2];
-                            row[81] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][4];
-                        }
-                        row[80] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][3];
-                        row[82] = levelsGEXPWithCESLID[lGEXPWCESLIDIter][5];
-                        lGEXPWCESLIDIter++;
-                        if (lGEXPWCESLIDIter == levelsGEXPWithCESLID.Count - 1)
-                        {
-                            broken1 = true;
-                            break;
-                        }
-                        continue;
+                        j++;
                     }
+                    eglRareDataIter++;
                 }
             }
-            // build the EGLoutput. I only want to go through the data once though
-            int EGLLIter = 0;
-            bool broken2 = false;
-            // make a deep copy of eglList by serializing to json
-            var jsonEglList = JsonSerializer.Serialize(eglList);
-            var deepEglList = JsonSerializer.Deserialize<List<Tuple<string, List<string>>>>(jsonEglList);
+            CsvHandling.CsvWriteData(eglPath, eglData);
 
-            // while going through the eglList, put these values in monster_log.txt
-            string toWrite = "";
-            foreach (List<string> row in EGLoutput)
+            return shuffledCeslIDsWithlGEXPData;
+        }
+
+        private static void InsertlGEXPData(string ceslPath, List<(string, List<string>)> pairedCeslIDsWithlGEXP)
+        {
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
+            // If ID matches in a grouping, apply same lGEXPData
+            List<List<string>> rareGroupings = [["236", "237"], ["574", "575"]];
+            // Discrepancy between Malboro Menace and Princess Flan is pretty high (50 to 38). Went with lower value for accessibility.
+
+            // Pair the groupings with the lGEXPdata
+            foreach (var group in rareGroupings)
             {
-                if (broken2) break;
-                if (deepEglList[EGLLIter].Item1 == row[0])
+                string standard = group[0];
+                List<string> standardlGEXP = pairedCeslIDsWithlGEXP.Find(x => x.Item1 == group[0]).Item2;
+                for (int i = 1; i < group.Count; i++)
                 {
-                    int rowIter = 3;
-                    while (rowIter < row.Count())
-                    {
-                        row[rowIter] = deepEglList[EGLLIter].Item2[rowIter];
-                        rowIter++;
-                    }
-                    // write values for each rare monster in line
+                    pairedCeslIDsWithlGEXP.Add((group[i], standardlGEXP));
+                }
+            }
+
+            // Sort the ceslIDsWithlGEXP data by ceslID so that I only have to go through the data once
+            pairedCeslIDsWithlGEXP.Sort((x, y) => Int32.Parse(x.Item1).CompareTo(Int32.Parse(y.Item1)));
+            int iter = 0;
+            foreach (var row in ceslData)
+            {
+                string ceslID = pairedCeslIDsWithlGEXP.Find(x => x.Item1 == row[0]).Item1;
+                if (ceslID != "-1" && ceslID != null)
+                {
+                    List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
+                    if (lGEXP[0] == "28") row[3] = "18"; // Set Dragon Scars rare monster level to set level rather than 28 for accessible situations
+                    else row[3] = lGEXP[0];
+                    row[79] = lGEXP[1];
+                    row[80] = lGEXP[2];
+                    row[81] = lGEXP[3];
+                    row[82] = lGEXP[4];
+                }
+            }
+            CsvHandling.CsvWriteData(ceslPath, ceslData);
+        }
+
+        private static void AppendToMonsterLog(string currDir, List<string> eglRareIDs, string eglPath)
+        {
+            string logPath = Path.Combine(currDir, "logs", "monster_log.txt");
+            List<string> charsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "enemy_names.txt"))];
+
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
+
+            string currentText = File.ReadAllText(logPath);
+
+            bool broken = false;
+            int ebIDIter = 0;
+
+            if (currentText.Count() > 0) currentText += "---\n";
+            currentText += "Rare Mirages:\n";
+            foreach (var row in eglData)
+            {
+                if (broken) break;
+                if (eglRareIDs.Contains(row[0]))
+                {
                     int j = 4;
                     int k = 0;
                     while (k <= 6)
                     {
                         // account for duplicates in same row
-                        if (row[j + k * 4] != "-1" && row[j + k * 4] != row[k * 4] && row[j + k * 4] != "0")
+                        if (row[j + k * 4] != "-1" && row[j + k * 4] != row[k * 4])
                         {
-                            toWrite += row[1].Substring(0, 8) + ": " + row[j + k * 4] + Environment.NewLine;
+                            if (int.Parse(row[j + k * 4]) > 1)
+                            {
+                                // Do the searching and writing here.
+                                string chapName = row[1];
+                                chapName = "Chapter " + Int32.Parse(chapName.Substring(4, 2));
+                                int charID = charsDB.FindIndex(x => x.Split("\t")[0] == row[j + k * 4]);
+                                string charName = charsDB[charID].Split("\t")[1];
+                                string toAdd = chapName + ": " + charName + Environment.NewLine;
+                                currentText += toAdd;
+                            }
                         }
                         k++;
                     }
-                    EGLLIter++;
-                    if (EGLLIter == deepEglList.Count())
+                    ebIDIter++;
+                    if (ebIDIter == eglRareIDs.Count())
                     {
-                        broken2 = true;
+                        broken = true;
                     }
                 }
             }
-            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            File.WriteAllText(logPath, currentText);
+        }
 
-            // Making an exception for Dragon Scars rare encounter, which I want to set to level 18.
-            // Some folks may not know the trick to running away and getting the required item
-            // EGL ID for dragon scar encounter is 595. Be cautious if it's more than 1 enemy type
-            dragonScarsSetLevel(EGLoutput, CESLoutput);
+        public static void ShuffleRareMonsters(string sV, RichTextBox log, string currDir)
+        {
+            log.AppendText("Shuffling rare monsters...\n");
 
-            return (EGLoutput, CESLoutput);
+            string eglPath = Path.Combine(currDir, "enemy_group_list.csv");
+            string ceslPath = Path.Combine(currDir, "character_enemy_status_list.csv");
+            //list of rare monsters based on EGL value
+            List<string> eglRareIDs = ["570", "572", "576", "582", "595", "599", "606", "613", "617", "620", "624", "636", "642", "645"];
+            List<List<string>> eglRareData = new List<List<string>>();
+            List<List<string>> lGEXPData = new List<List<string>>();
+
+            // Doing both at once to simplify the process
+            (eglRareData, lGEXPData) = GetEglDataAndlGEXPData(eglPath, ceslPath, eglRareIDs);
+
+            // Next, I need to shuffle the egl rows
+            eglRareData.Shuffle(Shuffle.ConsistentStringHash(sV));
+
+            // Then I reinsert the egl data back into the file
+            List<(string, List<string>)> pairedCeslIDsWithlGEXP = InsertEglData(eglPath, eglRareData, eglRareIDs, lGEXPData);
+
+            // I also modify the cesl data to reflect the correct lGEXP
+            InsertlGEXPData(ceslPath, pairedCeslIDsWithlGEXP);
+
+            // Append to the monster log with levels for each murkrift. Try to get locations, if possible
+            AppendToMonsterLog(currDir, eglRareIDs, eglPath);
         }
     }
 }

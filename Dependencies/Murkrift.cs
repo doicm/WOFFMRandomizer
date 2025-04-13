@@ -126,9 +126,7 @@ namespace WOFFRandomizer.Dependencies
         {
             List<List<string>> ceslData = CsvReadData(ceslPath);
             // If ID matches in a grouping, apply same lGEXPData
-            List<List<string>> murkGroupings = [["316", "317"], ["606", "607", "608", "609", "610", "611"], ["1138", "1139"], ["1140", "1141", "1142"]];
-
-            Console.WriteLine(pairedCeslIDsWithlGEXP.Count);
+            List<List<string>> murkGroupings = [["316", "317"], ["1138", "1139"], ["1140", "1141", "1142"]];
 
             // Pair the groupings with the lGEXPdata
             foreach (var group in murkGroupings)
@@ -182,7 +180,7 @@ namespace WOFFRandomizer.Dependencies
                     string areaName = "";
                     if (row[1].Substring(3,1) == "c")
                     {
-                        areaName = "Chapter " + row[1].Substring(4, 2);
+                        areaName = "Chapter " + Int32.Parse(row[1].Substring(4, 2));
                     }
                     else if (row[1].Substring(3,5) == "world")
                     {
@@ -213,7 +211,7 @@ namespace WOFFRandomizer.Dependencies
                         }
                         else if (row[1] == "DC_reserve_006")
                         {
-                            areaName = "Airship 7";
+                            areaName = "Airship 7 (Postgame+)";
                         }
                     }
 
@@ -235,8 +233,8 @@ namespace WOFFRandomizer.Dependencies
 
             // Get the list of murkrift fights that need to be shuffled
             // Behemoth fight at beginning is excluded
-            List<string> eglMurkIDs = ["789", "790", "791", "793", "795", "797", "798", "799", "800", "801", "803", "815", "816",
-            "817", "818", "819", "820", "825", "826", "827", "828", "829", "830"];
+            // Had to remove "815", "816", "817", "818", "819", "820" because they share ceslIDs and can affect other murkrifts
+            List<string> eglMurkIDs = ["789", "790", "791", "793", "795", "797", "798", "799", "800", "801", "803", "825", "826", "827", "828", "829", "830"];
 
             // First, I'll get the EGL data, shuffle it, then place the EGL data back in the slots
             // After that, I'll iterate through each ceslID in the egl data, assign it the level data,

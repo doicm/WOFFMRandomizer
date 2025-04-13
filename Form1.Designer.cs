@@ -44,7 +44,6 @@
             label5 = new Label();
             label6 = new Label();
             label7 = new Label();
-            label8 = new Label();
             richTextBox1 = new RichTextBox();
             buttonReadme = new Button();
             textBox2 = new TextBox();
@@ -62,6 +61,9 @@
             toolTipDoubleExp = new ToolTip(components);
             toolTipMurkrift = new ToolTip(components);
             checkBoxMurkrift = new CheckBox();
+            label8 = new Label();
+            checkBoxStats = new CheckBox();
+            toolTipStats = new ToolTip(components);
             SuspendLayout();
             // 
             // textBox1
@@ -203,23 +205,14 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Font = new Font("DejaVu Sans", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(12, 21);
-            label7.MaximumSize = new Size(200, 0);
+            label7.Font = new Font("DejaVu Sans", 16F, FontStyle.Bold);
+            label7.Location = new Point(5, 12);
+            label7.MaximumSize = new Size(220, 0);
             label7.Name = "label7";
-            label7.Size = new Size(197, 112);
+            label7.Size = new Size(215, 100);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Randomizer v0.1.6";
+            label7.Text = "World of Final Fantasy Maxima Randomizer v0.1.6";
             label7.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(56, 144);
-            label8.Name = "label8";
-            label8.Size = new Size(105, 15);
-            label8.TabIndex = 15;
-            label8.Text = "Created by: Doicm";
             // 
             // richTextBox1
             // 
@@ -304,11 +297,32 @@
             checkBoxMurkrift.UseVisualStyleBackColor = true;
             checkBoxMurkrift.MouseHover += checkBoxMurkrift_MouseHover;
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(56, 118);
+            label8.Name = "label8";
+            label8.Size = new Size(105, 15);
+            label8.TabIndex = 15;
+            label8.Text = "Created by: Doicm";
+            // 
+            // checkBoxStats
+            // 
+            checkBoxStats.AutoSize = true;
+            checkBoxStats.Location = new Point(684, 164);
+            checkBoxStats.Name = "checkBoxStats";
+            checkBoxStats.Size = new Size(153, 19);
+            checkBoxStats.TabIndex = 24;
+            checkBoxStats.Text = "Randomize Mirage Stats";
+            checkBoxStats.UseVisualStyleBackColor = true;
+            checkBoxStats.MouseHover += checkBoxStats_MouseHover;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBoxStats);
             Controls.Add(checkBoxMurkrift);
             Controls.Add(checkBoxDoubleExp);
             Controls.Add(checkBoxQuOrArenaPrizes);
@@ -356,7 +370,6 @@
         private Label label5;
         private Label label6;
         private Label label7;
-        private Label label8;
         private RichTextBox richTextBox1;
         private Button buttonReadme;
         private TextBox textBox2;
@@ -374,5 +387,8 @@
         private ToolTip toolTipDoubleExp;
         private ToolTip toolTipMurkrift;
         private CheckBox checkBoxMurkrift;
+        private Label label8;
+        private CheckBox checkBoxStats;
+        private ToolTip toolTipStats;
     }
 }
