@@ -10,19 +10,8 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class MonMap
     {
-        private static List<List<string>> addToNonRandomizedAreas(List<List<string>> nonRandomizedAreas,
-            List<List<string>> MPoutput, int start, int end)
-        {
-            int i = start;
-            while (i < end)
-            {
-                nonRandomizedAreas.Add(MPoutput[i]);
-                i++;
-            }
-            return nonRandomizedAreas;
-        }
-
-        private static void bestiaryTraversalPostShuffle(string currDir, List<List<string>> EGLoutput, int start, int end)
+        private static List<List<string>> bestiaryTraversalPostShuffle(string mlogPath, List<List<string>> EGLoutput, int start, int end, 
+            List<List<string>> randEncMPList)
         {
             List<int> exceptionLineList = [156,158,262,381,406,407];
             int eglLine = start;
@@ -31,7 +20,7 @@ namespace WOFFRandomizer.Dependencies
             int j = 4;
             List<string> miragesInArea = new List<string>();
             List<string> row = new List<string>();
-            string toWrite = "";
+            //string toWrite = "";
             while (eglLine <= end)
             {
                 if (exceptionLineList.Contains(eglLine))
@@ -49,61 +38,64 @@ namespace WOFFRandomizer.Dependencies
                         if (!miragesInArea.Contains(row[i*4 + j]))
                         {
                             miragesInArea.Add(row[i*4 + j]);
+                            randEncMPList.Add([row[(i * 4) + (j)], row[1]]);
                         }
                     }
                     i++;
                 }
                 eglLine++;
             }
-            // for each mirage on the area list, add them to be written in the log
-            foreach (string mirage in miragesInArea)
-            {
-                toWrite += areaname.Substring(0,8) + ": " + mirage + "\n";
-            }
-            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
+            //// for each mirage on the area list, add them to be written in the log
+            //foreach (string mirage in miragesInArea)
+            //{
+            //    toWrite += areaname.Substring(0,8) + ": " + mirage + "\n";
+            //}
+            //File.AppendAllText(mlogPath, toWrite);
 
+            return randEncMPList;
         }
-        private static void randomEncountersPostShuffle(string currDir, List<List<string>> EGLoutput)
+        private static List<List<string>> randomEncountersPostShuffle(string currDir, List<List<string>> EGLoutput,
+            List<List<string>> randEncMPList)
         {
             // Wellspring Woods 
             // EGL lines are 85-87
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 85, 87);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 85, 87, randEncMPList);
 
             // Nether Nebula
             // lines are 88-102.
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 88, 102);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 88, 102, randEncMPList);
 
             // Watchplains
             // lines 114-132
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 114, 132);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 114, 132, randEncMPList);
 
             // Pyreglow Forest
             // lines 134-147
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 134, 147);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 134, 147, randEncMPList);
 
             // Icicle Ridge
             // lines 154-172, exclude 156, 158
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 154, 172);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 154, 172, randEncMPList);
 
             // Saronia Docks
             // lines 174-187
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 174, 187);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 174, 187, randEncMPList);
 
             // Dragon's Scars
             // lines 194-205
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 194, 205);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 194, 205, randEncMPList);
 
             // Valley Seven
             // lines 214-227
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 214, 227);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 214, 227, randEncMPList);
 
             // Windswept Mire
             // lines 234-242
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 234, 242);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 234, 242, randEncMPList);
 
             // Phantom Sands
             // lines 254-266, exception for 262
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 254, 266);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 254, 266, randEncMPList);
 
             //// Underground Prison
             //// this area is ignored, but I'll account for it above so that it gets in the data. lines 274-278
@@ -111,46 +103,45 @@ namespace WOFFRandomizer.Dependencies
 
             // Mako Reactor 0
             // lines 284-294
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 284, 294);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 284, 294, randEncMPList);
 
             // Big Bridge
             // lines 304-311, 317-318
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 304, 311);
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 317, 318);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 304, 311, randEncMPList);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 317, 318, randEncMPList);
 
             // Train Graveyard
             // lines 324-338
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 324, 338);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 324, 338, randEncMPList);
 
             // Sunken Temple
             // lines 344-355
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 344, 355);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 344, 355, randEncMPList);
 
             // Crystal Tower
             // lines 364-383, excluding 381
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 364, 383);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 364, 383, randEncMPList);
 
             // Chainroad
             // lines 404-416, excluding 406, 407
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 404, 416);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 404, 416, randEncMPList);
 
             // Castle Exnine
             // lines 424-449
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 424, 449);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 424, 449, randEncMPList);
 
             // Coeurl and Lesser Coeurl
             // lines 1171, 1172. ...numbers are a bit off, but this adjustment should work?
-            bestiaryTraversalPostShuffle(currDir, EGLoutput, 1146, 1147);
+            randEncMPList = bestiaryTraversalPostShuffle(currDir, EGLoutput, 1146, 1147, randEncMPList);
+
+            return randEncMPList;
         }
-        public static List<List<string>> ModifyMonsterPlaceAndMonsterLog (List<List<string>> MPoutput, 
-            List<List<string>> EGLoutput, string currDir)
+
+        // Rewriting ModifyMonsterPlaceAndMonsterLog to go through egl rather than monster_log for monster_place
+        public static void ModifyMonsterPlaceAndMonsterLog (string currDir)
         {
-            //log.AppendText("Modifying mirage maps and monster log...\n");
-            
             // list of monsters to ignore, including Bahamutian Soldiers, so that they don't appear in the mirage list on the map
             List<string> monsToIgnoreOnMap = ["7193", "7194", "7195"];
-            // list of monsters to re-include into certain areas that were excluded from randomization
-            List<List<string>> monsToReinclude = [["0100", "7068"], ["0500", "7054"], ["2100", "7044"]];
 
             // have data on hand for each area from monster_place.csv
             List<List<string>> monster_place_csv_data = [
@@ -160,12 +151,12 @@ namespace WOFFRandomizer.Dependencies
                 ["LightForest", "灯の森", "7", "7"],
                 ["IcicleValley", "氷柱の谷フロア", "12", "11"],
                 ["SaloniaHarbor", "サロニアの港", "14", "13"],
-                // ["SewerArea", "下海・入口", "16", "15"], //sewer area will be ignored, since I don"t randomize this set yet
+                //["SewerArea", "下海・入口", "16", "15"], //sewer area will be ignored, since I don"t randomize this set
                 ["DragonValley", "竜の渓谷", "19", "18"],
                 ["BombVolcano", "セブンスバリー", "23", "21"],
                 ["WindWetlandsBands", "風吹く湿地帯", "24", "22"],
                 ["PhantomDesert", "幻の砂漠", "27", "25"],
-                // ["DeepGround", "ディープグラウンド", "29", "28"], // this area doesn"t get randomized either
+                //["DeepGround", "ディープグラウンド", "29", "28"], // this area doesn"t get randomized either, other than rare
                 ["MakoFireplaceInside", "零番魔晄炉", "30", "29"],
                 ["big_bridge_", "ビックブリッジ", "32", "31"],
                 ["resshahakaba_", "列車墓場", "35", "34"],
@@ -175,201 +166,181 @@ namespace WOFFRandomizer.Dependencies
                 ["ExNineCastle_", "エクスナイン城", "49", "47"]
             ];
 
-            // Store then clear the text of monster_log.txt to append back later after traversing through random encounters
-            string tempLog = File.ReadAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
-            File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), "");
+            string eglPath = Path.Combine(currDir, "enemy_group_list.csv");
+            string mpPath = Path.Combine(currDir, "monster_place.csv");
+            string mlogPath = Path.Combine(currDir, "logs", "monster_log.txt");
 
-            randomEncountersPostShuffle(currDir, EGLoutput);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
+            List<List<string>> randEncMPList = new List<List<string>>();
+            
+            // As part of writing to a log, also add to a new MP list for random encounters
+            randEncMPList = randomEncountersPostShuffle(mlogPath, eglData, randEncMPList);
 
-            File.AppendAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), tempLog);
+            // Create a separate list for MP for rare encounters, whether or not shuffled
+            // Get rare monsters from egl along with approx location
+            List<List<string>> rareMons = new List<List<string>>();
+            List<string> eglRareIDs = ["570", "572", "576", "582", "595", "599", "606", "613", "617", "620",
+                "624", "636", "642", "645"];
+            List<List<string>> rareChapterToAreaPairings = [["04","02"],["05","03"],["06","04"], ["08", "05"], ["10", "06"],
+                ["11","07"],["12","08"],["15","11"],["16","13"],["17","15"],["19","18"],["21_00","20"],["21_01","21"]];
 
-            // get the areas that aren't being randomized
-            List<List<string>> nonRandomizedAreas = new List<List<string>>();
-            nonRandomizedAreas = addToNonRandomizedAreas(nonRandomizedAreas, MPoutput, 42, 50);
-            nonRandomizedAreas = addToNonRandomizedAreas(nonRandomizedAreas, MPoutput, 84, 87);
-
-            // write for each area
-            List<List<string>> newMPoutput = new List<List<string>>();
-
-            // read monster log file and get data for each area's maps
-            string[] f = File.ReadAllLines(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
-            int id = 0;
-            int mpcdIter = 0;
-            string currLine = "0000";
-            string prevLine = "0000";
-            int areaIter = 1;
-            int mtrIter = 0;
-            foreach (string line in f)
+            foreach (var row in eglData)
             {
-                currLine = line.Substring(4, 4);
-                // if the next line is a new area, then go to the next area in monster_place_csv_data
-                if (currLine != prevLine)
+                if (eglRareIDs.Contains(row[0]))
                 {
-                    // if currLine = particular line that were excepted, then put in unrandomized data
-                    if (currLine == "0600")
+                    int i = 0;
+                    int j = 4;
+                    string charID;
+                    while (i < 6)
                     {
-                        int j = 0;
-                        while (j < 8)
+                        charID = row[j + (i * 4)];
+                        if (charID != "-1" && !rareMons.Select(x => x[0]).Contains(charID))
                         {
-                            if (nonRandomizedAreas[j][1].Substring(0,5) != "Sewer") break;
-                            newMPoutput.Add([id.ToString(), nonRandomizedAreas[j][1], nonRandomizedAreas[j][2],
-                            nonRandomizedAreas[j][3],nonRandomizedAreas[j][4],nonRandomizedAreas[j][5],
-                            nonRandomizedAreas[j][6]]);
-                            j++;
-                            id++;
+                            rareMons.Add([charID, row[1]]);
                         }
+                        i++;
                     }
-                    if (currLine == "1100")
-                    {
-                        int j = 8;
-                        while (j < nonRandomizedAreas.Count)
-                        {
-                            if (nonRandomizedAreas[j][1].Substring(0, 5) != "DeepG") break;
-                            newMPoutput.Add([id.ToString(), nonRandomizedAreas[j][1], nonRandomizedAreas[j][2],
-                                nonRandomizedAreas[j][3],nonRandomizedAreas[j][4],nonRandomizedAreas[j][5],
-                                nonRandomizedAreas[j][6]]);
-                            j++;
-                            id++;
-                        }
-                    }
-                    prevLine = currLine;
-                    mpcdIter++;
-                    areaIter = 1;
-                    if (mpcdIter == monster_place_csv_data.Count) break; // post game doesn't have monster_place data, so skipped
-                    //// check for monsToReinclude. also check if they're already in the area so they don't get double-counted
-                    //// Actually, they're going to get double-counted either way, so let's remove this code
-                    //if (mtrIter < monsToReinclude.Count)
-                    //{
-                    //    if (currLine == monsToReinclude[mtrIter][0])
-                    //    {
-                    //        newMPoutput.Add([id.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
-                    //            monster_place_csv_data[mpcdIter][1],monster_place_csv_data[mpcdIter][2], monsToReinclude[mtrIter][1],
-                    //            monster_place_csv_data[mpcdIter][3],"0"]);
-                    //        id++;
-                    //        areaIter++;
-                    //        mtrIter++;
-                    //    }
-                    //}
                 }
-                if (monsToIgnoreOnMap.Contains(line.Substring(10))) continue;
-                if (mpcdIter == monster_place_csv_data.Count()) break;
-                newMPoutput.Add([id.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
-                    monster_place_csv_data[mpcdIter][1],monster_place_csv_data[mpcdIter][2], line.Substring(10),
-                    monster_place_csv_data[mpcdIter][3],"0"]);
-                // unfortunately, game bugs out when there's more than 12 mons per area on map. there is a log, at least
-                if (areaIter > 12) 
-                {
-                    newMPoutput.RemoveAt(newMPoutput.Count() - 1);
-                }
-                areaIter++;
-                id++;
             }
-            return newMPoutput;
+
+            List<List<string>> MPinput = new List<List<string>>();
+
+            // Go through each area and input the values into MPinput
+            // I need to manually go through SewerArea and DeepGround
+            int mpID = 0;
+            int areaIter = 1;
+            int mpcdIter = 0; // This is for iterating through that big table above
+            int rareIter = 0; // This is for iterating through the rareMons list
+            int ctoaIter = 0;
+            bool firstRow = true;
+            string prevRowArea = "";
+            foreach (var row in randEncMPList)
+            {
+                if (firstRow)
+                {
+                    firstRow = false;
+                    MPinput.Add([mpID.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
+                        monster_place_csv_data[mpcdIter][1], monster_place_csv_data[mpcdIter][2],
+                        row[0], monster_place_csv_data[mpcdIter][3], "0"]);
+                    prevRowArea = row[1].Substring(0,8);
+                    mpID++;
+                    areaIter++;
+                    continue;
+                }
+                // If the current row's area doesn't match the previous row's area, a new area has emerged
+                // Check for rare mirages
+                if (prevRowArea != row[1].Substring(0,8))
+                {
+                    // Chapter name area doesn't match random encounter area. This'll be painful...
+                    // Got some pairings set up to correlate the chapterID with the areaID
+                    if (rareChapterToAreaPairings[ctoaIter][1] == prevRowArea.Substring(4,2))
+                    {
+                        // While it's unlikely to make it to the final list, need to make an exception 
+                        // for chainroad and exnine castle rare mirages
+                        while (rareChapterToAreaPairings[ctoaIter][0] == rareMons[rareIter][1].Substring(4, 2))
+                        {
+                            MPinput.Add([mpID.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
+                                monster_place_csv_data[mpcdIter][1], monster_place_csv_data[mpcdIter][2],
+                                rareMons[rareIter][0], monster_place_csv_data[mpcdIter][3], "0"]);
+                            areaIter++;
+                            rareIter++;
+                            mpID++;
+                        }
+                        // if chainroad
+                        if (rareChapterToAreaPairings[ctoaIter][0] == "21_00")
+                        {
+                            while (rareMons[rareIter][1].Substring(rareMons[rareIter][1].Length - 3) == "001")
+                            {
+                                MPinput.Add([mpID.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
+                                    monster_place_csv_data[mpcdIter][1], monster_place_csv_data[mpcdIter][2],
+                                    rareMons[rareIter][0], monster_place_csv_data[mpcdIter][3], "0"]);
+                                areaIter++;
+                                rareIter++;
+                                mpID++;
+                            }
+                        }
+                        // else if castle exnine
+                        else if (rareChapterToAreaPairings[ctoaIter][0] == "21_01")
+                        {
+                            while (rareMons[rareIter][1].Substring(rareMons[rareIter][1].Length - 3) == "011")
+                            {
+                                MPinput.Add([mpID.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
+                                    monster_place_csv_data[mpcdIter][1], monster_place_csv_data[mpcdIter][2],
+                                    rareMons[rareIter][0], monster_place_csv_data[mpcdIter][3], "0"]);
+                                areaIter++;
+                                rareIter++;
+                                mpID++;
+                                // if end of rareIter, it'll cause issues, so break out
+                                if (rareIter == rareMons.Count()) break;
+                            }
+                        }
+                        ctoaIter++;
+                    }
+                    // Write in the exceptions for SewerArea and DeepGround
+                    // This is actually for DragonValley, but we put SewerArea in here now
+                    if (row[1].Substring(0,8) == "RE_d0600")
+                    {
+                        MPinput.Add([mpID.ToString(), "SewerArea1", "下海・入口", "16", "7055", "15", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea2", "下海・入口", "16", "7084", "15", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea3", "下海・入口", "16", "7079", "15", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea4", "下海・入口", "16", "7085", "15", "10002000"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea5", "下海・入口", "17", "7055", "15", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea6", "下海・入口", "17", "7084", "15", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea7", "下海・入口", "17", "7079", "15", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "SewerArea8", "下海・入口", "17", "7085", "15", "10002000"]);
+                        mpID++;
+                    }
+                    if (row[1].Substring(0,8) == "RE_d1100")
+                    {
+                        MPinput.Add([mpID.ToString(), "DeepGround1", "ディープグラウンド", "29", "7170", "28", "0"]);
+                        mpID++;
+                        MPinput.Add([mpID.ToString(), "DeepGround2", "ディープグラウンド", "29", "7171", "28", "0"]);
+                        mpID++;
+                        areaIter = 3;
+                        // Get rare monster(s) for DeepGround while here
+                        while (rareMons[rareIter][1].Substring(4, 2) == "14")
+                        {
+                            MPinput.Add([mpID.ToString(), "DeepGround" + areaIter.ToString(),
+                                "ディープグラウンド", "29",
+                                rareMons[rareIter][0], "28", "0"]);
+                            areaIter++;
+                            rareIter++;
+                            mpID++;
+                        }
+                    }
+                    // If there are more than 12 rows in an area, need to reduce it down back to 12
+                    // to prevent it from breaking the game
+                    while (areaIter > 13)
+                    {
+                        MPinput.RemoveAt(MPinput.Count() - 1);
+                        areaIter--;
+                    }
+                    // Reset areaIter and set the mpcdIter to the next row on the big table above.
+                    areaIter = 1;
+                    mpcdIter++;
+                }
+                // If row goes to postgame, break
+                if (row[1].Substring(0, 8) == "RE_d2200") break;
+                // Otherwise, add a new row
+                if (!monsToIgnoreOnMap.Contains(row[0]))
+                {
+                    MPinput.Add([mpID.ToString(), monster_place_csv_data[mpcdIter][0] + areaIter.ToString(),
+                        monster_place_csv_data[mpcdIter][1], monster_place_csv_data[mpcdIter][2],
+                        row[0], monster_place_csv_data[mpcdIter][3], "0"]);
+                    areaIter++;
+                    mpID++;
+                }
+                prevRowArea = row[1].Substring(0, 8);
+                
+            }
+            CsvHandling.CsvWriteData(mpPath, MPinput);
         }
-
-        //private static void modifyMonsterLog(List<string> monsToIgnoreOnMap, 
-        //    List<List<string>> monsToReinclude, string currDir, bool enemShuffle)
-        //{
-        //    List<List<string>> MPoutput = new List<List<string>>();
-        //    string[] f = File.ReadAllLines(Path.GetFullPath(currDir + "/logs/monster_log.txt"), Encoding.UTF8);
-        //    int mtrIter = 0;
-        //    foreach (string line in f)
-        //    {
-        //        // first entry is areaID. second entry is mirageID
-        //        if (monsToIgnoreOnMap.Contains(line.Substring(10))) continue;
-        //        //// if current area is same as monsToReinclude area, sneak it in
-        //        //// changed my mind. remove it.
-        //        //if (monsToReinclude.Count > 0)
-        //        //{
-        //        //    if (mtrIter < monsToReinclude.Count)
-        //        //    {
-        //        //        if (line.Substring(4, 4) == monsToReinclude[mtrIter][0])
-        //        //        {
-        //        //            MPoutput.Add([monsToReinclude[mtrIter][0], monsToReinclude[mtrIter][1]]);
-        //        //            mtrIter++;
-        //        //        }
-        //        //    }
-                    
-        //        //}
-        //        MPoutput.Add([line.Substring(4, 4), line.Substring(10)]);
-        //    }
-        //    string[] linesArea = File.ReadAllLines(Path.GetFullPath(
-        //        currDir + "/database/areas.txt"), Encoding.UTF8);
-        //    string[] linesEnemy = File.ReadAllLines(Path.GetFullPath(
-        //        currDir + "/database/enemy_names.txt"), Encoding.UTF8);
-
-        //    // rewrite monster log
-        //    string toWrite = "";
-        //    bool raresStarted = false; bool bossesStarted = false;
-        //    if (enemShuffle) toWrite += "Random encounters: \n";
-        //    foreach (List<string> row in MPoutput)
-        //    {
-        //        // find area first
-        //        // if random encounters are not randomized, skip the first part
-        //        if (enemShuffle)   
-        //        {
-        //            foreach (string areaString in linesArea)
-        //            {
-        //                string temp = areaString.Substring(0, 4);
-        //                if (areaString.Substring(0, 4) == row[0])
-        //                {
-        //                    toWrite += areaString.Substring(8) + ": ";
-        //                    // then find the enemy
-        //                    foreach (string enemyString in linesEnemy)
-        //                    {
-        //                        if (enemyString.Substring(0, 4) == row[1])
-        //                        {
-        //                            toWrite += enemyString.Substring(5) + "\n";
-        //                            break;
-        //                        }
-        //                    }
-        //                    break;
-        //                }
-        //            }
-        //        }
-                
-
-        //        // then find rare monsters to append if chapter enemy
-        //        if (row[0].Contains("_e"))
-        //        {
-        //            if (!raresStarted)
-        //            {
-        //                raresStarted = true;
-        //                if (toWrite.Length > 0) toWrite += "---\n";
-        //                toWrite += "Rare monsters: \n";
-        //            }
-        //            foreach (string enemyString in linesEnemy)
-        //            {
-        //                if (enemyString.Substring(0, 4) == row[1])
-        //                {
-        //                    toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
-        //                        enemyString.Substring(5) + "\n";
-        //                    break;
-        //                }
-        //            }
-        //        }
-                
-        //        // then find bosses to append
-        //        else if (row[0].Contains("0406") | row[0].Contains("_0") | row[0] == "SEV_038")
-        //        {
-        //            if (!bossesStarted)
-        //            {
-        //                bossesStarted = true;
-        //                if (toWrite.Length > 0) toWrite += "---\n";
-        //                toWrite += "Boss fights: \n";
-        //            }
-        //            foreach (string enemyString in linesEnemy)
-        //            {
-        //                if (enemyString.Substring(0, 4) == row[1].Substring(Math.Max(0, row[1].Length - 4)))
-        //                {
-        //                    toWrite += "Chapter " + row[0].Substring(0, 2) + ": " +
-        //                        enemyString.Substring(5) + "\n";
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //    }
-            //File.WriteAllText(Path.GetFullPath(currDir + "/logs/monster_log.txt"), toWrite);
-        //}
     }
 }

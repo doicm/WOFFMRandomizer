@@ -72,6 +72,9 @@ namespace WOFFRandomizer.Dependencies
                 if (ceslIDs.Contains(row[0]) && !skipBossIDs.Contains(row[0]))
                 {
                     List<string> lGEXPRow = [row[3], row[79], row[80], row[81], row[82]];
+                    // Need to make exception for Vivi fight, since that gives no exp/gil normally and I want replacement
+                    // to give exp/gil
+                    if (row[0] == "271") lGEXPRow = [row[3], "20500", "1700", "150000", "1850"];
                     lGEXPData.Add(lGEXPRow);
                 }
             }

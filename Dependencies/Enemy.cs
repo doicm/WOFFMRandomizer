@@ -255,32 +255,147 @@ namespace WOFFRandomizer.Dependencies
             return EGLoutput;
         }
 
-        private static void WriteToMonsterLog(string currDir)
+        private static string PostShuffleBestiaryTraversalForLog(string mlogPath, List<string> areasDB, List<string> charsDB,
+            string toWrite, List<List<string>> EGLoutput, int start, int end)
+        {
+            List<int> exceptionLineList = [156, 158, 262, 381, 406, 407];
+            int eglLine = start;
+            int areaID = areasDB.FindIndex(x => x.Split("\t")[0] == EGLoutput[start][1].Substring(4,4));
+            string areaname = areasDB[areaID].Split("\t")[1];
+            int i = 0;
+            int j = 4;
+            List<string> miragesInArea = new List<string>();
+            List<string> row = new List<string>();
+            while (eglLine <= end)
+            {
+                if (exceptionLineList.Contains(eglLine))
+                {
+                    eglLine++;
+                    continue;
+                }
+                i = 0;
+                row = EGLoutput[eglLine];
+                while (i <= 5)
+                {
+
+                    if (row[i * 4 + j] != "-1")
+                    {
+                        if (!miragesInArea.Contains(row[i * 4 + j]))
+                        {
+                            miragesInArea.Add(row[i * 4 + j]);
+                        }
+                    }
+                    i++;
+                }
+                eglLine++;
+            }
+            // for each mirage on the area list, add them to be written in the log
+            foreach (string mirage in miragesInArea)
+            {
+                int mirageID = charsDB.FindIndex(x => x.Split("\t")[0] == mirage);
+                string mirageName = charsDB[mirageID].Split("\t")[1];
+                toWrite += areaname + ": " + mirageName + "\n";
+            }
+            return toWrite;
+        }
+
+        private static void WriteToMonsterLog(string currDir, List<List<string>> EGLoutput)
         {
             string mlogPath = Path.Combine(currDir, "logs", "monster_log.txt");
-            string[] f = File.ReadAllLines(mlogPath, Encoding.UTF8);
+            //string[] f = File.ReadAllLines(mlogPath, Encoding.UTF8);
             List<string> areasDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "areas.txt"))];
             List<string> charsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "enemy_names.txt"))];
 
-            // rewrite monster log
+            // write to monster log
             string toWrite = "Random Encounters:\n";
-            foreach (string line in f)
-            {
-                int areaID = areasDB.FindIndex(x => x.Split("\t")[0] == line.Substring(4, 4));
-                int charID = charsDB.FindIndex(x => x.Split("\t")[0] == line.Substring(10));
-                string areaName = areasDB[areaID].Split("\t")[1];
-                string charName = charsDB[charID].Split("\t")[1];
-                toWrite += areaName + ": " + charName + Environment.NewLine;
-            }
+
+            // Wellspring Woods 
+            // EGL lines are 85-87
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 85, 87);
+
+            // Nether Nebula
+            // lines are 88-102.
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 88, 102);
+
+            // Watchplains
+            // lines 114-132
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 114, 132);
+
+            // Pyreglow Forest
+            // lines 134-147
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 134, 147);
+
+            // Icicle Ridge
+            // lines 154-172, exclude 156, 158
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 154, 172);
+
+            // Saronia Docks
+            // lines 174-187
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 174, 187);
+
+            // Dragon's Scars
+            // lines 194-205
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 194, 205);
+
+            // Valley Seven
+            // lines 214-227
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 214, 227);
+
+            // Windswept Mire
+            // lines 234-242
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 234, 242);
+
+            // Phantom Sands
+            // lines 254-266, exception for 262
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 254, 266);
+
+            //// Underground Prison
+            //// this area is ignored, but I'll account for it above so that it gets in the data. lines 274-278
+
+            // Mako Reactor 0
+            // lines 284-294
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 284, 294);
+
+            // Big Bridge
+            // lines 304-311, 317-318
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 304, 311);
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 317, 318);
+
+            // Train Graveyard
+            // lines 324-338
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 324, 338);
+
+            // Sunken Temple
+            // lines 344-355
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 344, 355);
+
+            // Crystal Tower
+            // lines 364-383, excluding 381
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 364, 383);
+
+            // Chainroad
+            // lines 404-416, excluding 406, 407
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 404, 416);
+
+            // Castle Exnine
+            // lines 424-449
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 424, 449);
+
+            // Coeurl and Lesser Coeurl
+            // lines 1171, 1172. ...numbers are a bit off, but this adjustment should work?
+            toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 1146, 1147);
+
             File.WriteAllText(mlogPath, toWrite);
         }
 
         // This function is for modifying random encounters
-        private static List<List<string>> ModifyRandomEncounters(List<List<string>> MPoutput, string sV, RichTextBox log, string currDir)
+        private static void ModifyRandomEncounters(string sV, RichTextBox log, string currDir)
         {
             string eglPath = Path.Combine(currDir, "enemy_group_list.csv");
             string ceslPath = Path.Combine(currDir, "character_enemy_status_list.csv");
+            string mpPath = Path.Combine(currDir, "monster_place.csv");
 
+            List<List<string>> MPoutput = CsvReadData(mpPath);
             List<List<string>> EGLoutput = CsvReadData(eglPath);
             List<List<string>> CESLoutput = CsvReadData(ceslPath);
             // enemies dictionary to hold the final set of enemies
@@ -325,29 +440,30 @@ namespace WOFFRandomizer.Dependencies
 
             CsvWriteData(eglPath, EGLoutput);
             CsvWriteData(ceslPath, CESLoutput);
-
-            // Write to log for random encounters only. Going to do this separately now for each random/rare/boss
-            // As part of this, need to write to monster_place.csv
-            log.AppendText("Modifying mirage maps....\n");
-            MPoutput = MonMap.ModifyMonsterPlaceAndMonsterLog(MPoutput, EGLoutput, currDir);
+            
             // Read and modify the current values in the monster_log
-            WriteToMonsterLog(currDir);
+            // Going to have to do a traversal post-shuffle
+            WriteToMonsterLog(currDir, EGLoutput);
 
-            return (MPoutput);
         }
         public static void mirageEncsWriteCsv(string currDir, string sV, RichTextBox log, bool enemShuffle, bool bossShuffle, bool rareShuffle)
         {
             //List<List<string>> EGLoutput = readCsv(currDir + "/enemy_group_list.csv");
             //List<List<string>> CESLoutput = readCsv(currDir + "/character_enemy_status_list.csv");
-            List<List<string>> MPoutput = CsvReadData(currDir + "/monster_place.csv");
+            //List<List<string>> MPoutput = CsvReadData(currDir + "/monster_place.csv");
 
-            if (enemShuffle) (MPoutput) = ModifyRandomEncounters(MPoutput, sV, log, currDir);
+            if (enemShuffle) ModifyRandomEncounters(sV, log, currDir);
             if (rareShuffle) RareMon.ShuffleRareMonsters(sV, log, currDir);
             if (bossShuffle) Boss.ModifyBosses(sV, log, currDir);
+            if (enemShuffle | rareShuffle)
+            {
+                log.AppendText("Modifying mirage maps....\n");
+                MonMap.ModifyMonsterPlaceAndMonsterLog(currDir);
+            }
 
             //writeCsv(currDir + "/enemy_group_list.csv", EGLoutput);
             //writeCsv(currDir + "/character_enemy_status_list.csv", CESLoutput);
-            CsvWriteData(currDir + "/monster_place.csv", MPoutput);
+            //CsvWriteData(currDir + "/monster_place.csv", MPoutput);
         }
     }
 }

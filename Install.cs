@@ -159,6 +159,7 @@ namespace WOFFRandomizer
             if (sizesShuffle) Sizes.SizesShuffle(currDir, basepath, sV, log);
             if (quPrizesShuffle) QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
             if (statShuffle) Stats.RandomizeMirageStats(currDir, sV, log);
+            //if (enemShuffle | rareShuffle) MonMap.ModifyMonsterPlaceForRares(currDir, enemShuffle, rareShuffle);
 
             // Apply post-QoL adjustments
             if (doubleExpBool) DoubleExpQoL.DoubleExpGil(currDir, log);
