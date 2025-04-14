@@ -10,7 +10,7 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Maxima Randomizer v0.1.6";
+            this.Text = "World of Final Fantasy Maxima Randomizer v0.1.7";
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
