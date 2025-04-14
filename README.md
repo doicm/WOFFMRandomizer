@@ -8,7 +8,7 @@ and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 =====================================================================
-0.1.6
+0.1.7
 
 Notes:
 =====================================================================
@@ -65,6 +65,9 @@ before shuffling.
 that can be obtained between the arena and intervention quests. NPC
 quests are not included. Repeat attempts are not included. This also
 includes the Tama quest. ??? mementos are no longer hidden.
+- **Randomize Mirage Stats:** This randomizes the stats and growths
+that each mirage has. This may affect enemies as well as mirage allies.
+This only randomizes HP, Str, Def, Mag, MDef, and Agi.
 
 There are also the following features for QoL or for fun:
 
@@ -90,6 +93,11 @@ can break things.
 
 Changelog:
 =====================================================================
+2025-13-4 - 0.1.7 - Mirage stat randomization added. Fixed enemy 
+logs, mirage maps, boss/rare mirage level balance. Changed some 
+murkrift rando features to exclude some airship fights. Put Mel back
+in mirageboard rotation.
+
 2025-9-4 - 0.1.6 completed. Murkrift shuffling added. Fixed 
 mirageboard shuffling. Experience points for bosses and rare 
 monster fights adjusted. Mirageboard log added. Maxima is full
