@@ -213,7 +213,7 @@
             label7.Name = "label7";
             label7.Size = new Size(215, 100);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Maxima Randomizer v0.1.7";
+            label7.Text = "World of Final Fantasy Maxima Randomizer v0.1.8";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // richTextBox1
