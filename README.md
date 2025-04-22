@@ -8,7 +8,7 @@ and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 =====================================================================
-0.1.7
+0.1.8
 
 Notes:
 =====================================================================
@@ -73,6 +73,8 @@ There are also the following features for QoL or for fun:
 
 - **Double Exp and Gil Earned:** This doubles experience and gil
 earned in all battles.
+- **Increase Battle Speed:** This multiplies the battle speed at 
+setting 3. Wait setting recommended.
 
 Instructions:
 =====================================================================
@@ -93,6 +95,12 @@ can break things.
 
 Changelog:
 =====================================================================
+2025-22-4 - 0.1.8 - Added option for increased battle speed. Added
+cutscene skip for intro cutscene between chapters 1 & 2. Fixed
+prismtunity for first "Mu" encounter slot. Returned Megaflare to
+spot due to broken nature of Megaflare. Fixed level balances for
+rare mirages. Other minor level/gil/exp adjustments added.
+
 2025-13-4 - 0.1.7 - Mirage stat randomization added. Fixed enemy 
 logs, mirage maps, boss/rare mirage level balance. Changed some 
 murkrift rando features to exclude some airship fights. Put Mel back
