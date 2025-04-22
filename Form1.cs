@@ -87,9 +87,10 @@ namespace WOFFRandomizer
             bool doubleExpBool = checkBoxDoubleExp.Checked;
             bool murkActive = checkBoxMurkrift.Checked;
             bool statActive = checkBoxStats.Checked;
+            bool fiveBSActive = checkBoxFiveBS.Checked;
 
             Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive,
-                quPrizesActive, murkActive, statActive, doubleExpBool, button1, buttonRandomize, buttonUninstall);
+                quPrizesActive, murkActive, statActive, doubleExpBool, fiveBSActive, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -165,6 +166,11 @@ namespace WOFFRandomizer
         {
             toolTipStats.Show("This randomizes the stats and growths that each mirage has.\nThis may affect enemies as well as mirage allies.\n" +
                 "This only randomizes HP, Str, Def, Mag, MDef, and Agi.", checkBoxStats);
+        }
+
+        private void checkBoxFiveBS_MouseHover(object sender, EventArgs e)
+        {
+            toolTipFiveBS.Show("This multiplies the battle speed at setting 3.\nWait setting recommended, maybe.", checkBoxFiveBS);
         }
     }
 }

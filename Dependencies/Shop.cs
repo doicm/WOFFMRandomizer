@@ -16,16 +16,8 @@ namespace WOFFRandomizer.Dependencies
             // Get filename
             string csvfilename = Path.Combine(currDir, "shop_list.csv");
 
-            // Put all lines of the file into a list to edit
-            var csvFile = File.ReadAllLines(csvfilename, Encoding.UTF8);
-            var output = new List<string>(csvFile);
             // Convert each row string to a row list
-            List<List<string>> listListCsv = new List<List<string>>();
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                listListCsv.Add(listCsv);
-            }
+            List<List<string>> listListCsv = CsvHandling.CsvReadData(csvfilename);
 
             // Eldbox is item ID 520. Put that into shops that don't have it
             foreach (var row in listListCsv)
@@ -45,20 +37,23 @@ namespace WOFFRandomizer.Dependencies
                     i += 1;
                 }
             }
-            // Convert List<List<string>> back to List<string> output
-            output = new List<string>();
-            foreach (List<string> row in listListCsv)
-            {
-                output.Add(string.Join(",", row));
-            }
 
-            // Write over the file
-            string newFileOutput = "";
-            foreach (var item in output)
-            {
-                newFileOutput += string.Join(",", item) + Environment.NewLine;
-            }
-            File.WriteAllText(currDir + "/shop_list.csv", newFileOutput);
+            CsvHandling.CsvWriteData(csvfilename, listListCsv);
+
+            //// Convert List<List<string>> back to List<string> output
+            //output = new List<string>();
+            //foreach (List<string> row in listListCsv)
+            //{
+            //    output.Add(string.Join(",", row));
+            //}
+
+            //// Write over the file
+            //string newFileOutput = "";
+            //foreach (var item in output)
+            //{
+            //    newFileOutput += string.Join(",", item) + Environment.NewLine;
+            //}
+            //File.WriteAllText(currDir + "/shop_list.csv", newFileOutput);
         }
     }
 }

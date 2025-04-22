@@ -64,6 +64,8 @@
             label8 = new Label();
             checkBoxStats = new CheckBox();
             toolTipStats = new ToolTip(components);
+            checkBoxFiveBS = new CheckBox();
+            toolTipFiveBS = new ToolTip(components);
             SuspendLayout();
             // 
             // textBox1
@@ -317,11 +319,23 @@
             checkBoxStats.UseVisualStyleBackColor = true;
             checkBoxStats.MouseHover += checkBoxStats_MouseHover;
             // 
+            // checkBoxFiveBS
+            // 
+            checkBoxFiveBS.AutoSize = true;
+            checkBoxFiveBS.Location = new Point(471, 320);
+            checkBoxFiveBS.Name = "checkBoxFiveBS";
+            checkBoxFiveBS.Size = new Size(137, 19);
+            checkBoxFiveBS.TabIndex = 25;
+            checkBoxFiveBS.Text = "Increase Battle Speed";
+            checkBoxFiveBS.UseVisualStyleBackColor = true;
+            checkBoxFiveBS.MouseHover += checkBoxFiveBS_MouseHover;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBoxFiveBS);
             Controls.Add(checkBoxStats);
             Controls.Add(checkBoxMurkrift);
             Controls.Add(checkBoxDoubleExp);
@@ -390,5 +404,7 @@
         private Label label8;
         private CheckBox checkBoxStats;
         private ToolTip toolTipStats;
+        private CheckBox checkBoxFiveBS;
+        private ToolTip toolTipFiveBS;
     }
 }

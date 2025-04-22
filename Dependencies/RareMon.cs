@@ -46,10 +46,29 @@ namespace WOFFRandomizer.Dependencies
             {
                 if (ceslIDs.Contains(row[0]) && !skipRareIDs.Contains(row[0]))
                 {
-                    List<string> lGEXPRow = [row[3], row[79], row[80], row[81], row[82]];
+                    List<string> lGEXPRow = new List<string>();
+                    // Handle Kupicaroon divide by 3 GEXP adjustment here
+                    if (row[0] != "200")
+                    {
+                        lGEXPRow = [row[3], row[79], row[80], row[81], row[82]];
+                    }
+                    else
+                    {
+                        lGEXPRow = [
+                            row[3],
+                            (Int32.Parse(row[79]) / 3).ToString(),
+                            (Int32.Parse(row[80]) / 3).ToString(),
+                            (Int32.Parse(row[81]) / 3).ToString(),
+                            (Int32.Parse(row[82]) / 3).ToString()
+                        ];
+                    }
                     lGEXPData.Add(lGEXPRow);
                 }
             }
+            // Gigantaur/Gigantrot rows are placed at the end for some reason, so the placement is out of order
+            // Re-sort to put the last row in a certain slot in lGEXPData.
+            lGEXPData.Insert(9, lGEXPData[lGEXPData.Count - 1]);
+            lGEXPData.RemoveAt(lGEXPData.Count - 1);
 
             return (eglRareData, lGEXPData);
         }
@@ -92,7 +111,7 @@ namespace WOFFRandomizer.Dependencies
                     eglRareDataIter++;
                 }
             }
-            CsvHandling.CsvWriteData(eglPath, eglData);
+            CsvHandling.CsvWriteDataAddHeadRow(eglPath, eglData, 79);
 
             return shuffledCeslIDsWithlGEXPData;
         }
@@ -124,15 +143,26 @@ namespace WOFFRandomizer.Dependencies
                 if (ceslID != "-1" && ceslID != null)
                 {
                     List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
-                    if (lGEXP[0] == "28") row[3] = "18"; // Set Dragon Scars rare monster level to set level rather than 28 for accessible situations
-                    else row[3] = lGEXP[0];
-                    row[79] = lGEXP[1];
-                    row[80] = lGEXP[2];
-                    row[81] = lGEXP[3];
-                    row[82] = lGEXP[4];
+                    if (lGEXP[0] == "28") // Set Dragon Scars rare monster level to set level rather than 28 for accessible situations
+                    {
+                        row[3] = "20"; 
+                        row[79] = "18000"; // Adjust exp and gil lower too
+                        row[80] = "500";
+                        row[81] = lGEXP[3];
+                        row[82] = lGEXP[4];
+
+                    }
+                    else
+                    {
+                        row[3] = lGEXP[0];
+                        row[79] = lGEXP[1];
+                        row[80] = lGEXP[2];
+                        row[81] = lGEXP[3];
+                        row[82] = lGEXP[4];
+                    }
                 }
             }
-            CsvHandling.CsvWriteData(ceslPath, ceslData);
+            CsvHandling.CsvWriteDataAddHeadRow(ceslPath, ceslData, 84);
         }
 
         private static void AppendToMonsterLog(string currDir, List<string> eglRareIDs, string eglPath)

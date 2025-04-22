@@ -68,6 +68,7 @@ namespace WOFFRandomizer
             DefineCopyAndRemoveFile(basepath, "arena_reward_table_list");
             DefineCopyAndRemoveFile(basepath, "quest_data_sub_reward_table_list");
             DefineCopyAndRemoveFile(basepath, "character_list");
+            DefineCopyAndRemoveFile(basepath, "config_param");
 
             clearLogs();
 

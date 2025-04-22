@@ -11,29 +11,7 @@ using System.Xml;
 namespace WOFFRandomizer.Dependencies
 {
 
-    public static class ListExtensions // https://discussions.unity.com/t/c-adding-multiple-elements-to-a-list-on-one-line/80117/2
-    {
-        public static void AddMany<T>(this List<T> list, params T[] elements)
-        {
-            list.AddRange(elements);
-        }
-
-        public static void Shuffle<T>(this IList<T> list, int seed)
-        {
-            var rng = new Random(seed);
-            int n = list.Count;
-
-            while (n > 1)
-            {
-                n--;
-                int k = rng.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
-
-    }
+    
     internal class Mirageboard
     {
         private static void enemyRandoSetMethod(List<List<string>> listListCsv)
@@ -64,36 +42,19 @@ namespace WOFFRandomizer.Dependencies
 
         }
 
+        // May need a revisit
         public static void modifyForEnemyRandoOnly(string currDir)
         {
             // Get filename to edit
             string csvfilename = Path.Combine(currDir, "mirageboard_data.csv");
 
             // Put all lines of the file into a list to edit
-            var csvFile = File.ReadAllLines(csvfilename, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            List<List<string>> listListCsv = new List<List<string>>();
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                listListCsv.Add(listCsv);
-            }
+            
+            List<List<string>> listListCsv = CsvHandling.CsvReadData(csvfilename);
             enemyRandoSetMethod(listListCsv);
 
-            // convert List<List<string>>listListCsv back to List<string> output
-            output = new List<string>();
-            foreach (List<string> row in listListCsv)
-            {
-                output.Add(string.Join(",", row));
-            }
             // Write over the file
-            string newFileOutput = "";
-            foreach (var item in output)
-            {
-                newFileOutput += string.Join(",", item) + Environment.NewLine;
-            }
-
-            File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
+            CsvHandling.CsvWriteDataAddHeadRow(csvfilename, listListCsv, 20);
         }
 
         private static bool ignoreRows(List<string> row)
@@ -102,14 +63,15 @@ namespace WOFFRandomizer.Dependencies
             List<string> skipAbilities = new List<string>();
             List<string> skipEnemyRandoRows = new List<string>();
             List<string> skipMirages = new List<string>();
-            // ch 1 chocochick must learn joyride (992)
+            // ch 1 chocochick must learn stroll (992)
             // pre ch 6 black nakk must learn sizzle (1262)
             // pre ch 6 mythril giant must learn smash (2251)
             // ch 8 floating eye must learn flutter (4261)
             // pre ch 11 quachacho must learn chill (1592)
             // pre ch 15 searcher must learn zap (5402)
             // Skip to get Tama's Foxfire in case you don't have a fire solution for Sharqual's weight scale issue in Saronia Harbor
-            skipRows.AddMany("62", "992", "1262", "2251", "4261", "1592", "5402");
+            // Skip Bahamut*'s Megaflare. It's too powerful to be on anything but Bahamut*.
+            skipRows.AddMany("62", "992", "1262", "2251", "4261", "1592", "5402", "6596");
             // For use with skipping smash and joyride, as well as other possible abilities
             skipAbilities.AddMany("2003", "2010");
             // For use with enemy randos
@@ -194,7 +156,7 @@ namespace WOFFRandomizer.Dependencies
                 }
             }
         }
-        private static List<string> modifyBoards(List<string> output, string seedvalue, string currDir)
+        private static List<List<string>> modifyBoards(List<List<string>> csvData, string seedvalue, string currDir)
         {
             // statTuples to store each set of three datas that will be randomized
             var statTuples = new List<Tuple<string, string, string>>();
@@ -202,19 +164,13 @@ namespace WOFFRandomizer.Dependencies
             int endData = 7620; // max count of data
             // iterate through each used node and extract the needed values that will be randomized
             // Also convert each row string to a row list
-            List<List<string>> listListCsv = new List<List<string>>();
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                listListCsv.Add(listCsv);
-            }
-            foreach (List<string> row in listListCsv)
+            foreach (List<string> row in csvData)
             {
 
-                int i = listListCsv.FindIndex(str => str == row);
+                int i = csvData.FindIndex(str => str == row);
                 if (i >= startData && i <= endData)
                 {
-                    if (ignoreRows(listListCsv[i]))
+                    if (ignoreRows(csvData[i]))
                     {
                         continue;
                     }
@@ -227,51 +183,41 @@ namespace WOFFRandomizer.Dependencies
 
             int sTIter = 0;
             // iterate through each row and place the values back in
-            foreach (List<string> row in listListCsv)
+            foreach (List<string> row in csvData)
             {
-                int i = listListCsv.FindIndex(str => str == row);
+                int i = csvData.FindIndex(str => str == row);
                 if (i >= startData && i <= endData)
                 {
-                    if (ignoreRows(listListCsv[i]))
+                    if (ignoreRows(csvData[i]))
                     {
                         continue;
                     }
-                    listListCsv[i][7] = statTuples[sTIter].Item1;
-                    listListCsv[i][8] = statTuples[sTIter].Item2;
-                    listListCsv[i][11] = statTuples[sTIter].Item3;
+                    csvData[i][7] = statTuples[sTIter].Item1;
+                    csvData[i][8] = statTuples[sTIter].Item2;
+                    csvData[i][11] = statTuples[sTIter].Item3;
                     sTIter += 1;
 
                 }
             }
-
-            // convert List<List<string>>listListCsv back to List<string> output
-            output = new List<string>();
-            foreach (List<string> row in listListCsv)
-            {
-                output.Add(string.Join(",", row));
-            }
-
+            
             // Write to mirageboard_log.txt
-            WriteToMirageboardLog(listListCsv, currDir);
+            WriteToMirageboardLog(csvData, currDir);
 
-            return output;
+            return csvData;
         }
 
-        private static List<string> ModifyCapList(List<string> output)
+        private static List<List<string>> ModifyCapList(List<List<string>> capData)
         {
-            var newOutput = new List<string>();
             // Col 47 is the AP cost
-            foreach (var row in output)
+            foreach (var row in capData)
             {
-                List<string> listCsv = row.Split(",").ToList();
-                if (Int32.Parse(listCsv[47]) > 12)
+                if (Int32.Parse(row[47]) > 12)
                 {
-                    listCsv[47] = "12";
+                    row[47] = "12";
                 }
-                newOutput.Add(string.Join(",", listCsv));
             }
 
-            return newOutput;
+            return capData;
         }
 
         public static void mirageboard_dataWriteCsv(string currDir, string seedvalue, RichTextBox log)
@@ -282,35 +228,21 @@ namespace WOFFRandomizer.Dependencies
             string capPath = Path.Combine(currDir, "command_ability_param.csv");
 
             // Put all lines of the file into a list to edit
-            var csvFile = File.ReadAllLines(csvfilename, Encoding.UTF8);
-            var output = new List<string>(csvFile);
+            List<List<string>> mbData = CsvHandling.CsvReadData(csvfilename);
 
-            var csvCapFile = File.ReadAllLines(capPath, Encoding.UTF8);
-            var outputCapFile = new List<string>(csvCapFile);
+            List<List<string>> capData = CsvHandling.CsvReadData(capPath);
 
             // Edit the list
-            output = modifyBoards(output, seedvalue, currDir);
+            mbData = modifyBoards(mbData, seedvalue, currDir);
 
             // Reduce costs of AP for abilities above 12 to 12 (only applies to 4 abilities, I think)
-            outputCapFile = ModifyCapList(outputCapFile);
+            capData = ModifyCapList(capData);
 
             // Write over the file
-            string newFileOutput = "";
-            foreach (var item in output)
-            {
-                newFileOutput += string.Join(",", item) + Environment.NewLine;
-            }
-
-            File.WriteAllText(currDir + "/mirageboard_data.csv", newFileOutput);
+            CsvHandling.CsvWriteDataAddHeadRow(csvfilename,mbData, 20);
 
             // Write over the file
-            string newCapFileOutput = "";
-            foreach (var item in outputCapFile)
-            {
-                newCapFileOutput += string.Join(",", item) + Environment.NewLine;
-            }
-
-            File.WriteAllText(currDir + "/command_ability_param.csv", newCapFileOutput);
+            CsvHandling.CsvWriteDataAddHeadRow(capPath, capData, 158);
 
 
         }

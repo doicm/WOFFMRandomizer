@@ -110,7 +110,7 @@ namespace WOFFRandomizer.Dependencies
             float agiGrowth = CheckFloatOrIntAndConvert(row[27]);
 
             // make exceptions for XL, flans, skull eater
-            List<string> XLList = ["7038", "7044", "7056", "7070", "7082", "7085", "7126", "7154", "7175", "7176", 
+            List<string> XLList = ["7038", "7044", "7056", "7070", "7082", "7085", "7126", "7154", "7175", "7176",
                 "7190", "7213", "7214", "7215", "7216"];
             List<string> flanList = ["7112", "7114", "7115", "7116"];
             string skullEater = "7074";
@@ -201,6 +201,7 @@ namespace WOFFRandomizer.Dependencies
             // 8028 is the last mirage to deal with
 
             // Use the pokemon BST method, I guess
+            // This csv doesn't like the first row being taken out, so I need to consider that
             List<List<string>> clData = CsvHandling.CsvReadData(clPath);
 
             // Set random based on the seed value
@@ -213,9 +214,10 @@ namespace WOFFRandomizer.Dependencies
                 if (!exceptionList.Contains(clID) && Int32.Parse(clID) >= 7000 && Int32.Parse(clID) <= 8028)
                 {
                     clData[i] = SetStats(clData[i], fixRand);
+                    break;
                 }
             }
-            CsvHandling.CsvWriteData(clPath, clData);
+            CsvHandling.CsvWriteDataAddHeadRow(clPath, clData, 109);
 
         }
     }

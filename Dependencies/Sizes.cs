@@ -24,19 +24,12 @@ namespace WOFFRandomizer.Dependencies
             // The sizes seem to have accompanying balance values for each mirage, which I'll include as a List of strings
 
             // First, put everything into a list of csvs
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(crlPath, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
+            List<List<string>> csvData = CsvHandling.CsvReadData(crlPath);
 
             // Iterate through each row of data, inserting into sizesList the needed information, starting at row 124
             int crlIDIter = 124;
             // List of rows to skip if ID matches something that's invalid, usually a boss or XL
-            List<int> exceptionList = [150, 161, 164, 167, 180, 188, 196, 208, 211, 212, 226, 240, 253, 254, 262, 284, 292, 297, 300, 301, 305, 308, 309, 
+            List<int> exceptionList = [150, 161, 164, 167, 178, 180, 188, 194, 196, 208, 211, 212, 226, 240, 253, 254, 262, 284, 292, 297, 300, 301, 305, 308, 309,
             316, 319, 329, 330, 331, 332, 333, 334, 348, 349, 350, 351, 361, 362, 363, 364, 365, 383, 387];
             while (crlIDIter < csvData.Count)
             {
@@ -57,14 +50,7 @@ namespace WOFFRandomizer.Dependencies
         private static void InsertShuffledSizesList(List<((string, string), List<string>)> shuffledSizesList, string crlPath)
         {
             // First, put everything into a list of csvs
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(crlPath, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
+            List<List<string>> csvData = CsvHandling.CsvReadData(crlPath);
 
             // Iterate through each row of data, inserting back into the data the needed information, starting at row 124
             int crlIDIter = 124;
@@ -75,17 +61,25 @@ namespace WOFFRandomizer.Dependencies
             316, 319, 329, 330, 331, 332, 333, 334, 348, 349, 350, 351, 361, 362, 363, 364, 365, 383, 387];
 
             string toWrite = "";
+            // First, write the header row. 
+            for (int i = 0; i < 66; i++)
+            {
+                toWrite += "0xA0";
+                if (i == 66 - 1) toWrite += Environment.NewLine;
+                else toWrite += "|";
+            }
+            // Start at 1 to exclude the header row
             for (int i = 0; i < csvData.Count; i++)
             {
 
                 if (i < crlIDIter)
                 {
-                    toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
+                    toWrite += string.Join("|", csvData[i]) + Environment.NewLine;
                     continue;
                 }
                 if (exceptionList.Contains(crlIDIter))
                 {
-                    toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
+                    toWrite += string.Join("|", csvData[i]) + Environment.NewLine;
                     crlIDIter++;
                     continue;
                 }
@@ -93,7 +87,7 @@ namespace WOFFRandomizer.Dependencies
                 //csvData[i][2] = shuffledSizesList[sSLIter].Item1.Item2;
                 csvData[i][19] = shuffledSizesList[sSLIter].Item2[0];
                 //csvData[i][20] = shuffledSizesList[sSLIter].Item2[1];
-                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
+                toWrite += string.Join("|", csvData[i]) + Environment.NewLine;
                 sSLIter++;
                 crlIDIter++;
             }
@@ -103,17 +97,17 @@ namespace WOFFRandomizer.Dependencies
         private static void RemoveComplexTowerAnimations(string capPath, string basepath)
         {
             // First, put everything into a list of csvs
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(capPath, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
+            List<List<string>> csvData = CsvHandling.CsvReadData(capPath);
 
             // rewrite ability_list.csv to have complex L tower abilities be different
             string toWrite = "";
+            // First, write the header row. 
+            for (int i = 0; i < 158; i++)
+            {
+                toWrite += "0xA0";
+                if (i == 158 - 1) toWrite += Environment.NewLine;
+                else toWrite += "|";
+            }
             for (int i = 0; i < csvData.Count; i++)
             {
                 if (csvData[i][2].Contains("Lタワー")) // if row is a special stack ability
@@ -122,7 +116,7 @@ namespace WOFFRandomizer.Dependencies
                     csvData[i][8] = "-1";
                     csvData[i][26] = "0";
                 }
-                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
+                toWrite += string.Join("|", csvData[i]) + Environment.NewLine;
             }
             File.WriteAllText(capPath, toWrite);
 

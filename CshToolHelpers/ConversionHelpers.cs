@@ -5,6 +5,7 @@ namespace CshToolHelpers
 {
     internal class ConversionHelpers
     {
+        #region -csv
         public static void ConvertToCsv(string cshFile)
         {
             var cshVars = new CshVariables();
@@ -78,14 +79,13 @@ namespace CshToolHelpers
                     }
 
                     cshVars.FieldCount = dcmpCshReader.ReadBytesUInt32(true);
-                    cshVars.RowsCount = dcmpCshReader.ReadBytesUInt32(true) - 1;
+                    cshVars.RowsCount = dcmpCshReader.ReadBytesUInt32(true);
 
                     Console.WriteLine($"Field Count: {cshVars.FieldCount}");
                     Console.WriteLine($"Rows Count: {cshVars.RowsCount}");
                     Console.WriteLine("");
 
-                    // Jump to entries position
-                    var entryTablePos = dcmpCshReader.BaseStream.Position += cshVars.FieldCount * 8;
+                    var entryTablePos = dcmpCshReader.BaseStream.Position;
 
                     // Read each entry and write to a csv file
                     var outCsvFile = Path.Combine(Path.GetDirectoryName(cshFile), Path.GetFileNameWithoutExtension(cshFile) + ".csv");
@@ -95,7 +95,7 @@ namespace CshToolHelpers
                         File.Delete(outCsvFile);
                     }
 
-                    using (var csvWriter = new StreamWriter(outCsvFile, true, System.Text.Encoding.UTF8))
+                    using (var csvWriter = new StreamWriter(outCsvFile, true, Encoding.UTF8))
                     {
                         var currentPos = entryTablePos;
 
@@ -117,7 +117,7 @@ namespace CshToolHelpers
                                 {
                                     // string
                                     case 0:
-                                        cshVars.EntryOnCSV += System.Text.Encoding.UTF8.GetString(cshVars.EntryData.ToArray()).Replace("\0", "");
+                                        cshVars.EntryOnCSV += Encoding.UTF8.GetString(cshVars.EntryData.ToArray()).Replace("\0", "");
                                         break;
 
                                     // int
@@ -147,11 +147,16 @@ namespace CshToolHelpers
                                     // empty
                                     case 192:
                                         break;
+
+                                    // unknown
+                                    default:
+                                        cshVars.EntryOnCSV += $"0x{cshVars.EntryDataType.ToString("X2")}";
+                                        break;
                                 }
 
                                 if (j != cshVars.FieldCount - 1)
                                 {
-                                    cshVars.EntryOnCSV += ",";
+                                    cshVars.EntryOnCSV += cshVars.CSVDelimiter;
                                 }
 
                                 cshVars.EntryData.Clear();
@@ -171,8 +176,10 @@ namespace CshToolHelpers
             Console.WriteLine("");
             Console.WriteLine("Finished writing csh data to csv file");
         }
+        #endregion
 
 
+        #region -csh
         public static void ConvertToCsh(string csvFile)
         {
             var cshVars = new CshVariables();
@@ -184,7 +191,7 @@ namespace CshToolHelpers
                 SupportMethods.ErrorExit("Specified csv file is empty!");
             }
 
-            cshVars.FieldCount = (uint)csvData[0].Split(',').Length;
+            cshVars.FieldCount = (uint)csvData[0].Split(cshVars.CSVDelimiter).Length;
             cshVars.RowsCount = (uint)csvData.Length;
 
             Console.WriteLine($"Field Count: {cshVars.FieldCount}");
@@ -205,15 +212,7 @@ namespace CshToolHelpers
                     _ = preCmpHeaderWriter.BaseStream.Position = 0;
                     preCmpHeaderWriter.WriteBytesUInt32(cshVars.DcmpMagic, true);
                     preCmpHeaderWriter.WriteBytesUInt32(cshVars.FieldCount, true);
-                    preCmpHeaderWriter.WriteBytesUInt32(cshVars.RowsCount + 1, true);
-
-                    for (int i = 0; i < cshVars.FieldCount; i++)
-                    {
-                        preCmpHeaderWriter.WriteBytesUInt32(cshVars.FirstTableReserved, true);
-                        preCmpHeaderWriter.Write(cshVars.FirstTableUnkVal);
-                        preCmpHeaderWriter.Write(cshVars.FirstTableReservedArray);
-                    }
-
+                    preCmpHeaderWriter.WriteBytesUInt32(cshVars.RowsCount, true);
                     headerSize = preCmpHeaderWriter.BaseStream.Length;
 
                     preCmpHeaderStream.Seek(0, SeekOrigin.Begin);
@@ -241,10 +240,10 @@ namespace CshToolHelpers
 
                     foreach (var entryData in csvData)
                     {
-                        currentEntryData = entryData.Split(',');
+                        currentEntryData = entryData.Split(cshVars.CSVDelimiter);
 
                         cshVars.EntryData = new List<byte>();
-                       
+
                         foreach (var entryField in currentEntryData)
                         {
                             byte[] currentEntryDataBytes = Array.Empty<byte>();
@@ -264,8 +263,8 @@ namespace CshToolHelpers
                                 cshVars.EntryDataSizeMultiplier = 1;
                                 currentEntryDataBytes = BitConverter.GetBytes(cshVars.EntryFloatValue);
                                 Array.Reverse(currentEntryDataBytes);
-                                offset += 4;                                
-                            } 
+                                offset += 4;
+                            }
                             else if (int.TryParse(entryField, NumberStyles.Integer, CultureInfo.InvariantCulture, out cshVars.EntryIntValue) == true)
                             {
                                 // int
@@ -278,34 +277,44 @@ namespace CshToolHelpers
                             }
                             else
                             {
-                                // string
-                                cshVars.EntryDataOffset = (uint)offset;
-                                cshVars.EntryDataType = 0;
-
-                                cshVars.EntryStringVal = entryField + "\0";
-                                var currentEntryStringList = Encoding.UTF8.GetBytes(cshVars.EntryStringVal).ToList();
-                                var currentEntryStringValSize = currentEntryStringList.Count;
-
-                                if (currentEntryStringValSize % 4 != 0)
+                                if (entryField.StartsWith("0x"))
                                 {
-                                    var remainder = currentEntryStringValSize % 4;
-                                    var increaseAmount = 4 - remainder;
-                                    currentEntryStringValSize += increaseAmount;
-
-                                    for (int p = 0; p < increaseAmount; p++)
-                                    {
-                                        currentEntryStringList.Add(0x00);
-                                    }
-
-                                    cshVars.EntryDataSizeMultiplier = (ushort)(currentEntryStringValSize / 4);
+                                    // unknown
+                                    cshVars.EntryDataOffset = 0;
+                                    cshVars.EntryDataType = Convert.ToByte(entryField.Substring(2), 16);
+                                    cshVars.EntryDataSizeMultiplier = 0;
                                 }
                                 else
                                 {
-                                    cshVars.EntryDataSizeMultiplier = (ushort)(currentEntryStringValSize / 4);
-                                }
+                                    // string
+                                    cshVars.EntryDataOffset = (uint)offset;
+                                    cshVars.EntryDataType = 0;
 
-                                offset += currentEntryStringValSize;
-                                currentEntryDataBytes = currentEntryStringList.ToArray();
+                                    cshVars.EntryStringVal = entryField + "\0";
+                                    var currentEntryStringList = Encoding.UTF8.GetBytes(cshVars.EntryStringVal).ToList();
+                                    var currentEntryStringValSize = currentEntryStringList.Count;
+
+                                    if (currentEntryStringValSize % 4 != 0)
+                                    {
+                                        var remainder = currentEntryStringValSize % 4;
+                                        var increaseAmount = 4 - remainder;
+                                        currentEntryStringValSize += increaseAmount;
+
+                                        for (int p = 0; p < increaseAmount; p++)
+                                        {
+                                            currentEntryStringList.Add(0x00);
+                                        }
+
+                                        cshVars.EntryDataSizeMultiplier = (ushort)(currentEntryStringValSize / 4);
+                                    }
+                                    else
+                                    {
+                                        cshVars.EntryDataSizeMultiplier = (ushort)(currentEntryStringValSize / 4);
+                                    }
+
+                                    offset += currentEntryStringValSize;
+                                    currentEntryDataBytes = currentEntryStringList.ToArray();
+                                }
                             }
 
                             preCmpEntryTableWriter.WriteBytesUInt32(cshVars.EntryDataOffset, true);
@@ -382,10 +391,10 @@ namespace CshToolHelpers
                 cshStreamWriter.WriteBytesUInt32(cshVars.CmpUnkVal, true);
                 cshStreamWriter.WriteBytesUInt32(cshVars.CmpUnkVal2, true);
                 cshStreamWriter.WriteBytesUInt32(cshVars.CmpUnkVal3, true);
-                PadReservedBytes(cshStreamWriter, 6, cshVars);
+                PadReservedBytes(cshStreamWriter, 6);
 
                 cshStreamWriter.WriteBytesUInt32(cshVars.CmpUnkVal4, true);
-                PadReservedBytes(cshStreamWriter, 21, cshVars);
+                PadReservedBytes(cshStreamWriter, 21);
 
                 cshStreamWriter.Write(Encoding.UTF8.GetBytes(cshVars.CmpZLIBMagic));
                 cshStreamWriter.WriteBytesUInt32(cshVars.DcmpSize, true);
@@ -401,12 +410,13 @@ namespace CshToolHelpers
         }
 
 
-        private static void PadReservedBytes(BinaryWriter cshStreamWriter, int padAmount, CshVariables cshVars)
+        private static void PadReservedBytes(BinaryWriter cshStreamWriter, int padAmount)
         {
             for (int l = 0; l < padAmount; l++)
             {
                 cshStreamWriter.WriteBytesUInt32(0, false);
             }
         }
+        #endregion
     }
 }

@@ -9,37 +9,14 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class QuOrArenaPrizes
     {
-
-        private static List<List<string>> CsvReadData(string path)
-        {
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(path, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
-
-            return csvData;
-        }
-        private static void CsvWriteData (string path, List<List<string>> csvData)
-        {
-            string toWrite = "";
-            for (int i = 0; i < csvData.Count; i++)
-            {
-                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
-            }
-            File.WriteAllText(path, toWrite);
-        }
         private static List<(string, List<(string, string)>)> CollectRewardsList (string interventionPath, string arenaPath)
         {
             List<(string, List<(string, string)>)> rewardsList = new List<(string, List<(string, string)>)> ();
             
             // First, put everything into a list of csvs. Start with interventionPath, then do arenaPath
             // it's going to be easier to put them into two separate lists
-            List<List<string>> csvDataIntervention = CsvReadData(interventionPath);
-            List<List<string>> csvDataArena = CsvReadData(arenaPath);
+            List<List<string>> csvDataIntervention = CsvHandling.CsvReadData(interventionPath);
+            List<List<string>> csvDataArena = CsvHandling.CsvReadData(arenaPath);
 
             List<int> interventionException = [16, 17, 26, 27, 30, 31, 36, 38];
             int interventionIter = 0;
@@ -105,12 +82,13 @@ namespace WOFFRandomizer.Dependencies
         {
             // First, put everything into a list of csvs. Start with interventionPath, then do arenaPath
             // it's going to be easier to put them into two separate lists
-            List<List<string>> csvDataIntervention = CsvReadData(interventionPath);
-            List<List<string>> csvDataArena = CsvReadData(arenaPath);
+            List<List<string>> csvDataIntervention = CsvHandling.CsvReadData(interventionPath);
+            List<List<string>> csvDataArena = CsvHandling.CsvReadData(arenaPath);
             // iterator for list allIndividualRewards
             int aIRIter = 0;
 
             List<int> interventionException = [16, 17, 26, 27, 30, 31, 36, 38];
+            // New cshtoolhelpers adds a row at the beginning. Get rid of that first row for both read rows
             int interventionIter = 0;
             // Go up to 49 for intervention quests. After that, it's either repeats or NPC quests
             while (interventionIter < 50)
@@ -150,8 +128,8 @@ namespace WOFFRandomizer.Dependencies
             }
 
             // Write the new data to the csv files.
-            CsvWriteData(interventionPath, csvDataIntervention);
-            CsvWriteData(arenaPath, csvDataArena);
+            CsvHandling.CsvWriteData(interventionPath, csvDataIntervention);
+            CsvHandling.CsvWriteData(arenaPath, csvDataArena);
 
             // Write data to a log
             WriteToQuestLog(currDir, csvDataIntervention, csvDataArena);

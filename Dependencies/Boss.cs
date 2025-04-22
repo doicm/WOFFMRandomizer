@@ -10,32 +10,9 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class Boss
     {
-        private static List<List<string>> CsvReadData(string path)
-        {
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(path, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
-
-            return csvData;
-        }
-        private static void CsvWriteData(string path, List<List<string>> csvData)
-        {
-            string toWrite = "";
-            for (int i = 0; i < csvData.Count; i++)
-            {
-                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
-            }
-            File.WriteAllText(path, toWrite);
-        }
-
         private static (List<List<string>>, List<List<string>>) GetEglDataAndlGEXPData(string eglPath, string ceslPath, List<string> eglBossIDs)
         {
-            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
             List<List<string>> lGEXPData = new List<List<string>>();
 
             List<List<string>> eglBossData = new List<List<string>>();
@@ -66,7 +43,7 @@ namespace WOFFRandomizer.Dependencies
             // Now get the lGEXPData. Make groupings of similar enemies
             List<string> skipBossIDs = ["151", "164", "185", "272", "301", "323", "324", "327", "328", "350",
                 "351", "352", "354"]; // These are duplicate entries in terms of lGEXP
-            List<List<string>> ceslData = CsvReadData(ceslPath);
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
             foreach (var row in ceslData)
             {
                 if (ceslIDs.Contains(row[0]) && !skipBossIDs.Contains(row[0]))
@@ -85,7 +62,7 @@ namespace WOFFRandomizer.Dependencies
         private static List<(string, List<string>)> InsertEglData(string eglPath, List<List<string>> eglBossData, List<string> eglBossIDs,
             List<List<string>> lGEXPData)
         {
-            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
             int eglBossDataIter = 0;
             List<(string, List<string>)> shuffledCeslIDsWithlGEXPData = new List<(string, List<string>)>();
             List<string> shuffledCeslIDs = new List<string>();
@@ -121,17 +98,21 @@ namespace WOFFRandomizer.Dependencies
                     eglBossDataIter++;
                 }
             }
-            CsvWriteData(eglPath, eglData);
+            CsvHandling.CsvWriteDataAddHeadRow(eglPath, eglData, 79);
 
             return shuffledCeslIDsWithlGEXPData;
         }
 
         private static void InsertlGEXPData(string ceslPath, List<(string, List<string>)> pairedCeslIDsWithlGEXP)
         {
-            List<List<string>> ceslData = CsvReadData(ceslPath);
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
             // If ID matches in a grouping, apply same lGEXPData
             List<List<string>> bossGroupings = [["152", "151"],["165", "164"], ["184", "185"], ["271", "272"], ["300", "301"], ["322", "323", "324"],
                 ["326", "327", "328"], ["349", "350", "351"], ["353", "352"], ["355", "354"]];
+
+            // Make two lists, one where exp/gil is cut by 1/4 (for adds in fights) and one where exp/gil is cut by 1/3 (for Kupirates). TODO
+            List<string> exceptionListQuart = ["185", "301", "327", "328"];
+            List<string> exceptionListThird = ["196"];
 
             // Pair the groupings with the lGEXPdata
             foreach (var group in bossGroupings)
@@ -152,15 +133,37 @@ namespace WOFFRandomizer.Dependencies
                 string ceslID = pairedCeslIDsWithlGEXP.Find(x => x.Item1 == row[0]).Item1;
                 if (ceslID != "-1" && ceslID != null)
                 {
-                    List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
-                    row[3] = lGEXP[0];
-                    row[79] = lGEXP[1];
-                    row[80] = lGEXP[2];
-                    row[81] = lGEXP[3];
-                    row[82] = lGEXP[4];
+                    if (exceptionListQuart.Contains(ceslID))
+                    {
+                        List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
+                        row[3] = lGEXP[0];
+                        row[79] = (Int32.Parse(lGEXP[1]) / 4).ToString();
+                        row[80] = (Int32.Parse(lGEXP[2]) / 4).ToString();
+                        row[81] = (Int32.Parse(lGEXP[3]) / 4).ToString();
+                        row[82] = (Int32.Parse(lGEXP[4]) / 4).ToString();
+                    }
+                    else if (exceptionListThird.Contains(ceslID))
+                    {
+                        List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
+                        row[3] = lGEXP[0];
+                        row[79] = (Int32.Parse(lGEXP[1]) / 3).ToString();
+                        row[80] = (Int32.Parse(lGEXP[2]) / 3).ToString();
+                        row[81] = (Int32.Parse(lGEXP[3]) / 3).ToString();
+                        row[82] = (Int32.Parse(lGEXP[4]) / 3).ToString();
+                    }
+                    else
+                    {
+                        List<string> lGEXP = pairedCeslIDsWithlGEXP[iter++].Item2;
+                        row[3] = lGEXP[0];
+                        row[79] = lGEXP[1];
+                        row[80] = lGEXP[2];
+                        row[81] = lGEXP[3];
+                        row[82] = lGEXP[4];
+                    }
+                        
                 }
             }
-            CsvWriteData(ceslPath, ceslData);
+            CsvHandling.CsvWriteData(ceslPath, ceslData);
         }
 
         private static void AppendToMonsterLog(string currDir, List<string> eglBossIDs, string eglPath)
@@ -168,7 +171,7 @@ namespace WOFFRandomizer.Dependencies
             string logPath = Path.Combine(currDir, "logs", "monster_log.txt");
             List<string> charsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "enemy_names.txt"))];
 
-            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
 
             string currentText = File.ReadAllText(logPath);
 

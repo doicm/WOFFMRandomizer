@@ -14,29 +14,6 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class Enemy
     {
-        private static List<List<string>> CsvReadData(string path)
-        {
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(path, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
-
-            return csvData;
-        }
-        private static void CsvWriteData(string path, List<List<string>> csvData)
-        {
-            string toWrite = "";
-            for (int i = 0; i < csvData.Count; i++)
-            {
-                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
-            }
-            File.WriteAllText(path, toWrite);
-        }
-
         private static (Dictionary<string, List<string>>, List<List<string>>, List<Tuple<string, string, string, string, string>>)
             bestiaryTraversal(List<List<string>> EGLoutput, List<List<string>> CESLoutput, Dictionary<string, List<string>> enemiesDict,
             List<List<string>> ceslRowData, List<Tuple<string, string, string, string, string>> levelsGEXP, int start, int end, string currDir)
@@ -198,7 +175,8 @@ namespace WOFFRandomizer.Dependencies
                             row[2] = eDictShuffled[key][3];
                             // ability
                             row[11] = eDictShuffled[key][12];
-                            // capture hint
+                            // capture terms and hint
+                            row[46] = eDictShuffled[key][47];
                             row[49] = eDictShuffled[key][50];
                         }
                         else
@@ -395,9 +373,9 @@ namespace WOFFRandomizer.Dependencies
             string ceslPath = Path.Combine(currDir, "character_enemy_status_list.csv");
             string mpPath = Path.Combine(currDir, "monster_place.csv");
 
-            List<List<string>> MPoutput = CsvReadData(mpPath);
-            List<List<string>> EGLoutput = CsvReadData(eglPath);
-            List<List<string>> CESLoutput = CsvReadData(ceslPath);
+            List<List<string>> MPoutput = CsvHandling.CsvReadData(mpPath);
+            List<List<string>> EGLoutput = CsvHandling.CsvReadData(eglPath);
+            List<List<string>> CESLoutput = CsvHandling.CsvReadData(ceslPath);
             // enemies dictionary to hold the final set of enemies
             Dictionary<string, List<string>> enemiesDict = new Dictionary<string, List<string>>();
             // ceslRowData list to hold the ceslRowData in order and to apply to the enemies dictionary after randomization
@@ -438,8 +416,8 @@ namespace WOFFRandomizer.Dependencies
             // Write to EGLoutput second, changing the other values
             EGLoutput = eglOutputModify(EGLoutput, eDictShuffled, currDir);
 
-            CsvWriteData(eglPath, EGLoutput);
-            CsvWriteData(ceslPath, CESLoutput);
+            CsvHandling.CsvWriteData(eglPath, EGLoutput);
+            CsvHandling.CsvWriteData(ceslPath, CESLoutput);
             
             // Read and modify the current values in the monster_log
             // Going to have to do a traversal post-shuffle
@@ -460,6 +438,15 @@ namespace WOFFRandomizer.Dependencies
                 log.AppendText("Modifying mirage maps....\n");
                 MonMap.ModifyMonsterPlaceAndMonsterLog(currDir);
             }
+            // Write extra row back into cesl and egl
+            string eglPath = Path.Combine(currDir, "enemy_group_list.csv");
+            string ceslPath = Path.Combine(currDir, "character_enemy_status_list.csv");
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
+
+            CsvHandling.CsvWriteDataAddHeadRow(eglPath, eglData, 79);
+            CsvHandling.CsvWriteDataAddHeadRow(ceslPath, ceslData, 84);
+
 
             //writeCsv(currDir + "/enemy_group_list.csv", EGLoutput);
             //writeCsv(currDir + "/character_enemy_status_list.csv", CESLoutput);

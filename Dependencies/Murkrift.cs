@@ -10,32 +10,9 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class Murkrift
     {
-        private static List<List<string>> CsvReadData(string path)
-        {
-            List<List<string>> csvData = new List<List<string>>();
-            var csvFile = File.ReadAllLines(path, Encoding.UTF8);
-            var output = new List<string>(csvFile);
-            foreach (var row in output)
-            {
-                List<string> listCsv = row.Split(",").ToList();
-                csvData.Add(listCsv);
-            }
-
-            return csvData;
-        }
-        private static void CsvWriteData(string path, List<List<string>> csvData)
-        {
-            string toWrite = "";
-            for (int i = 0; i < csvData.Count; i++)
-            {
-                toWrite += string.Join(",", csvData[i]) + Environment.NewLine;
-            }
-            File.WriteAllText(path, toWrite);
-        }
-
         private static (List<List<string>>, List<List<string>>) GetEglDataAndlGEXPData(string eglPath, string ceslPath, List<string> eglMurkIDs)
         {
-            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
             List<List<string>> lGEXPData = new List<List<string>>();
 
             List<List<string>> eglMurkData = new List<List<string>>();
@@ -66,7 +43,7 @@ namespace WOFFRandomizer.Dependencies
             // Now get the lGEXPData. Make groupings of similar enemies
             //List<List<string>> murkGroupings = [["316", "317"], ["606", "607", "608", "609", "610", "611"], ["1138", "1139"], ["1140", "1141", "1142"]];
             List<string> skipMurkIDs = ["317", "607", "608", "609", "610", "611", "1139", "1141", "1142"]; // These are duplicate entries in terms of lGEXP
-            List<List<string>> ceslData = CsvReadData(ceslPath);
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
             foreach (var row in ceslData)
             {
                 if (ceslIDs.Contains(row[0]) && !skipMurkIDs.Contains(row[0]))
@@ -82,7 +59,7 @@ namespace WOFFRandomizer.Dependencies
         private static List<(string, List<string>)> InsertEglData(string eglPath, List<List<string>> eglMurkData, List<string> eglMurkIDs, 
             List<List<string>> lGEXPData)
         {
-            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
             int eglMurkDataIter = 0;
             List<(string, List<string>)> shuffledCeslIDsWithlGEXPData = new List<(string, List<string>)> ();
             List<string> shuffledCeslIDs = new List<string>();
@@ -117,14 +94,14 @@ namespace WOFFRandomizer.Dependencies
                     eglMurkDataIter++;
                 }
             }
-            CsvWriteData(eglPath, eglData);
+            CsvHandling.CsvWriteDataAddHeadRow(eglPath, eglData, 79);
 
             return shuffledCeslIDsWithlGEXPData;
         }
 
         private static void InsertlGEXPData(string ceslPath, List<(string, List<string>)> pairedCeslIDsWithlGEXP)
         {
-            List<List<string>> ceslData = CsvReadData(ceslPath);
+            List<List<string>> ceslData = CsvHandling.CsvReadData(ceslPath);
             // If ID matches in a grouping, apply same lGEXPData
             List<List<string>> murkGroupings = [["316", "317"], ["1138", "1139"], ["1140", "1141", "1142"]];
 
@@ -155,7 +132,7 @@ namespace WOFFRandomizer.Dependencies
                     row[82] = lGEXP[4];
                 }
             }
-            CsvWriteData(ceslPath, ceslData);
+            CsvHandling.CsvWriteDataAddHeadRow(ceslPath, ceslData, 84);
         }
 
         private static void AppendToMonsterLog(string currDir, List<string> eglMurkIDs, string eglPath)
@@ -163,7 +140,7 @@ namespace WOFFRandomizer.Dependencies
             string logPath = Path.Combine(currDir, "logs", "monster_log.txt");
             List<string> charsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "enemy_names.txt"))];
 
-            List<List<string>> eglData = CsvReadData(eglPath);
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
 
             string currentText = File.ReadAllText(logPath);
 
