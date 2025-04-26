@@ -8,7 +8,7 @@ and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 =====================================================================
-0.1.8
+0.1.9
 
 Notes:
 =====================================================================
@@ -69,18 +69,34 @@ includes the Tama quest. ??? mementos are no longer hidden.
 that each mirage has. This may affect enemies as well as mirage allies.
 This only randomizes HP, Str, Def, Mag, MDef, and Agi.
 
-There are also the following features for QoL or for fun:
+There are also the following optional features for QoL or for fun:
 
 - **Double Exp and Gil Earned:** This doubles experience and gil
 earned in all battles.
 - **Increase Battle Speed:** This multiplies the battle speed at 
 setting 3. Wait setting recommended.
+- **Double movement speed:** This doubles movement speed for both
+unmounted and mounted. WARNING: If you are mounted in Sunken Temple
+and Castle Exnine, you may fall off the stage. If you do, try to
+navigate to a platform's z-axis (y-axis?) to get back.
+
+These QoL features are automatically included:
+
+- **Skip intro cutscene option between Ch1-Ch2:** You can pause
+and skip this cutscene now.
+- **Lure and Stealth Mirajewels at beginning:** The Lure Mirajewel
+is included in Tama's mirageboard, and the Stealth Mirajewel is
+included in Sylph's mirageboard. You can unlock them at 1 cost.
 
 Instructions:
 =====================================================================
 Find the latest release in the releases section on Github, then
 download the zip and extract it to a destination of your choosing.
 Run WOFFRandomizer.exe and follow the directions for installing. 
+
+You can verify installation when running the game by checking the
+top-left of the title screen and seeing if it shows the randomizer
+version and seed value. If it does, it should have installed.
 
 If you run into issues with uninstalling, you should be able to 
 restore your files by verifying your files on Steam. Hopefully
@@ -95,6 +111,14 @@ can break things.
 
 Changelog:
 =====================================================================
+2025-26-4 - 0.1.9 - Added double movement speed QoL and Lure/Stealth
+mirajewels on mirageboard. Added toggle for Libra mirajewel at first
+mirajewel chest. Can now lose to Yuna/Valefor fight. Randomizer
+version and seed now viewable on title screen. Fixed game crashing
+issue with intervention/coliseum rewards. Changed mirageboard node
+randomizer behavior. Added some enemies to random enemy rando.
+Increased Kupirate boss fight exp.
+
 2025-22-4 - 0.1.8 - Added option for increased battle speed. Added
 cutscene skip for intro cutscene between chapters 1 & 2. Fixed
 prismtunity for first "Mu" encounter slot. Returned Megaflare to
