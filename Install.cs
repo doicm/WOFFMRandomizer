@@ -101,6 +101,17 @@ namespace WOFFRandomizer
             File.Delete(fileThatWasEdited);
         }
 
+        private static void copyBackAndDeleteOtherCshCsv(string basepath, string currDir, string path, string name)
+        {
+            string sourceCSH = Path.GetFullPath(basepath + path + name + ".csh");
+            string csvThatWasEdited = Path.GetFullPath(currDir + "/" + name + ".csv");
+            string cshThatWasProduced = Path.GetFullPath(currDir + "/" + name + ".csh");
+
+            File.Copy(cshThatWasProduced, sourceCSH, true);
+            File.Delete(csvThatWasEdited);
+            File.Delete(cshThatWasProduced);
+        }
+
         private static void WriteToSeedLog(string currDir, string sV, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
             bool libraShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, 
             bool statShuffle, bool doubleExpBool, bool fiveBSBool, bool movementBool)
@@ -217,7 +228,7 @@ namespace WOFFRandomizer
             if (movementBool) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "map_move_param.csv"));
 
             // In case other randomizer checkboxes are disabled, want to run on all of these
-            copyBackAndDeleteOtherFile(basepath, currDir, "/resource/finalizedCommon/mithril/system/csv/message/us", "/menu.csh", log);
+            copyBackAndDeleteOtherCshCsv(basepath, currDir, "/resource/finalizedCommon/mithril/system/csv/message/us", "/menu");
             copyBackAndDelete(basepath, currDir, "mirageboard_data");
             copyBackAndDelete(basepath, currDir, "enemy_group_list");
             copyBackAndDelete(basepath, currDir, "character_enemy_status_list");
@@ -230,7 +241,7 @@ namespace WOFFRandomizer
             copyBackAndDelete(basepath, currDir, "quest_data_sub_reward_table_list");
             copyBackAndDelete(basepath, currDir, "character_list");
             copyBackAndDelete(basepath, currDir, "config_param");
-            copyBackAndDeleteOtherFile(basepath, currDir, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param.csh", log);
+            copyBackAndDeleteOtherCshCsv(basepath, currDir, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param");
 
             log.SelectionFont = new Font(log.Font, FontStyle.Bold);
             log.AppendText("Finished generating seed " + sV + "!\n");
