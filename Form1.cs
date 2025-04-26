@@ -10,7 +10,8 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            this.Text = "World of Final Fantasy Maxima Randomizer v0.1.8";
+            string version = "0.1.9";
+            this.Text = "World of Final Fantasy Maxima Randomizer v" + version;
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
 
@@ -19,6 +20,10 @@ namespace WOFFRandomizer
             buttonUninstall.Enabled = false;
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
+
+            // Disable checkboxes when dependent checkboxes are inactive
+            checkBoxLibra.Enabled = false;
+
 
             // Check if WOFF.exe settings option is blank or not
             string currDir = Directory.GetCurrentDirectory();
@@ -81,6 +86,7 @@ namespace WOFFRandomizer
             bool enemActive = checkBoxRandEnc.Checked;
             bool bossActive = checkBoxBosses.Checked;
             bool itemActive = checkBoxTreasures.Checked;
+            bool libraActive = checkBoxLibra.Checked;
             bool rareActive = checkBoxRareMon.Checked;
             bool sizesActive = checkBoxSizes.Checked;
             bool quPrizesActive = checkBoxQuOrArenaPrizes.Checked;
@@ -88,9 +94,10 @@ namespace WOFFRandomizer
             bool murkActive = checkBoxMurkrift.Checked;
             bool statActive = checkBoxStats.Checked;
             bool fiveBSActive = checkBoxFiveBS.Checked;
+            bool movementActive = checkBoxMovement.Checked;
 
-            Install.Run(basepath, textBox2.Text, richTextBox1, mbActive, enemActive, bossActive, itemActive, rareActive, sizesActive,
-                quPrizesActive, murkActive, statActive, doubleExpBool, fiveBSActive, button1, buttonRandomize, buttonUninstall);
+            Install.Run(basepath, textBox2.Text, "0.1.9", richTextBox1, mbActive, enemActive, bossActive, itemActive, libraActive, rareActive, sizesActive,
+                quPrizesActive, murkActive, statActive, doubleExpBool, fiveBSActive, movementActive, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -171,6 +178,29 @@ namespace WOFFRandomizer
         private void checkBoxFiveBS_MouseHover(object sender, EventArgs e)
         {
             toolTipFiveBS.Show("This multiplies the battle speed at setting 3.\nWait setting recommended, maybe.", checkBoxFiveBS);
+        }
+
+        private void checkBoxLibra_MouseHover(object sender, EventArgs e)
+        {
+            toolTipLibra.Show("This includes the Libra Mirajewel treasure chest in Nether Nebula in the shuffle.", checkBoxLibra);
+        }
+
+        private void checkBoxTreasures_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxTreasures.Checked == false)
+            {
+                checkBoxLibra.Enabled = false;
+                checkBoxLibra.Checked = false;
+            }
+            else
+            {
+                checkBoxLibra.Enabled = true;
+            }
+        }
+
+        private void checkBoxMovement_MouseHover(object sender, EventArgs e)
+        {
+            toolTipMovement.Show("This doubles movement speed, which also cuts encounter rate in half.", checkBoxMovement);
         }
     }
 }

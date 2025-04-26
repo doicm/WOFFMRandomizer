@@ -10,6 +10,15 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class Boss
     {
+        private static void ModifyYunaAndValeforToBeLoseable(string eglPath)
+        {
+            List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
+            // Find row containing 05_EV_ユウナ
+            int i = eglData.FindIndex(x => x.Contains("05_EV_ユウナ"));
+            eglData[i][67] = "1"; // Set value of "losing is fine" condition to "game over will happen" condition
+            
+            CsvHandling.CsvWriteDataAddHeadRow(eglPath, eglData, 79);
+        }
         private static (List<List<string>>, List<List<string>>) GetEglDataAndlGEXPData(string eglPath, string ceslPath, List<string> eglBossIDs)
         {
             List<List<string>> eglData = CsvHandling.CsvReadData(eglPath);
@@ -51,7 +60,8 @@ namespace WOFFRandomizer.Dependencies
                     List<string> lGEXPRow = [row[3], row[79], row[80], row[81], row[82]];
                     // Need to make exception for Vivi fight, since that gives no exp/gil normally and I want replacement
                     // to give exp/gil
-                    if (row[0] == "271") lGEXPRow = [row[3], "20500", "1700", "150000", "1850"];
+                    if (row[0] == "196") lGEXPRow = [row[3], "4000", "1200", "46620", "1800"];
+                    else if (row[0] == "271") lGEXPRow = [row[3], "20500", "1700", "150000", "1850"];
                     lGEXPData.Add(lGEXPRow);
                 }
             }
@@ -242,6 +252,9 @@ namespace WOFFRandomizer.Dependencies
 
             // I also modify the cesl data to reflect the correct lGEXP
             InsertlGEXPData(ceslPath, pairedCeslIDsWithlGEXP);
+
+            // Make unloseable fight loseable (Yuna & Valefor)
+            ModifyYunaAndValeforToBeLoseable(eglPath);
 
             // Append to the monster log with levels for each murkrift. Try to get locations, if possible
             AppendToMonsterLog(currDir, eglBossIDs, eglPath);

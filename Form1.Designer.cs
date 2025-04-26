@@ -66,6 +66,10 @@
             toolTipStats = new ToolTip(components);
             checkBoxFiveBS = new CheckBox();
             toolTipFiveBS = new ToolTip(components);
+            checkBoxLibra = new CheckBox();
+            toolTipLibra = new ToolTip(components);
+            toolTipMovement = new ToolTip(components);
+            checkBoxMovement = new CheckBox();
             SuspendLayout();
             // 
             // textBox1
@@ -184,6 +188,7 @@
             checkBoxTreasures.TabIndex = 12;
             checkBoxTreasures.Text = "Shuffle Treasure Chests";
             checkBoxTreasures.UseVisualStyleBackColor = true;
+            checkBoxTreasures.CheckedChanged += checkBoxTreasures_CheckedChanged;
             checkBoxTreasures.MouseHover += checkBoxTreasures_MouseHover;
             // 
             // label5
@@ -213,7 +218,7 @@
             label7.Name = "label7";
             label7.Size = new Size(215, 100);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Maxima Randomizer v0.1.8";
+            label7.Text = "World of Final Fantasy Maxima Randomizer v0.1.9";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // richTextBox1
@@ -269,7 +274,7 @@
             // checkBoxQuOrArenaPrizes
             // 
             checkBoxQuOrArenaPrizes.AutoSize = true;
-            checkBoxQuOrArenaPrizes.Location = new Point(260, 139);
+            checkBoxQuOrArenaPrizes.Location = new Point(260, 164);
             checkBoxQuOrArenaPrizes.Name = "checkBoxQuOrArenaPrizes";
             checkBoxQuOrArenaPrizes.Size = new Size(135, 34);
             checkBoxQuOrArenaPrizes.TabIndex = 21;
@@ -330,11 +335,35 @@
             checkBoxFiveBS.UseVisualStyleBackColor = true;
             checkBoxFiveBS.MouseHover += checkBoxFiveBS_MouseHover;
             // 
+            // checkBoxLibra
+            // 
+            checkBoxLibra.AutoSize = true;
+            checkBoxLibra.Location = new Point(278, 139);
+            checkBoxLibra.Name = "checkBoxLibra";
+            checkBoxLibra.Size = new Size(146, 19);
+            checkBoxLibra.TabIndex = 26;
+            checkBoxLibra.Text = "Shuffle Libra Mirajewel";
+            checkBoxLibra.UseVisualStyleBackColor = true;
+            checkBoxLibra.MouseHover += checkBoxLibra_MouseHover;
+            // 
+            // checkBoxMovement
+            // 
+            checkBoxMovement.AutoSize = true;
+            checkBoxMovement.Location = new Point(684, 345);
+            checkBoxMovement.Name = "checkBoxMovement";
+            checkBoxMovement.Size = new Size(160, 19);
+            checkBoxMovement.TabIndex = 27;
+            checkBoxMovement.Text = "Double Movement Speed";
+            checkBoxMovement.UseVisualStyleBackColor = true;
+            checkBoxMovement.MouseHover += checkBoxMovement_MouseHover;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBoxMovement);
+            Controls.Add(checkBoxLibra);
             Controls.Add(checkBoxFiveBS);
             Controls.Add(checkBoxStats);
             Controls.Add(checkBoxMurkrift);
@@ -406,5 +435,9 @@
         private ToolTip toolTipStats;
         private CheckBox checkBoxFiveBS;
         private ToolTip toolTipFiveBS;
+        private CheckBox checkBoxLibra;
+        private ToolTip toolTipLibra;
+        private ToolTip toolTipMovement;
+        private CheckBox checkBoxMovement;
     }
 }

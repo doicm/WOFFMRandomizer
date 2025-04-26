@@ -400,7 +400,7 @@ namespace WOFFRandomizer.Dependencies
             }
             File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
         }
-        public static void TreasureShuffle(string currDir, string sV, RichTextBox log)
+        public static void TreasureShuffle(string currDir, string sV, RichTextBox log, bool libraShuffle)
         {
             log.AppendText("Shuffling treasures...\n");
             // can only shuffle item types. counts correspond to the number of lua files in the bin
@@ -419,18 +419,23 @@ namespace WOFFRandomizer.Dependencies
             List<(byte[], string)> itemIDs = new List<(byte[], string)>();
             List<(byte[], string)> abIDs = new List<(byte[], string)>();
             List<(byte[], string)> stoneIDs = new List<(byte[], string)>();
+            // Handle treasure list for Items
             foreach (var treasure in treasureList.Item1)
             {
                 treasureIDsForItems.Add(treasure.Item1);
                 itemIDs.Add(treasure.Item2);
             }
+            // Handle treasure list for Ability Seeds
             foreach (var treasure in treasureList.Item2)
             {
                 treasureIDsForABs.Add(treasure.Item1);
                 abIDs.Add(treasure.Item2);
             }
+            // Handle treasure list for Mirajewels
             foreach (var treasure in treasureList.Item3)
             {
+                // Make exception for Libra Mirajewel if box is not checked
+                if (!libraShuffle && treasure.Item2.Item2 == "Stone037") continue;
                 treasureIDsForStones.Add(treasure.Item1);
                 stoneIDs.Add(treasure.Item2);
             }
@@ -449,6 +454,8 @@ namespace WOFFRandomizer.Dependencies
             {
                 shuffledABList.Add((treasureIDsForABs[i], abIDs[i]));
             }
+            // If libraShuffle is inactive, will need to reinsert manually before going through iteration
+            if (!libraShuffle) shuffledStoneList.Add((treasureList.Item3[0].Item1, treasureList.Item3[0].Item2));
             for (int i = 0; i < stoneIDs.Count; i++)
             {
                 shuffledStoneList.Add((treasureIDsForStones[i], stoneIDs[i]));

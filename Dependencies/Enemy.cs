@@ -142,8 +142,15 @@ namespace WOFFRandomizer.Dependencies
             // Only going up to Castle Exnine for random encounters because post-game stuff is fine on its own
             // Except...I want the coeurls in there
 
-            // Coeurl and Lesser Coeurl. I may regret this, but I'll give it a shot.
+            // Weeglee, Brrblizz, and Joult
+            (enemiesDict, ceslRowData, levelsGEXP) = bestiaryTraversal(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, 501, 501, currDir);
+            (enemiesDict, ceslRowData, levelsGEXP) = bestiaryTraversal(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, 504, 504, currDir);
+            (enemiesDict, ceslRowData, levelsGEXP) = bestiaryTraversal(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, 507, 507, currDir);
+
+            // Coeurl and Lesser Coeurl.
             (enemiesDict, ceslRowData, levelsGEXP) = bestiaryTraversal(EGLoutput, CESLoutput, enemiesDict, ceslRowData, levelsGEXP, 1219, 1220, currDir);
+
+            
 
             return (enemiesDict, ceslRowData, levelsGEXP);
         }
@@ -362,6 +369,8 @@ namespace WOFFRandomizer.Dependencies
             // Coeurl and Lesser Coeurl
             // lines 1171, 1172. ...numbers are a bit off, but this adjustment should work?
             toWrite = PostShuffleBestiaryTraversalForLog(mlogPath, areasDB, charsDB, toWrite, EGLoutput, 1146, 1147);
+
+            toWrite += "Weeglee, Brrblizz, and Joult slots also have monsters swapped into them.\n";
 
             File.WriteAllText(mlogPath, toWrite);
         }

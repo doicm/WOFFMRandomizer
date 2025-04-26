@@ -128,8 +128,8 @@ namespace WOFFRandomizer.Dependencies
             }
 
             // Write the new data to the csv files.
-            CsvHandling.CsvWriteData(interventionPath, csvDataIntervention);
-            CsvHandling.CsvWriteData(arenaPath, csvDataArena);
+            CsvHandling.CsvWriteDataAddHeadRow(interventionPath, csvDataIntervention, 15);
+            CsvHandling.CsvWriteDataAddHeadRow(arenaPath, csvDataArena, 11);
 
             // Write data to a log
             WriteToQuestLog(currDir, csvDataIntervention, csvDataArena);

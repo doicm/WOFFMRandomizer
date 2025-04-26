@@ -14,32 +14,14 @@ namespace WOFFRandomizer.Dependencies
     
     internal class Mirageboard
     {
-        private static void enemyRandoSetMethod(List<List<string>> listListCsv)
+        private static List<List<string>> enemyRandoSetMethod(List<List<string>> listListCsv)
         {
-            // Critical values are the following for Tama and Sylph:
-            var enemyRandoSpecialMirages = new List<(string, string)>
-            {
-                ("68", "2000"),
-                ("4749", "2001"),
-                ("4751", "2006")
-            };
+            // Tama Sizzle (have to replace Stroll due to issues with other mirageboards).
+            listListCsv[68][7] = "8";
+            listListCsv[68][8] = "2000";
+            listListCsv[68][1] = "1";
 
-            int eRSMIter = 0;
-            // navigate to each row and place the values back in
-            foreach (List<string> row in listListCsv)
-            {
-                int i = listListCsv.FindIndex(str => str == row);
-
-                if (row[0] == enemyRandoSpecialMirages[eRSMIter].Item1)
-                {
-                    listListCsv[i][7] = "8";
-                    listListCsv[i][8] = enemyRandoSpecialMirages[eRSMIter].Item2;
-                    listListCsv[i][11] = "1";
-                    eRSMIter += 1;
-                    if (eRSMIter == enemyRandoSpecialMirages.Count) break;
-                }
-            }
-
+            return listListCsv;
         }
 
         // May need a revisit
@@ -51,7 +33,7 @@ namespace WOFFRandomizer.Dependencies
             // Put all lines of the file into a list to edit
             
             List<List<string>> listListCsv = CsvHandling.CsvReadData(csvfilename);
-            enemyRandoSetMethod(listListCsv);
+            listListCsv = enemyRandoSetMethod(listListCsv);
 
             // Write over the file
             CsvHandling.CsvWriteDataAddHeadRow(csvfilename, listListCsv, 20);
@@ -61,7 +43,6 @@ namespace WOFFRandomizer.Dependencies
         {
             List<string> skipRows = new List<string>();
             List<string> skipAbilities = new List<string>();
-            List<string> skipEnemyRandoRows = new List<string>();
             List<string> skipMirages = new List<string>();
             // ch 1 chocochick must learn stroll (992)
             // pre ch 6 black nakk must learn sizzle (1262)
@@ -70,12 +51,11 @@ namespace WOFFRandomizer.Dependencies
             // pre ch 11 quachacho must learn chill (1592)
             // pre ch 15 searcher must learn zap (5402)
             // Skip to get Tama's Foxfire in case you don't have a fire solution for Sharqual's weight scale issue in Saronia Harbor
-            // Skip Bahamut*'s Megaflare. It's too powerful to be on anything but Bahamut*.
-            skipRows.AddMany("62", "992", "1262", "2251", "4261", "1592", "5402", "6596");
+            // Skip Bahamut*'s Megaflare. It's too powerful to be on anything but Bahamut*
+            // Skip two rows (63, 4747) for Tama and Sylph where Lure and Stealth Mirajewels are written in
+            skipRows.AddMany("62", "63", "992", "4747", "1262", "2251", "4261", "1592", "5402", "6596");
             // For use with skipping smash and joyride, as well as other possible abilities
             skipAbilities.AddMany("2003", "2010");
-            // For use with enemy randos
-            skipEnemyRandoRows.AddMany("68", "4749", "4751");
             // For use with skipping specific mirages, mostly those that don't actually exist as mirages
             skipMirages.AddMany("7027", "7041", "7080", "7086", "7113", "7134", "7162", "8006", "7172", "7191", "7192", "7193", "7194", "7195", "8010",
                 "8017", "8018", "8025");
@@ -218,6 +198,35 @@ namespace WOFFRandomizer.Dependencies
             }
 
             return capData;
+        }
+
+        public static void MiragesGiveLureAndStealthStones(string currDir)
+        {
+            // Read data
+            string mdPath = Path.Combine(currDir, "mirageboard_data.csv");
+            List<List<string>> mdData = CsvHandling.CsvReadData(mdPath);
+
+            // Set Stealth mirajewel at 1 cost (free cost doesn't give it) (Stone115) over line 997, and move line 997 to 1001
+            mdData[4755][7] = mdData[4747][7];
+            mdData[4755][8] = mdData[4747][8];
+            mdData[4755][11] = mdData[4747][11];
+
+            mdData[4747][7] = "5";
+            mdData[4747][8] = "115";
+            mdData[4747][11] = "1";
+
+            // Set Lure Mirajewel at 1 cost (free cost doesn't give it) (Stone118) over line 63, and move line 63 to 75
+            mdData[75][7] = mdData[63][7];
+            mdData[75][8] = mdData[63][8];
+            mdData[75][11] = mdData[63][11];
+
+            mdData[63][7] = "5";
+            mdData[63][8] = "118";
+            mdData[63][11] = "1";
+
+
+            // Write data back
+            CsvHandling.CsvWriteDataAddHeadRow(mdPath, mdData, 20);
         }
 
         public static void mirageboard_dataWriteCsv(string currDir, string seedvalue, RichTextBox log)

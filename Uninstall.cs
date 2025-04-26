@@ -57,6 +57,7 @@ namespace WOFFRandomizer
             button2.Enabled = false;
             button3.Enabled = false;
 
+            DefineCopyAndRemoveOtherFile(basepath, "/resource/finalizedCommon/mithril/system/csv/message/us", "/menu.csh");
             DefineCopyAndRemoveFile(basepath, "mirageboard_data");
             DefineCopyAndRemoveFile(basepath, "enemy_group_list");
             DefineCopyAndRemoveFile(basepath, "character_enemy_status_list");
@@ -69,6 +70,7 @@ namespace WOFFRandomizer
             DefineCopyAndRemoveFile(basepath, "quest_data_sub_reward_table_list");
             DefineCopyAndRemoveFile(basepath, "character_list");
             DefineCopyAndRemoveFile(basepath, "config_param");
+            DefineCopyAndRemoveOtherFile(basepath, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param.csh");
 
             clearLogs();
 
