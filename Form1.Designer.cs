@@ -32,7 +32,6 @@
             textBox1 = new TextBox();
             button1 = new Button();
             label1 = new Label();
-            label2 = new Label();
             checkBoxMirageboard = new CheckBox();
             label3 = new Label();
             label4 = new Label();
@@ -70,6 +69,21 @@
             toolTipLibra = new ToolTip(components);
             toolTipMovement = new ToolTip(components);
             checkBoxMovement = new CheckBox();
+            checkBoxDialogue = new CheckBox();
+            toolTipDialogue = new ToolTip(components);
+            checkBoxDataSeeds = new CheckBox();
+            checkBoxDataJewels = new CheckBox();
+            toolTipDataSeeds = new ToolTip(components);
+            toolTipDataJewels = new ToolTip(components);
+            label9 = new Label();
+            label2 = new Label();
+            label10 = new Label();
+            toolTipT2AttackItems = new ToolTip(components);
+            checkBoxT2AttackItems = new CheckBox();
+            toolTipReaderItems = new ToolTip(components);
+            checkBoxReaderItems = new CheckBox();
+            toolTipTransfig = new ToolTip(components);
+            checkBoxTransfig = new CheckBox();
             SuspendLayout();
             // 
             // textBox1
@@ -93,44 +107,36 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(704, 68);
+            label1.Location = new Point(716, 63);
             label1.Name = "label1";
-            label1.Size = new Size(109, 21);
+            label1.Size = new Size(71, 21);
             label1.TabIndex = 2;
-            label1.Text = "Mirageboard";
-            // 
-            // label2
-            // 
-            label2.BackColor = SystemColors.AppWorkspace;
-            label2.Location = new Point(646, 68);
-            label2.Name = "label2";
-            label2.Size = new Size(1, 300);
-            label2.TabIndex = 3;
+            label1.Text = "Mirages";
             // 
             // checkBoxMirageboard
             // 
             checkBoxMirageboard.AutoSize = true;
-            checkBoxMirageboard.Location = new Point(684, 114);
+            checkBoxMirageboard.Location = new Point(668, 93);
             checkBoxMirageboard.Name = "checkBoxMirageboard";
-            checkBoxMirageboard.Size = new Size(100, 19);
+            checkBoxMirageboard.Size = new Size(171, 19);
             checkBoxMirageboard.TabIndex = 4;
-            checkBoxMirageboard.Text = "Shuffle Nodes";
+            checkBoxMirageboard.Text = "Shuffle Mirageboard Nodes";
             checkBoxMirageboard.UseVisualStyleBackColor = true;
             checkBoxMirageboard.MouseHover += checkBoxMirageboard_MouseHover;
             // 
             // label3
             // 
             label3.BackColor = SystemColors.AppWorkspace;
-            label3.Location = new Point(431, 68);
+            label3.Location = new Point(432, 68);
             label3.Name = "label3";
-            label3.Size = new Size(1, 300);
+            label3.Size = new Size(1, 208);
             label3.TabIndex = 6;
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(504, 68);
+            label4.Location = new Point(507, 63);
             label4.Name = "label4";
             label4.Size = new Size(74, 21);
             label4.TabIndex = 5;
@@ -139,7 +145,7 @@
             // checkBoxRandEnc
             // 
             checkBoxRandEnc.AutoSize = true;
-            checkBoxRandEnc.Location = new Point(471, 114);
+            checkBoxRandEnc.Location = new Point(458, 93);
             checkBoxRandEnc.Name = "checkBoxRandEnc";
             checkBoxRandEnc.Size = new Size(138, 19);
             checkBoxRandEnc.TabIndex = 7;
@@ -150,7 +156,7 @@
             // checkBoxBosses
             // 
             checkBoxBosses.AutoSize = true;
-            checkBoxBosses.Location = new Point(471, 164);
+            checkBoxBosses.Location = new Point(458, 143);
             checkBoxBosses.Name = "checkBoxBosses";
             checkBoxBosses.Size = new Size(101, 19);
             checkBoxBosses.TabIndex = 8;
@@ -182,7 +188,7 @@
             // checkBoxTreasures
             // 
             checkBoxTreasures.AutoSize = true;
-            checkBoxTreasures.Location = new Point(260, 114);
+            checkBoxTreasures.Location = new Point(252, 93);
             checkBoxTreasures.Name = "checkBoxTreasures";
             checkBoxTreasures.Size = new Size(148, 19);
             checkBoxTreasures.TabIndex = 12;
@@ -195,7 +201,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(308, 68);
+            label5.Location = new Point(311, 63);
             label5.Name = "label5";
             label5.Size = new Size(52, 21);
             label5.TabIndex = 11;
@@ -218,7 +224,7 @@
             label7.Name = "label7";
             label7.Size = new Size(215, 100);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Maxima Randomizer v0.1.9";
+            label7.Text = "World of Final Fantasy Maxima Randomizer v0.2.0";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // richTextBox1
@@ -252,7 +258,7 @@
             // checkBoxRareMon
             // 
             checkBoxRareMon.AutoSize = true;
-            checkBoxRareMon.Location = new Point(471, 139);
+            checkBoxRareMon.Location = new Point(458, 118);
             checkBoxRareMon.Name = "checkBoxRareMon";
             checkBoxRareMon.Size = new Size(134, 19);
             checkBoxRareMon.TabIndex = 19;
@@ -263,7 +269,7 @@
             // checkBoxSizes
             // 
             checkBoxSizes.AutoSize = true;
-            checkBoxSizes.Location = new Point(684, 139);
+            checkBoxSizes.Location = new Point(668, 118);
             checkBoxSizes.Name = "checkBoxSizes";
             checkBoxSizes.Size = new Size(131, 19);
             checkBoxSizes.TabIndex = 20;
@@ -274,7 +280,7 @@
             // checkBoxQuOrArenaPrizes
             // 
             checkBoxQuOrArenaPrizes.AutoSize = true;
-            checkBoxQuOrArenaPrizes.Location = new Point(260, 164);
+            checkBoxQuOrArenaPrizes.Location = new Point(252, 218);
             checkBoxQuOrArenaPrizes.Name = "checkBoxQuOrArenaPrizes";
             checkBoxQuOrArenaPrizes.Size = new Size(135, 34);
             checkBoxQuOrArenaPrizes.TabIndex = 21;
@@ -285,7 +291,7 @@
             // checkBoxDoubleExp
             // 
             checkBoxDoubleExp.AutoSize = true;
-            checkBoxDoubleExp.Location = new Point(471, 345);
+            checkBoxDoubleExp.Location = new Point(458, 341);
             checkBoxDoubleExp.Name = "checkBoxDoubleExp";
             checkBoxDoubleExp.Size = new Size(164, 19);
             checkBoxDoubleExp.TabIndex = 22;
@@ -296,7 +302,7 @@
             // checkBoxMurkrift
             // 
             checkBoxMurkrift.AutoSize = true;
-            checkBoxMurkrift.Location = new Point(471, 189);
+            checkBoxMurkrift.Location = new Point(458, 168);
             checkBoxMurkrift.Name = "checkBoxMurkrift";
             checkBoxMurkrift.Size = new Size(114, 19);
             checkBoxMurkrift.TabIndex = 23;
@@ -316,7 +322,7 @@
             // checkBoxStats
             // 
             checkBoxStats.AutoSize = true;
-            checkBoxStats.Location = new Point(684, 164);
+            checkBoxStats.Location = new Point(668, 143);
             checkBoxStats.Name = "checkBoxStats";
             checkBoxStats.Size = new Size(153, 19);
             checkBoxStats.TabIndex = 24;
@@ -327,7 +333,7 @@
             // checkBoxFiveBS
             // 
             checkBoxFiveBS.AutoSize = true;
-            checkBoxFiveBS.Location = new Point(471, 320);
+            checkBoxFiveBS.Location = new Point(458, 316);
             checkBoxFiveBS.Name = "checkBoxFiveBS";
             checkBoxFiveBS.Size = new Size(137, 19);
             checkBoxFiveBS.TabIndex = 25;
@@ -338,7 +344,7 @@
             // checkBoxLibra
             // 
             checkBoxLibra.AutoSize = true;
-            checkBoxLibra.Location = new Point(278, 139);
+            checkBoxLibra.Location = new Point(270, 118);
             checkBoxLibra.Name = "checkBoxLibra";
             checkBoxLibra.Size = new Size(146, 19);
             checkBoxLibra.TabIndex = 26;
@@ -349,7 +355,7 @@
             // checkBoxMovement
             // 
             checkBoxMovement.AutoSize = true;
-            checkBoxMovement.Location = new Point(684, 345);
+            checkBoxMovement.Location = new Point(668, 316);
             checkBoxMovement.Name = "checkBoxMovement";
             checkBoxMovement.Size = new Size(160, 19);
             checkBoxMovement.TabIndex = 27;
@@ -357,11 +363,112 @@
             checkBoxMovement.UseVisualStyleBackColor = true;
             checkBoxMovement.MouseHover += checkBoxMovement_MouseHover;
             // 
+            // checkBoxDialogue
+            // 
+            checkBoxDialogue.AutoSize = true;
+            checkBoxDialogue.Location = new Point(252, 316);
+            checkBoxDialogue.Name = "checkBoxDialogue";
+            checkBoxDialogue.Size = new Size(126, 19);
+            checkBoxDialogue.TabIndex = 28;
+            checkBoxDialogue.Text = "Speed Up Dialogue";
+            checkBoxDialogue.UseVisualStyleBackColor = true;
+            checkBoxDialogue.MouseHover += checkBoxDialogue_MouseHover;
+            // 
+            // checkBoxDataSeeds
+            // 
+            checkBoxDataSeeds.AutoSize = true;
+            checkBoxDataSeeds.Location = new Point(270, 143);
+            checkBoxDataSeeds.Name = "checkBoxDataSeeds";
+            checkBoxDataSeeds.Size = new Size(156, 19);
+            checkBoxDataSeeds.TabIndex = 29;
+            checkBoxDataSeeds.Text = "Replace Set Ability Seeds";
+            checkBoxDataSeeds.UseVisualStyleBackColor = true;
+            checkBoxDataSeeds.MouseHover += checkBoxDataSeeds_MouseHover;
+            // 
+            // checkBoxDataJewels
+            // 
+            checkBoxDataJewels.AutoSize = true;
+            checkBoxDataJewels.Location = new Point(270, 168);
+            checkBoxDataJewels.Name = "checkBoxDataJewels";
+            checkBoxDataJewels.Size = new Size(145, 19);
+            checkBoxDataJewels.TabIndex = 30;
+            checkBoxDataJewels.Text = "Replace Set Mirajewels";
+            checkBoxDataJewels.UseVisualStyleBackColor = true;
+            checkBoxDataJewels.MouseHover += checkBoxDataJewels_MouseHover;
+            // 
+            // label9
+            // 
+            label9.BackColor = SystemColors.AppWorkspace;
+            label9.Location = new Point(641, 68);
+            label9.Name = "label9";
+            label9.Size = new Size(1, 208);
+            label9.TabIndex = 31;
+            // 
+            // label2
+            // 
+            label2.BackColor = SystemColors.AppWorkspace;
+            label2.Location = new Point(227, 285);
+            label2.Name = "label2";
+            label2.Size = new Size(625, 1);
+            label2.TabIndex = 32;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label10.Location = new Point(519, 289);
+            label10.Name = "label10";
+            label10.Size = new Size(40, 21);
+            label10.TabIndex = 33;
+            label10.Text = "QoL";
+            // 
+            // checkBoxT2AttackItems
+            // 
+            checkBoxT2AttackItems.Location = new Point(252, 339);
+            checkBoxT2AttackItems.Name = "checkBoxT2AttackItems";
+            checkBoxT2AttackItems.Size = new Size(155, 34);
+            checkBoxT2AttackItems.TabIndex = 34;
+            checkBoxT2AttackItems.Text = "Remove Powerful Attack Items from Shop";
+            checkBoxT2AttackItems.UseVisualStyleBackColor = true;
+            checkBoxT2AttackItems.MouseHover += checkBoxT2AttackItems_MouseHover;
+            // 
+            // checkBoxReaderItems
+            // 
+            checkBoxReaderItems.AutoSize = true;
+            checkBoxReaderItems.Location = new Point(270, 193);
+            checkBoxReaderItems.Name = "checkBoxReaderItems";
+            checkBoxReaderItems.Size = new Size(141, 19);
+            checkBoxReaderItems.TabIndex = 35;
+            checkBoxReaderItems.Text = "Shuffle Reading Items";
+            checkBoxReaderItems.UseVisualStyleBackColor = true;
+            checkBoxReaderItems.MouseHover += checkBoxReaderItems_MouseHover;
+            // 
+            // checkBoxTransfig
+            // 
+            checkBoxTransfig.AutoSize = true;
+            checkBoxTransfig.BackgroundImageLayout = ImageLayout.None;
+            checkBoxTransfig.Location = new Point(668, 168);
+            checkBoxTransfig.Name = "checkBoxTransfig";
+            checkBoxTransfig.Size = new Size(151, 19);
+            checkBoxTransfig.TabIndex = 36;
+            checkBoxTransfig.Text = "Shuffle Transfigurations";
+            checkBoxTransfig.UseVisualStyleBackColor = true;
+            checkBoxTransfig.MouseHover += checkBoxTransfig_MouseHover;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(863, 450);
+            Controls.Add(checkBoxTransfig);
+            Controls.Add(checkBoxReaderItems);
+            Controls.Add(checkBoxT2AttackItems);
+            Controls.Add(label10);
+            Controls.Add(label2);
+            Controls.Add(label9);
+            Controls.Add(checkBoxDataJewels);
+            Controls.Add(checkBoxDataSeeds);
+            Controls.Add(checkBoxDialogue);
             Controls.Add(checkBoxMovement);
             Controls.Add(checkBoxLibra);
             Controls.Add(checkBoxFiveBS);
@@ -386,7 +493,6 @@
             Controls.Add(label3);
             Controls.Add(label4);
             Controls.Add(checkBoxMirageboard);
-            Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(button1);
             Controls.Add(textBox1);
@@ -401,7 +507,6 @@
         private TextBox textBox1;
         private Button button1;
         private Label label1;
-        private Label label2;
         private CheckBox checkBoxMirageboard;
         private Label label3;
         private Label label4;
@@ -439,5 +544,20 @@
         private ToolTip toolTipLibra;
         private ToolTip toolTipMovement;
         private CheckBox checkBoxMovement;
+        private CheckBox checkBoxDialogue;
+        private ToolTip toolTipDialogue;
+        private CheckBox checkBoxDataSeeds;
+        private CheckBox checkBoxDataJewels;
+        private ToolTip toolTipDataSeeds;
+        private ToolTip toolTipDataJewels;
+        private Label label9;
+        private Label label2;
+        private Label label10;
+        private ToolTip toolTipT2AttackItems;
+        private CheckBox checkBoxT2AttackItems;
+        private ToolTip toolTipReaderItems;
+        private CheckBox checkBoxReaderItems;
+        private ToolTip toolTipTransfig;
+        private CheckBox checkBoxTransfig;
     }
 }

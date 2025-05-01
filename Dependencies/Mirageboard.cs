@@ -19,7 +19,7 @@ namespace WOFFRandomizer.Dependencies
             // Tama Sizzle (have to replace Stroll due to issues with other mirageboards).
             listListCsv[68][7] = "8";
             listListCsv[68][8] = "2000";
-            listListCsv[68][1] = "1";
+            listListCsv[68][11] = "1";
 
             return listListCsv;
         }
@@ -51,14 +51,15 @@ namespace WOFFRandomizer.Dependencies
             // pre ch 11 quachacho must learn chill (1592)
             // pre ch 15 searcher must learn zap (5402)
             // Skip to get Tama's Foxfire in case you don't have a fire solution for Sharqual's weight scale issue in Saronia Harbor
-            // Skip Bahamut*'s Megaflare. It's too powerful to be on anything but Bahamut*
+            // Skip Bahamut*'s Megaflare. It's too powerful to be on anything but Bahamut*. (6596)
+            // Skip both Zantetsukens for Odin and Odin*. The AP cost scales with current AP, so too powerful. (3999 and 6619)
             // Skip two rows (63, 4747) for Tama and Sylph where Lure and Stealth Mirajewels are written in
-            skipRows.AddMany("62", "63", "992", "4747", "1262", "2251", "4261", "1592", "5402", "6596");
+            skipRows.AddMany("62", "63", "992", "4747", "1262", "2251", "4261", "1592", "5402", "6596", "3999", "6619");
             // For use with skipping smash and joyride, as well as other possible abilities
             skipAbilities.AddMany("2003", "2010");
             // For use with skipping specific mirages, mostly those that don't actually exist as mirages
-            skipMirages.AddMany("7027", "7041", "7080", "7086", "7113", "7134", "7162", "8006", "7172", "7191", "7192", "7193", "7194", "7195", "8010",
-                "8017", "8018", "8025");
+            skipMirages.AddMany("7027", "7041", "7080", "7086", "7113", "7134", "7162", "8006", "7172", "7191", "7192", "7193", "7194", "7195", "8000",
+                "8010", "8017", "8018", "8025");
 
             // if the category is not in between 1-9, excluding 6 (prismariums), skip it
             // categories: 1) abilities, 2) ?, 3) passives, 4) blank space, 5) mirajewel, 7) unique abilities, 8) joyride/stroll/etc, 9) unique passives
@@ -93,7 +94,7 @@ namespace WOFFRandomizer.Dependencies
             List<string> mirajewelsDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "mirajewels.txt"))];
 
             List<string> skipMirages = ["7027", "7041", "7080", "7086", "7113", "7134", "7162", "8006", "7172", "7191", "7192", 
-                "7193", "7194", "7195", "8010", "8012", "8017", "8018", "8025"];
+                "7193", "7194", "7195", "8000", "8010", "8017", "8018", "8025"];
 
             using (var sw = new StreamWriter(Path.Combine(currDir, "logs", "mirageboard_log.txt")))
             {

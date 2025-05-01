@@ -113,8 +113,9 @@ namespace WOFFRandomizer
         }
 
         private static void WriteToSeedLog(string currDir, string sV, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
-            bool libraShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, 
-            bool statShuffle, bool doubleExpBool, bool fiveBSBool, bool movementBool)
+            bool libraShuffle, bool dataseedsShuffle, bool datajewelsShuffle, bool readeritemsShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, 
+            bool murkShuffle, bool statShuffle, bool transfigShuffle, bool doubleExpBool, bool fiveBSBool, bool movementBool, bool dialogueBool, 
+            bool t2AttackItemsBool)
         {
             string toWrite = sV + Environment.NewLine;
             toWrite += Environment.NewLine;
@@ -124,19 +125,26 @@ namespace WOFFRandomizer
             if (bossShuffle) toWrite += "Bosses randomized...." + Environment.NewLine;
             if (murkShuffle) toWrite += "Murkrifts randomized...." + Environment.NewLine;
             if (itemShuffle) toWrite += "Treasure chests randomized...." + Environment.NewLine;
-            if (libraShuffle) toWrite += "Libra Mirajewel shuffle...." + Environment.NewLine;
+            if (libraShuffle) toWrite += "Libra Mirajewel shuffled...." + Environment.NewLine;
+            if (dataseedsShuffle) toWrite += "Ability seeds in chests replaced...." + Environment.NewLine;
+            if (datajewelsShuffle) toWrite += "Mirajewels in chests replaced...." + Environment.NewLine;
+            if (readeritemsShuffle) toWrite += "Reading items included in randomization...." + Environment.NewLine;
             if (sizesShuffle) toWrite += "Mirage sizes randomized...." + Environment.NewLine;
             if (quPrizesShuffle) toWrite += "Intervention quest/coliseum rewards randomized...." + Environment.NewLine;
             if (statShuffle) toWrite += "Mirage stats randomized...." + Environment.NewLine;
+            if (transfigShuffle) toWrite += "Transfigurations/MBs randomized...." + Environment.NewLine;
             if (doubleExpBool) toWrite += "Experience and gil doubled...." + Environment.NewLine;
             if (fiveBSBool) toWrite += "Battle speed increased...." + Environment.NewLine;
             if (movementBool) toWrite += "Movement speed increased...." + Environment.NewLine;
+            if (dialogueBool) toWrite += "Dialogue in battles and field decreased...." + Environment.NewLine;
+            if (t2AttackItemsBool) toWrite += "Removed some attack items from shop...." + Environment.NewLine;
 
             System.IO.File.WriteAllText(currDir + "/logs/seed.txt", toWrite);
         }
         public static void Run(string basepath, string sV, string version, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
-            bool libraShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, bool statShuffle, bool doubleExpBool, 
-            bool fiveBSBool, bool movementBool, Button button1, Button button2, Button button3)
+            bool libraShuffle, bool dataseedsShuffle, bool datajewelsShuffle, bool readeritemsShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, 
+            bool statShuffle, bool transfigShuffle, bool doubleExpBool, bool fiveBSBool, bool movementBool, bool dialogueBool,
+            bool t2AttackItemsBool, Button button1, Button button2, Button button3)
         {
             string currDir = Directory.GetCurrentDirectory();
             button1.Enabled = false;
@@ -172,8 +180,9 @@ namespace WOFFRandomizer
             log.AppendText("Started generating seed " + sV + "...\n");
 
             // Write to txt file with seed name in it for reference
-            WriteToSeedLog(currDir, sV, mbShuffle, enemShuffle, bossShuffle, itemShuffle, libraShuffle, rareShuffle, sizesShuffle, quPrizesShuffle, 
-                murkShuffle, statShuffle, doubleExpBool, fiveBSBool, movementBool);
+            WriteToSeedLog(currDir, sV, mbShuffle, enemShuffle, bossShuffle, itemShuffle, libraShuffle, dataseedsShuffle, datajewelsShuffle, readeritemsShuffle,
+                rareShuffle, sizesShuffle, quPrizesShuffle, murkShuffle, statShuffle, transfigShuffle, doubleExpBool, fiveBSBool, movementBool, dialogueBool,
+                t2AttackItemsBool);
 
             // Put the seed name and version number on the title screen by editing menu.csv
             PutSeedAndVersionOnTitleScreen(currDir, sV, version);
@@ -182,7 +191,7 @@ namespace WOFFRandomizer
             ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirageboard_data.csh"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | murkShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "enemy_group_list.csh"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | doubleExpBool | murkShuffle ) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_enemy_status_list.csh"));
-            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | t2AttackItemsBool) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "shop_list.csh"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "monster_place.csh"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_resource_list.csh"));
             if (sizesShuffle | mbShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "command_ability_param.csh"));
@@ -201,23 +210,26 @@ namespace WOFFRandomizer
             if (enemShuffle|rareShuffle|bossShuffle) Enemy.mirageEncsWriteCsv(currDir, sV, log, enemShuffle, bossShuffle, rareShuffle);
             if (murkShuffle) Murkrift.MurkriftShuffle(currDir, sV, log);
             if (enemShuffle) Mirageboard.modifyForEnemyRandoOnly(currDir);
-            if (itemShuffle) Item.TreasureShuffle(currDir, sV, log, libraShuffle);
+            if (itemShuffle) Item.TreasureShuffle(currDir, sV, log, libraShuffle, dataseedsShuffle, datajewelsShuffle, readeritemsShuffle);
             if (sizesShuffle) Sizes.SizesShuffle(currDir, basepath, sV, log);
             if (quPrizesShuffle) QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
             if (statShuffle) Stats.RandomizeMirageStats(currDir, sV, log);
+            if (t2AttackItemsBool) Shop.RemoveT2AttackItems(currDir, log);
+            if (transfigShuffle) Transfig.TransfigMBShuffle(currDir, sV, log);
 
             // Apply post-QoL adjustments
             QoL.AddCSSkipToIntroCutscene(currDir, log);
+            QoL.AddCSSkipsToEnding(currDir, log);
             if (doubleExpBool) DoubleExpQoL.DoubleExpGil(currDir, log);
             if (fiveBSBool) QoL.MultiplyFiveBattleSpeedByFive(currDir, log);
             if (movementBool) QoL.DoubleMovementSpeed(currDir, log);
-            //if (encRateBool) QoL.DoubleEncounterRate(currDir, log);
+            if (dialogueBool) QoL.DecreaseDialogue(basepath, log);
 
             // Second WoFFCshTool run
             ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | murkShuffle ) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "enemy_group_list.csv"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | doubleExpBool | murkShuffle ) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_enemy_status_list.csv"));
-            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "shop_list.csv"));
+            if (mbShuffle | enemShuffle | rareShuffle | bossShuffle | t2AttackItemsBool) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "shop_list.csv"));
             if (mbShuffle | enemShuffle | rareShuffle | bossShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "monster_place.csv"));
             if (sizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_resource_list.csv"));
             if (sizesShuffle | mbShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "command_ability_param.csv"));

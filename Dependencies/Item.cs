@@ -148,7 +148,7 @@ namespace WOFFRandomizer.Dependencies
         }
 
         private static (List<(string, (byte[], string))>, List<(string, (byte[], string))>, List<(string, (byte[], string))>) 
-            CollectTreasureList(string scriptBinary, RichTextBox log)
+            CollectTreasureList(string scriptBinary, RichTextBox log, bool readeritemsShuffle, List<string> readerItemDB)
         {
             List<(string, (byte[], string))> itemList = new List<(string, (byte[], string))>();
             List<(string, (byte[], string))> abList = new List<(string, (byte[], string))>();
@@ -217,14 +217,18 @@ namespace WOFFRandomizer.Dependencies
                             if (!itemList.Exists(item => item.Item1 == treasureChestID) && !abList.Exists(item => item.Item1 == treasureChestID)
                                 && !stoneList.Exists(item => item.Item1 == treasureChestID))
                             {
-                                if (itemID.StartsWith("Item")) itemList.Add((treasureChestID, (itemBytes, itemID)));
+                                if (itemID.StartsWith("Item"))
+                                {
+                                    if (!readeritemsShuffle && readerItemDB.Contains(itemID)) continue;
+                                    itemList.Add((treasureChestID, (itemBytes, itemID)));
+                                }
                                 else if (itemID.StartsWith("Ability")) abList.Add((treasureChestID, (itemBytes, itemID)));
                                 else if (itemID.StartsWith("Stone"))
                                 {
                                     stoneList.Add((treasureChestID, (itemBytes, itemID)));
                                 }
                             }
-                            gimmick_itemboxCount++;
+                            gimmick_itemboxCount++; // Just for debugging
                         }
                     }
                 }
@@ -233,7 +237,7 @@ namespace WOFFRandomizer.Dependencies
         }
 
         private static void InsertShuffledTreasureList((List<(string, (byte[], string))>, List<(string, (byte[], string))>, List<(string, (byte[], string))>) 
-            shuffledTreasureList, string scriptBinary, RichTextBox log)
+            shuffledTreasureList, string scriptBinary, RichTextBox log, bool readeritemsShuffle, List<string> readerItemDB)
         {
             // traverse binary file and grab only data in lua files that contain filename portion "gimmick_itembox", i think
             // if the next "gimmick_itembox" name matches the last one, that means they're from the same set. ignore it.
@@ -293,6 +297,8 @@ namespace WOFFRandomizer.Dependencies
                             else if (treasureChestID.StartsWith("d0010")) continue;
                             // I believe Despellstones are the Gimme Golem items. Not 100% sure, but based on how they're named in Japanese, I would guess so.
                             else if (itemID.StartsWith("Despell")) continue;
+                            // Make sure that, if the bool for shuffling in reader items is inactive, to skip them
+                            else if (!readeritemsShuffle && readerItemDB.Contains(itemID)) continue;
                             // everything is mostly the same as the CollectTreasureList function except this
                             // i need to now replace the items carefully in the binary
                             // i have to randomize items with items/abilitybooks with abilitybooks
@@ -302,7 +308,7 @@ namespace WOFFRandomizer.Dependencies
                                 if (treasureChestID == shuffledTreasureList.Item1[itemListIter].Item1)
                                 {
                                     EditBinaryFile(position, size, shuffledTreasureList.Item1[itemListIter].Item2.Item1, barcStream, barcReader, log);
-                                    
+
                                     itemListIter++;
                                 }
                             }
@@ -339,15 +345,15 @@ namespace WOFFRandomizer.Dependencies
             List<(string, string)> combinedShuffledTreasureList = new List<(string, string)>();
             for (int i = 0; i < shuffledItemList.Count; i++)
             {
-                combinedShuffledTreasureList.Add((shuffledItemList[i].Item1, Encoding.UTF8.GetString(shuffledItemList[i].Item2.Item1)));
+                combinedShuffledTreasureList.Add((shuffledItemList[i].Item1, shuffledItemList[i].Item2.Item2));
             }
             for (int i = 0; i < shuffledABList.Count; i++)
             {
-                combinedShuffledTreasureList.Add((shuffledABList[i].Item1, Encoding.UTF8.GetString(shuffledABList[i].Item2.Item1)));
+                combinedShuffledTreasureList.Add((shuffledABList[i].Item1, shuffledABList[i].Item2.Item2));
             }
             for (int i = 0; i < shuffledStoneList.Count; i++)
             {
-                combinedShuffledTreasureList.Add((shuffledStoneList[i].Item1, Encoding.UTF8.GetString(shuffledStoneList[i].Item2.Item1)));
+                combinedShuffledTreasureList.Add((shuffledStoneList[i].Item1, shuffledStoneList[i].Item2.Item2));
             }
 
             combinedShuffledTreasureList.Sort((x, y) => x.Item1.CompareTo(y.Item1));
@@ -359,7 +365,7 @@ namespace WOFFRandomizer.Dependencies
 
             File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
 
-            // todo - function for relabeling ITEM, STONE, and ABILITYBOOK with names from database
+            // TODO - function for relabeling ITEM, STONE, and ABILITYBOOK with names from database
             // create master list from database/items.txt and database/mirajewels.txt to compare the item_log.txt with and replace
             List<(string, string)> masterList = new List<(string, string)>();
             using (var sr = new StreamReader(Path.Combine(currDir, "database", "items.txt")))
@@ -400,15 +406,21 @@ namespace WOFFRandomizer.Dependencies
             }
             File.WriteAllText(Path.Combine(currDir, "logs", "item_log.txt"), toWrite);
         }
-        public static void TreasureShuffle(string currDir, string sV, RichTextBox log, bool libraShuffle)
+        public static void TreasureShuffle(string currDir, string sV, RichTextBox log, bool libraShuffle, bool dataseedsShuffle, bool datajewelsShuffle,
+            bool readeritemsShuffle)
         {
             log.AppendText("Shuffling treasures...\n");
             // can only shuffle item types. counts correspond to the number of lua files in the bin
             // for example, 3 potions means three different lua files for one treasure chest
             // not going to compress to lua and back. will just modify the bin directly, if possible
             string scriptBinary = Path.Combine(currDir, "script64.bin");
+
+            // Keeping a list of item exclusions in case the "exclude reading items" bool is active
+            List<string> readerItemDB = ["Item066", "Item067", "Item068", "Item069", "Item070", "Item071", // First 6 girl's diaries
+                "Item081", "Item082", "Item083", "Item084", "Item085", "Item086", "Item087"]; // Herald Reports and Occult Fans
+
             (List <(string, (byte[], string))>, List<(string, (byte[], string))>, List<(string, (byte[], string))>) 
-                treasureList = CollectTreasureList(scriptBinary, log);
+                treasureList = CollectTreasureList(scriptBinary, log, readeritemsShuffle, readerItemDB);
 
             // Shuffle just the items/abilitybooks, not the treasureIDs
             // split the list into two separate lists, then join them back up
@@ -419,6 +431,7 @@ namespace WOFFRandomizer.Dependencies
             List<(byte[], string)> itemIDs = new List<(byte[], string)>();
             List<(byte[], string)> abIDs = new List<(byte[], string)>();
             List<(byte[], string)> stoneIDs = new List<(byte[], string)>();
+            Random rnd = new Random(Shuffle.ConsistentStringHash(sV));
             // Handle treasure list for Items
             foreach (var treasure in treasureList.Item1)
             {
@@ -429,7 +442,23 @@ namespace WOFFRandomizer.Dependencies
             foreach (var treasure in treasureList.Item2)
             {
                 treasureIDsForABs.Add(treasure.Item1);
-                abIDs.Add(treasure.Item2);
+                if (dataseedsShuffle)
+                {
+                    // choose an AbilityBook_ between 1 and 118 inclusive, which is ability books/seeds
+                    string abilitySeedID = (rnd.Next(1, 119)).ToString(); // also need to prepend 0's
+                    while (abilitySeedID.Count() < 3)
+                    {
+                        abilitySeedID = "0" + abilitySeedID;
+                    }
+                    abilitySeedID = "AbilityBook_" + abilitySeedID;
+                    // Convert abilitySeedID into array of bytes
+                    byte[] abilitySeedBytes = Encoding.ASCII.GetBytes(abilitySeedID);
+                    abIDs.Add((abilitySeedBytes, abilitySeedID));
+                }
+                else
+                {
+                    abIDs.Add(treasure.Item2);
+                }
             }
             // Handle treasure list for Mirajewels
             foreach (var treasure in treasureList.Item3)
@@ -437,7 +466,31 @@ namespace WOFFRandomizer.Dependencies
                 // Make exception for Libra Mirajewel if box is not checked
                 if (!libraShuffle && treasure.Item2.Item2 == "Stone037") continue;
                 treasureIDsForStones.Add(treasure.Item1);
-                stoneIDs.Add(treasure.Item2);
+                if (datajewelsShuffle)
+                {
+                    // choose a Stone between 0 and 121 inclusive, which is Mirajewels
+                    int stoneNum = rnd.Next(0, 126);
+                    // Also have a case for the 4 mirajewels stuck in later, so add 4 and make a case
+                    if (stoneNum > 121)
+                    {
+                        stoneNum += 82;
+                    }
+                    string stoneID = stoneNum.ToString();
+                    // also need to prepend 0's
+                    while (stoneID.Count() < 3)
+                    {
+                        stoneID = "0" + stoneID;
+                    }
+                    stoneID = "Stone" + stoneID;
+                    // Convert stoneID into array of bytes
+                    byte[] stoneBytes = Encoding.ASCII.GetBytes(stoneID);
+                    stoneIDs.Add((stoneBytes, stoneID));
+                }
+                else
+                {
+                    stoneIDs.Add(treasure.Item2);
+                }
+                    
             }
             itemIDs.Shuffle(Shuffle.ConsistentStringHash(sV));
             abIDs.Shuffle(Shuffle.ConsistentStringHash(sV));
@@ -464,7 +517,7 @@ namespace WOFFRandomizer.Dependencies
             (List<(string, (byte[], string))>, List<(string, (byte[], string))>, List<(string, (byte[], string))>) 
                 shuffledTreasureList = (shuffledItemList, shuffledABList, shuffledStoneList);
 
-            InsertShuffledTreasureList(shuffledTreasureList, scriptBinary, log);
+            InsertShuffledTreasureList(shuffledTreasureList, scriptBinary, log, readeritemsShuffle, readerItemDB);
 
             createItemLog(currDir, shuffledItemList, shuffledABList, shuffledStoneList);
 

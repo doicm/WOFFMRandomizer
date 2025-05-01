@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using WOFFRandomizer.Dependencies;
 
 namespace WOFFRandomizer
 {
@@ -49,6 +50,7 @@ namespace WOFFRandomizer
             System.IO.File.WriteAllText(currDir + "/logs/item_log.txt", "");
             System.IO.File.WriteAllText(currDir + "/logs/quest_log.txt", "");
             System.IO.File.WriteAllText(currDir + "/logs/mirageboard_log.txt", "");
+            System.IO.File.WriteAllText(currDir + "/logs/transfig_log.txt", "");
         }
 
         public static void Run(string basepath, RichTextBox log, Button button1, Button button2, Button button3)
@@ -71,6 +73,8 @@ namespace WOFFRandomizer
             DefineCopyAndRemoveFile(basepath, "character_list");
             DefineCopyAndRemoveFile(basepath, "config_param");
             DefineCopyAndRemoveOtherFile(basepath, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param.csh");
+
+            DialogueReduce.UninstallEventCshFiles(basepath);
 
             clearLogs();
 

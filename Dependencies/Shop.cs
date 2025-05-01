@@ -38,22 +38,36 @@ namespace WOFFRandomizer.Dependencies
                 }
             }
 
-            CsvHandling.CsvWriteData(csvfilename, listListCsv);
+            CsvHandling.CsvWriteDataAddHeadRow(csvfilename, listListCsv, 121);
+        }
 
-            //// Convert List<List<string>> back to List<string> output
-            //output = new List<string>();
-            //foreach (List<string> row in listListCsv)
-            //{
-            //    output.Add(string.Join(",", row));
-            //}
+        public static void RemoveT2AttackItems(string currDir, RichTextBox log)
+        {
+            log.AppendText("Removing Tier 2 attack items from shop...\n");
+            string slPath = Path.Combine(currDir, "shop_list.csv");
+            List<List<string>> slData = CsvHandling.CsvReadData(slPath);
 
-            //// Write over the file
-            //string newFileOutput = "";
-            //foreach (var item in output)
-            //{
-            //    newFileOutput += string.Join(",", item) + Environment.NewLine;
-            //}
-            //File.WriteAllText(currDir + "/shop_list.csv", newFileOutput);
+            // Remove T2 attack item data if it meets the criteria
+            // Bomb Core = 25
+            // Lightning Marble = 28
+            // Solid Frigicite = 31
+            // Dragon Scale = 34
+            // Dragon Wing = 37
+            // Earth Hammer = 40
+            List<string> T2List = ["25", "28", "31", "34", "37", "40"];
+            foreach (List<string> row in slData)
+            {
+                for (int i = 3; i < row.Count; i++)
+                {
+                    if (T2List.Contains(row[i]))
+                    {
+                        row[i] = "-1";
+                    }
+                }
+            }
+
+
+            CsvHandling.CsvWriteDataAddHeadRow(slPath, slData, 121);
         }
     }
 }

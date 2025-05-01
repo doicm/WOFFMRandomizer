@@ -10,7 +10,7 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            string version = "0.1.9";
+            string version = "0.2.0";
             this.Text = "World of Final Fantasy Maxima Randomizer v" + version;
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
@@ -21,8 +21,24 @@ namespace WOFFRandomizer
 
             textBox2.PlaceholderText = "Seed value (can be blank)";
 
-            // Disable checkboxes when dependent checkboxes are inactive
-            checkBoxLibra.Enabled = false;
+            // Enable boxes to a sort of basic preset
+            checkBoxTreasures.Checked = true;
+            checkBoxQuOrArenaPrizes.Checked = true;
+            //checkBoxDialogue.Checked = true;
+            checkBoxRandEnc.Checked = true;
+            checkBoxBosses.Checked = true;
+            checkBoxFiveBS.Checked = true;
+            checkBoxDoubleExp.Checked = true;
+            checkBoxMirageboard.Checked = true;
+            //checkBoxSizes.Checked = true;
+            //checkBoxStats.Checked = true;
+            checkBoxMovement.Checked = true;
+
+
+            //// Disable checkboxes when dependent checkboxes are inactive
+            //checkBoxLibra.Enabled = false;
+            //checkBoxDataSeeds.Enabled = false;
+            //checkBoxDataJewels.Enabled = false;
 
 
             // Check if WOFF.exe settings option is blank or not
@@ -87,17 +103,25 @@ namespace WOFFRandomizer
             bool bossActive = checkBoxBosses.Checked;
             bool itemActive = checkBoxTreasures.Checked;
             bool libraActive = checkBoxLibra.Checked;
+            bool dataseedsActive = checkBoxDataSeeds.Checked;
+            bool datajewelsActive = checkBoxDataJewels.Checked;
+            bool readeritemsActive = checkBoxReaderItems.Checked;
             bool rareActive = checkBoxRareMon.Checked;
             bool sizesActive = checkBoxSizes.Checked;
             bool quPrizesActive = checkBoxQuOrArenaPrizes.Checked;
-            bool doubleExpBool = checkBoxDoubleExp.Checked;
+            bool doubleExpActive = checkBoxDoubleExp.Checked;
             bool murkActive = checkBoxMurkrift.Checked;
             bool statActive = checkBoxStats.Checked;
             bool fiveBSActive = checkBoxFiveBS.Checked;
             bool movementActive = checkBoxMovement.Checked;
+            bool dialogueActive = checkBoxDialogue.Checked;
+            bool t2AttackItemsActive = checkBoxT2AttackItems.Checked;
+            bool transfigActive = checkBoxTransfig.Checked;
 
-            Install.Run(basepath, textBox2.Text, "0.1.9", richTextBox1, mbActive, enemActive, bossActive, itemActive, libraActive, rareActive, sizesActive,
-                quPrizesActive, murkActive, statActive, doubleExpBool, fiveBSActive, movementActive, button1, buttonRandomize, buttonUninstall);
+            Install.Run(basepath, textBox2.Text, "0.2.0", richTextBox1, mbActive, enemActive, bossActive, itemActive, libraActive,
+                dataseedsActive, datajewelsActive, readeritemsActive, rareActive, sizesActive,
+                quPrizesActive, murkActive, statActive, transfigActive, doubleExpActive, fiveBSActive, movementActive, dialogueActive,
+                t2AttackItemsActive, button1, buttonRandomize, buttonUninstall);
 
         }
 
@@ -124,7 +148,7 @@ namespace WOFFRandomizer
 
         private void checkBoxRandEnc_MouseHover(object sender, EventArgs e)
         {
-            toolTipRandEnc.Show("This shuffles the random encounters around that appear up to ending.\nThis doesn't include postgame encounters.", checkBoxRandEnc);
+            toolTipRandEnc.Show("This shuffles the random encounters around that appear up to ending.\nThis includes some postgame encounters.", checkBoxRandEnc);
         }
 
         private void checkBoxRareMon_MouseHover(object sender, EventArgs e)
@@ -148,8 +172,7 @@ namespace WOFFRandomizer
         private void checkBoxSizes_MouseHover(object sender, EventArgs e)
         {
             toolTipSizes.Show("This shuffles the sizes around that mirages can be.\nThis does not include XL. This may cause some interesting behaviors with stacks.\n" +
-                "Stack ability animations are disabled to prevent crashes.\n" +
-                "WARNING: If randomizing in the middle of a playthrough, please remove mirages\nfrom all stacks and save before shuffling.", checkBoxSizes);
+                "Stack ability animations are disabled to prevent crashes.", checkBoxSizes);
         }
 
         private void checkBoxQuOrArenaPrizes_MouseHover(object sender, EventArgs e)
@@ -191,16 +214,56 @@ namespace WOFFRandomizer
             {
                 checkBoxLibra.Enabled = false;
                 checkBoxLibra.Checked = false;
+                checkBoxDataSeeds.Enabled = false;
+                checkBoxDataSeeds.Checked = false;
+                checkBoxDataJewels.Enabled = false;
+                checkBoxDataJewels.Checked = false;
+                checkBoxReaderItems.Enabled = false;
+                checkBoxReaderItems.Checked = false;
             }
             else
             {
                 checkBoxLibra.Enabled = true;
+                checkBoxDataSeeds.Enabled = true;
+                checkBoxDataJewels.Enabled = true;
+                checkBoxReaderItems.Enabled = true;
             }
         }
 
         private void checkBoxMovement_MouseHover(object sender, EventArgs e)
         {
             toolTipMovement.Show("This doubles movement speed, which also cuts encounter rate in half.", checkBoxMovement);
+        }
+
+        private void checkBoxDialogue_MouseHover(object sender, EventArgs e)
+        {
+            toolTipDialogue.Show("This speeds up the dialogue in the field and battles.\nFor field dialogue, " +
+                "voiced dialogue in config must be set to Off.\nNOTE: This only works in English.", checkBoxDialogue);
+        }
+
+        private void checkBoxDataSeeds_MouseHover(object sender, EventArgs e)
+        {
+            toolTipDataSeeds.Show("This replaces the standard set of ability seeds in treasure chests\nwith random seeds from in the game data.\n", checkBoxDataSeeds);
+        }
+
+        private void checkBoxDataJewels_MouseHover(object sender, EventArgs e)
+        {
+            toolTipDataJewels.Show("This replaces the standard set of Mirajewels in treasure chests\nwith random Mirajewels from in the game data.\n", checkBoxDataJewels);
+        }
+
+        private void checkBoxT2AttackItems_MouseHover(object sender, EventArgs e)
+        {
+            toolTipT2AttackItems.Show("This removes the Tier 2 attack items in Chocolatte's shop (anti-QoL).", checkBoxT2AttackItems);
+        }
+
+        private void checkBoxReaderItems_MouseHover(object sender, EventArgs e)
+        {
+            toolTipReaderItems.Show("This shuffles reading items, such as Girl's Diary,\ninto the treasure randomization.", checkBoxReaderItems);
+        }
+
+        private void checkBoxTransfig_MouseHover(object sender, EventArgs e)
+        {
+            toolTipTransfig.Show("This shuffles what mirages can transfigure into along with mirageboard unlocks.\nSome mirageboard unlock nodes are removed to prevent major issues.", checkBoxTransfig);
         }
     }
 }
