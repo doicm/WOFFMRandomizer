@@ -148,6 +148,14 @@ can break things.
 
 Changelog:
 =====================================================================
+2025-1-5 - 0.2.0 - Added sped up dialogue. Added mirajewel and 
+ability seed randomization in treasure chests from data. Added 
+mirage transfiguration/MB unlock shuffling. Added option to exclude 
+reading items from item shuffle. Added cutscene skips in ending. 
+Removed Cactus Johnny from Mirageboard shuffle, since mirage doesn't
+exist in this version. Kept Zantetsuken on Odin in MB shuffle. Added
+option to remove T2 attack items.
+
 2025-26-4 - 0.1.9 - Added double movement speed QoL and Lure/Stealth
 mirajewels on mirageboard. Added toggle for Libra mirajewel at first
 mirajewel chest. Can now lose to Yuna/Valefor fight. Randomizer
