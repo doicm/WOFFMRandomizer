@@ -8,7 +8,7 @@ and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 =====================================================================
-0.1.9
+0.2.0
 
 Notes:
 =====================================================================
@@ -28,19 +28,46 @@ or in Linux on the following:
 
 &ensp;<SteamLibrary-folder>/steamapps/compatdata/552700/pfx/
 
+3.) I also highly recommend creating a shortcut to the 
+WOFF executable and running the game from there instead of
+trying to run it from Steam, as there are numerous problems
+with the alternative solutions provided from trying to run
+from Steam (running in Admin mode, compatibility, etc).
+
 Description:
 =====================================================================
 This mod is designed to work with World of Final Fantasy: Maxima
 for Steam. The regular version without the expansion will not work.
 
+This randomizer is designed to be played up to the ending where you
+see the Lilikins dance in the credits. After that in the postgame,
+there isn't too much randomized.
+
 These are the features currently implemented for randomizing:
 
+*Items* 
 - **Shuffle Treasure Chests:** This shuffles most of the treasure
 chest contents in the game up to ending. Counts of items and some
 specialty items not included.
+- **Shuffle Libra Mirajewel:** This includes the Libra Mirajewel
+treasure chest in Nether Nebula in the shuffle.
+- **Replace Set Ability Seeds:** This replaces the standard set of
+ability seeds in treasure chests with random seeds from in the game
+data.
+- **Replace Set Mirajewels:** This replaces the standard set of
+Mirajewels in treasure chests with random Mirajewels from in the
+game data.
+- **Shuffle Reading Items.** This shuffles most reading items,
+such as Girl's Diary, into the treasure randomization.
+- **Shuffle Intervention/Coliseum Rewards:** This shuffles the prizes
+that can be obtained between the arena and intervention quests. NPC
+quests are not included. Repeat attempts are not included. This also
+includes the Tama quest. ??? mementos are no longer hidden.
+
+*Enemies*
 - **Shuffle Random Encounters:** This shuffles the random encounters
-around that appear up to ending. This doesn't include postgame
-encounters.
+around that appear up to ending. This does include a few post-game
+enemies.
 - **Shuffle Rare Mirages:** This shuffles most of the rare monster
 battles.
 - **Shuffle Bosses:** This shuffles bosses that appear during the
@@ -49,6 +76,8 @@ bosses such as Exnine fights.
 - **Shuffle Murkrifts:** This shuffles murkrift enemies except
 for Behemoth at the beginning and the rare monster fight in the
 Train Graveyard.
+
+*Mirages*
 - **Shuffle Nodes:** This shuffles most of the nodes between
 mirageboards for mirages. Some nodes are excluded that are either
 not functional or cause the game to softlock. Some nodes may also
@@ -61,13 +90,12 @@ behaviors with stacks. Stack ability animations are disabled to
 prevent crashes. **WARNING:** If randomizing in the middle of a
 playthrough, please remove mirages from all stacks and save
 before shuffling.
-- **Shuffle Intervention/Coliseum Rewards:** This shuffles the prizes
-that can be obtained between the arena and intervention quests. NPC
-quests are not included. Repeat attempts are not included. This also
-includes the Tama quest. ??? mementos are no longer hidden.
 - **Randomize Mirage Stats:** This randomizes the stats and growths
 that each mirage has. This may affect enemies as well as mirage allies.
 This only randomizes HP, Str, Def, Mag, MDef, and Agi.
+- **Shuffle Transfigurations:** This shuffles what mirages can
+transfigure into along with mirageboard unlocks. Some mirageboard
+unlock nodes are removed to prevent major issues.
 
 There are also the following optional features for QoL or for fun:
 
@@ -75,10 +103,15 @@ There are also the following optional features for QoL or for fun:
 earned in all battles.
 - **Increase Battle Speed:** This multiplies the battle speed at 
 setting 3. Wait setting recommended.
-- **Double movement speed:** This doubles movement speed for both
+- **Double Movement Speed:** This doubles movement speed for both
 unmounted and mounted. WARNING: If you are mounted in Sunken Temple
 and Castle Exnine, you may fall off the stage. If you do, try to
 navigate to a platform's z-axis (y-axis?) to get back.
+- **Speed Up Dialogue:** This speeds up the dialogue in the field
+and battles. For field dialogue, voiced dialogue in config must
+be set to off. NOTE: This only works in English.
+- **Remove Powerful Attack Items from Shop:** This removes the
+tier 2 attack items in Chocolatte's shop, sort of an anti-QoL.
 
 These QoL features are automatically included:
 
@@ -87,12 +120,16 @@ and skip this cutscene now.
 - **Lure and Stealth Mirajewels at beginning:** The Lure Mirajewel
 is included in Tama's mirageboard, and the Stealth Mirajewel is
 included in Sylph's mirageboard. You can unlock them at 1 cost.
+- **Skip ending and credits:** You can pause and skip the credits
+for some reason (at least watch the dance number).
 
 Instructions:
 =====================================================================
 Find the latest release in the releases section on Github, then
 download the zip and extract it to a destination of your choosing.
 Run WOFFRandomizer.exe and follow the directions for installing. 
+When you load the randomizer, it will have a basic preset loaded
+with the checkboxes already ticked.
 
 You can verify installation when running the game by checking the
 top-left of the title screen and seeing if it shows the randomizer
