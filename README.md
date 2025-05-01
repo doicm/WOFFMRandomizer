@@ -1,4 +1,4 @@
-Randomizer - World of Final Fantasy
+Randomizer - World of Final Fantasy: Maxima
 =====================================================================
 Mod Created By:	Doicm (decentdoicm)
 
