@@ -73,6 +73,7 @@ namespace WOFFRandomizer
             DefineCopyAndRemoveFile(basepath, "character_list");
             DefineCopyAndRemoveFile(basepath, "config_param");
             DefineCopyAndRemoveOtherFile(basepath, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param.csh");
+            DefineCopyAndRemoveFile(basepath, "mirage_library_list");
 
             DialogueReduce.UninstallEventCshFiles(basepath);
 

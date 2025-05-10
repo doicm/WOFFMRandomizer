@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Text;
 using System.Runtime.InteropServices.JavaScript;
@@ -10,10 +11,12 @@ namespace WOFFRandomizer
         public Form1()
         {
             InitializeComponent();
-            string version = "0.2.0";
+            string version = "0.2.1";
             this.Text = "World of Final Fantasy Maxima Randomizer v" + version;
             textBox1.ReadOnly = true;
             richTextBox1.ReadOnly = true;
+            richTextBoxPercent.ReadOnly = true;
+            this.MaximizeBox = false;
 
             // Toggle buttons based on input WOFF executable
             buttonRandomize.Enabled = false;
@@ -27,12 +30,12 @@ namespace WOFFRandomizer
             //checkBoxDialogue.Checked = true;
             checkBoxRandEnc.Checked = true;
             checkBoxBosses.Checked = true;
-            checkBoxFiveBS.Checked = true;
-            checkBoxDoubleExp.Checked = true;
+            //checkBoxBattleSpeed.Checked = true;
+            //checkBoxDoubleExp.Checked = true;
             checkBoxMirageboard.Checked = true;
             //checkBoxSizes.Checked = true;
             //checkBoxStats.Checked = true;
-            checkBoxMovement.Checked = true;
+            //checkBoxMovement.Checked = true;
 
 
             //// Disable checkboxes when dependent checkboxes are inactive
@@ -89,12 +92,14 @@ namespace WOFFRandomizer
 
         }
 
+        // Uninstall button
         private void button3_Click(object sender, EventArgs e)
         {
             string basepath = textBox1.Text.Substring(0, textBox1.Text.LastIndexOf("WOFF.exe"));
             Uninstall.Run(basepath, richTextBox1, button1, buttonRandomize, buttonUninstall);
         }
 
+        // Randomize button
         private void button2_Click(object sender, EventArgs e)
         {
             string basepath = textBox1.Text.Substring(0, textBox1.Text.LastIndexOf("WOFF.exe"));
@@ -112,16 +117,37 @@ namespace WOFFRandomizer
             bool doubleExpActive = checkBoxDoubleExp.Checked;
             bool murkActive = checkBoxMurkrift.Checked;
             bool statActive = checkBoxStats.Checked;
-            bool fiveBSActive = checkBoxFiveBS.Checked;
+            bool battleSpeedActive = checkBoxBattleSpeed.Checked;
             bool movementActive = checkBoxMovement.Checked;
             bool dialogueActive = checkBoxDialogue.Checked;
             bool t2AttackItemsActive = checkBoxT2AttackItems.Checked;
             bool transfigActive = checkBoxTransfig.Checked;
 
-            Install.Run(basepath, textBox2.Text, "0.2.0", richTextBox1, mbActive, enemActive, bossActive, itemActive, libraActive,
+            int totalChecks = 
+                (mbActive ? 1 : 0) + 
+                (enemActive ? 1 : 0) +
+                (bossActive ? 1 : 0) +
+                (itemActive ? 1 : 0) +
+                (libraActive ? 1 : 0) +
+                (dataseedsActive ? 1 : 0) +
+                (datajewelsActive ? 1 : 0) +
+                (readeritemsActive ? 1 : 0) +
+                (rareActive ? 1 : 0) +
+                (sizesActive ? 1 : 0) +
+                (quPrizesActive ? 1 : 0) +
+                (doubleExpActive ? 1 : 0) +
+                (murkActive ? 1 : 0) +
+                (statActive ? 1 : 0) +
+                (battleSpeedActive ? 1 : 0) +
+                (movementActive ? 1 : 0) +
+                (dialogueActive ? 1 : 0) +
+                (t2AttackItemsActive ? 1 : 0) +
+                (transfigActive ? 1 : 0);
+
+            Install.Run(basepath, textBox2.Text, "0.2.1", richTextBox1, mbActive, enemActive, bossActive, itemActive, libraActive,
                 dataseedsActive, datajewelsActive, readeritemsActive, rareActive, sizesActive,
-                quPrizesActive, murkActive, statActive, transfigActive, doubleExpActive, fiveBSActive, movementActive, dialogueActive,
-                t2AttackItemsActive, button1, buttonRandomize, buttonUninstall);
+                quPrizesActive, murkActive, statActive, transfigActive, doubleExpActive, battleSpeedActive, movementActive, dialogueActive,
+                t2AttackItemsActive, button1, buttonRandomize, buttonUninstall, totalChecks, richTextBoxPercent);
 
         }
 
@@ -198,9 +224,9 @@ namespace WOFFRandomizer
                 "This only randomizes HP, Str, Def, Mag, MDef, and Agi.", checkBoxStats);
         }
 
-        private void checkBoxFiveBS_MouseHover(object sender, EventArgs e)
+        private void checkBoxBattleSpeed_MouseHover(object sender, EventArgs e)
         {
-            toolTipFiveBS.Show("This multiplies the battle speed at setting 3.\nWait setting recommended, maybe.", checkBoxFiveBS);
+            toolTipBattleSpeed.Show("This multiplies the battle speed at all speed.\nWait setting recommended, maybe.", checkBoxBattleSpeed);
         }
 
         private void checkBoxLibra_MouseHover(object sender, EventArgs e)
@@ -232,7 +258,8 @@ namespace WOFFRandomizer
 
         private void checkBoxMovement_MouseHover(object sender, EventArgs e)
         {
-            toolTipMovement.Show("This doubles movement speed, which also cuts encounter rate in half.", checkBoxMovement);
+            toolTipMovement.Show("This doubles movement speed, which also cuts encounter rate in half.\nWARNING: Use at your own risk, as it can put you out of " +
+                "bounds if not careful\ndue to speed excess in some areas.", checkBoxMovement);
         }
 
         private void checkBoxDialogue_MouseHover(object sender, EventArgs e)
@@ -263,7 +290,8 @@ namespace WOFFRandomizer
 
         private void checkBoxTransfig_MouseHover(object sender, EventArgs e)
         {
-            toolTipTransfig.Show("This shuffles what mirages can transfigure into along with mirageboard unlocks.\nSome mirageboard unlock nodes are removed to prevent major issues.", checkBoxTransfig);
+            toolTipTransfig.Show("This shuffles what mirages can transfigure into along with mirageboard unlocks.\nSome mirageboard unlock nodes are removed to prevent major issues." +
+                "\nNOTE: Not recommended to apply this or remove this mid-playthrough.", checkBoxTransfig);
         }
     }
 }

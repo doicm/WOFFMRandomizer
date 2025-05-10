@@ -77,6 +77,16 @@ namespace WOFFRandomizer.Dependencies
             return (transfigRows, mbUnlockRows);
         }
 
+        private static List<List<string>> InsertUnlockCreds(List<List<string>> mbdData, int rowID, List<string> unlockCreds)
+        {
+            for (int j = 1; j < unlockCreds.Count; j++)
+            {
+                mbdData[rowID][10 + j] = unlockCreds[j];
+            }
+
+            return mbdData;
+        }
+
         private static List<List<string>> ReinsertShuffledData(List<List<string>> mbdData,
             List<List<string>> transfigRows, List<List<string>> mbUnlockRows, List<string> skipMirages, List<string> mbExclusionList, RichTextBox log)
         {
@@ -200,6 +210,18 @@ namespace WOFFRandomizer.Dependencies
                     mbdData[rowID][10] = linkID;
                 }
 
+                // Need to find unlock credentials for each mirageboard and store them
+                List<List<string>> tempMirageUnlockCreds = new List<List<string>>();
+
+                for (int i = 0; i < mbUnlockRows.Count; i++)
+                {
+                    string mirage = mbUnlockRows[i][4];
+                    List<string> unlockData = mbdData.Find(x => x[8] == mirage && x[7] == "11")[11..17];
+                    tempMirageUnlockCreds.Add([mirage, .. unlockData]);
+
+                }
+                List<List<string>> mirageUnlockCreds = JsonSerializer.Deserialize<List<List<string>>>(JsonSerializer.Serialize(tempMirageUnlockCreds));
+
                 // Write each row with node_category 11 with the shuffled mirageboard
                 // Going to take them in pairs and pair them up. for mirages with two mirageboard unlocks, need to consider that
                 bool duo = false, trio = false, broken = false;
@@ -212,6 +234,7 @@ namespace WOFFRandomizer.Dependencies
                     }
                     // Get the pair of mirages
                     string mirageOne = mbUnlockRows[0][4];
+                    List<string> mirageOneUnlockCreds = mirageUnlockCreds.Find(x => x[0] == mirageOne);
                     if (DuoBoardMirages.Contains(mirageOne)) duo = true;
                     else trio = true;
                     string mirageTwo = mbUnlockRows[1][4];
@@ -234,6 +257,7 @@ namespace WOFFRandomizer.Dependencies
                                 break;
                             }
                         }
+                        List<string> mirageTwoUnlockCreds = mirageUnlockCreds.Find(x => x[0] == mirageTwo);
                         // Find the first row in the mirageboard_data and write the shuffled mirage (mirageTwo) into it
                         int firstRowID = mbdData.FindIndex(x => x[4] == mirageOne && x[7] == "11");
                         if (firstRowID == -1)
@@ -241,6 +265,7 @@ namespace WOFFRandomizer.Dependencies
                             break; // throw if invalid
                         }
                         mbdData[firstRowID][8] = mirageTwo;
+                        mbdData = InsertUnlockCreds(mbdData, firstRowID, mirageTwoUnlockCreds);
                         // Get the second row and put the first mirage in there
                         int secondRowID = mbdData.FindIndex(x => x[4] == mirageTwo && x[7] == "11");
                         if (secondRowID == -1)
@@ -248,6 +273,7 @@ namespace WOFFRandomizer.Dependencies
                             break; // throw if invalid
                         }
                         mbdData[secondRowID][8] = mirageOne;
+                        mbdData = InsertUnlockCreds(mbdData, secondRowID, mirageOneUnlockCreds);
 
                         // Delete the rows from mbUnlockRows to prevent duplication
                         mbUnlockRows.RemoveAt(0);
@@ -279,6 +305,7 @@ namespace WOFFRandomizer.Dependencies
                                 break;
                             }
                         }
+                        List<string> mirageTwoUnlockCreds = mirageUnlockCreds.Find(x => x[0] == mirageTwo);
                         string mirageThree = mbUnlockRows[2 + i][4];
                         while (!TrioBoardMirages.Contains(mirageThree) && mirageThree != mirageTwo && mirageThree != mirageOne)
                         {
@@ -290,64 +317,39 @@ namespace WOFFRandomizer.Dependencies
                                 break;
                             }
                         }
+                        List<string> mirageThreeUnlockCreds = mirageUnlockCreds.Find(x => x[0] == mirageThree);
                         // Handle this in three pairs
                         // First pair
                         // Find the first row in the mirageboard_data and write the shuffled mirage (mirageTwo) into it
                         int firstRowIDA = mbdData.FindIndex(x => x[4] == mirageOne && x[7] == "11");
-                        if (firstRowIDA == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbdData[firstRowIDA][8] = mirageTwo;
+                        mbdData = InsertUnlockCreds(mbdData, firstRowIDA, mirageTwoUnlockCreds);
                         // Get the second row and put the first mirage in there
                         int secondRowIDA = mbdData.FindIndex(x => x[4] == mirageTwo && x[7] == "11");
-                        if (secondRowIDA == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbdData[secondRowIDA][8] = mirageOne;
+                        mbdData = InsertUnlockCreds(mbdData, secondRowIDA, mirageOneUnlockCreds);
 
                         // Second pair
                         int firstRowIDB = mbdData.FindLastIndex(x => x[4] == mirageOne && x[7] == "11");
-                        if (firstRowIDB == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbdData[firstRowIDB][8] = mirageThree;
+                        mbdData = InsertUnlockCreds(mbdData, firstRowIDB, mirageThreeUnlockCreds);
                         int thirdRowIDA = mbdData.FindIndex(x => x[4] == mirageThree && x[7] == "11");
-                        if (thirdRowIDA == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbdData[thirdRowIDA][8] = mirageOne;
+                        mbdData = InsertUnlockCreds(mbdData, thirdRowIDA, mirageOneUnlockCreds);
 
                         // Third pair
                         int secondRowIDB = mbdData.FindLastIndex(x => x[4] == mirageTwo && x[7] == "11");
-                        if (secondRowIDB == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbdData[secondRowIDB][8] = mirageThree;
+                        mbdData = InsertUnlockCreds(mbdData, secondRowIDB, mirageThreeUnlockCreds);
                         int thirdRowIDB = mbdData.FindLastIndex(x => x[4] == mirageThree && x[7] == "11");
-                        if (thirdRowIDB == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbdData[thirdRowIDB][8] = mirageTwo;
+                        mbdData = InsertUnlockCreds(mbdData, thirdRowIDB, mirageTwoUnlockCreds);
 
                         // Delete the rows from mbUnlockRows to prevent duplication
                         mbUnlockRows.RemoveAt(0);
                         int mbIDA = mbUnlockRows.FindIndex(x => x[4] == mirageTwo);
-                        if (mbIDA == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbUnlockRows.RemoveAt(mbIDA);
                         int mbIDB = mbUnlockRows.FindIndex(x => x[4] == mirageThree);
-                        if (mbIDB == -1)
-                        {
-                            break; // throw if invalid
-                        }
                         mbUnlockRows.RemoveAt(mbIDB);
                         // There's two sets of rows for each one, so I think I need to delete both to be accurate
                         mbIDA = mbUnlockRows.FindIndex(x => x[4] == mirageOne);
@@ -428,7 +430,16 @@ namespace WOFFRandomizer.Dependencies
             foreach(List<string> row in DLCMBRows)
             {
                 int index = mbdData.FindIndex(x => x[4] == row[4] && x[7] == "13");
-                mbdData[index] = row;
+                //// Was going to reinsert the rows, but instead I think I'll just unlink them to prevent major issues
+                //// This may also fix the sp growth bug, but we'll see
+                //mbdData[index] = row;
+                mbdData[index][7] = "12";
+                mbdData[index][8] = "-1";
+                mbdData[index][13] = "";
+                mbdData[index][14] = "-1";
+                mbdData[index][15] = "-1";
+                mbdData[index][16] = "0";
+                mbdData[index][17] = "-1";
             }
 
             return mbdData;
@@ -473,7 +484,8 @@ namespace WOFFRandomizer.Dependencies
                     int mbunlockMirageID = charsDB.FindIndex(x => x.Split("\t")[0] == row[8]);
                     string mbunlockMirageName = charsDB[mbunlockMirageID].Split("\t")[1];
 
-                    toWrite += origMirageName + "<->" + mbunlockMirageName + Environment.NewLine;
+                    //toWrite += origMirageName + "<->" + mbunlockMirageName + Environment.NewLine;
+                    toWrite += origMirageName + "<->" + mbunlockMirageName + " " + row[13] + " " + row[15] + " " + row[16] + Environment.NewLine ;
                 }
             }
 

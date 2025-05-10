@@ -375,6 +375,27 @@ namespace WOFFRandomizer.Dependencies
             File.WriteAllText(mlogPath, toWrite);
         }
 
+        private static void CorrectListedMonsterDrops(Dictionary<string, List<string>> eDictShuffled, string currDir)
+        {
+            string mllPath = Path.Combine(currDir, "mirage_library_list.csv");
+            List<List<string>> mllData = CsvHandling.CsvReadData(mllPath);
+
+            List<List<string>> mllConstants = JsonSerializer.Deserialize<List<List<string>>>(JsonSerializer.Serialize(CsvHandling.CsvReadData(mllPath))); // Store initial data
+
+            foreach (var item in eDictShuffled)
+            {
+                List<string> dataIDs = mllConstants.Find(x => item.Key == x[6]);
+                if (dataIDs == null) continue;
+                string ceslID = dataIDs[6];
+                int index = mllData.FindIndex(x => item.Value[1] == x[3]);
+                mllData[index][6] = ceslID;
+                
+            }
+
+            CsvHandling.CsvWriteDataAddHeadRow(mllPath, mllData, 11);
+
+        }
+
         // This function is for modifying random encounters
         private static void ModifyRandomEncounters(string sV, RichTextBox log, string currDir)
         {
@@ -385,6 +406,8 @@ namespace WOFFRandomizer.Dependencies
             List<List<string>> MPoutput = CsvHandling.CsvReadData(mpPath);
             List<List<string>> EGLoutput = CsvHandling.CsvReadData(eglPath);
             List<List<string>> CESLoutput = CsvHandling.CsvReadData(ceslPath);
+            
+
             // enemies dictionary to hold the final set of enemies
             Dictionary<string, List<string>> enemiesDict = new Dictionary<string, List<string>>();
             // ceslRowData list to hold the ceslRowData in order and to apply to the enemies dictionary after randomization
@@ -427,6 +450,8 @@ namespace WOFFRandomizer.Dependencies
 
             CsvHandling.CsvWriteData(eglPath, EGLoutput);
             CsvHandling.CsvWriteData(ceslPath, CESLoutput);
+
+            CorrectListedMonsterDrops(eDictShuffled, currDir);
             
             // Read and modify the current values in the monster_log
             // Going to have to do a traversal post-shuffle
@@ -435,10 +460,7 @@ namespace WOFFRandomizer.Dependencies
         }
         public static void mirageEncsWriteCsv(string currDir, string sV, RichTextBox log, bool enemShuffle, bool bossShuffle, bool rareShuffle)
         {
-            //List<List<string>> EGLoutput = readCsv(currDir + "/enemy_group_list.csv");
-            //List<List<string>> CESLoutput = readCsv(currDir + "/character_enemy_status_list.csv");
-            //List<List<string>> MPoutput = CsvReadData(currDir + "/monster_place.csv");
-
+            
             if (enemShuffle) ModifyRandomEncounters(sV, log, currDir);
             if (rareShuffle) RareMon.ShuffleRareMonsters(sV, log, currDir);
             if (bossShuffle) Boss.ModifyBosses(sV, log, currDir);

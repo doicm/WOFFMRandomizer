@@ -9,7 +9,8 @@ namespace WOFFRandomizer.Dependencies
 {
     internal class QuOrArenaPrizes
     {
-        private static List<(string, List<(string, string)>)> CollectRewardsList (string interventionPath, string arenaPath)
+        private static List<(string, List<(string, string)>)> CollectRewardsList (string interventionPath, 
+            string arenaPath, List<int> arenaInclusion)
         {
             List<(string, List<(string, string)>)> rewardsList = new List<(string, List<(string, string)>)> ();
             
@@ -41,8 +42,6 @@ namespace WOFFRandomizer.Dependencies
                 interventionIter++;
             }
 
-            List<int> arenaInclusion = [1,3,5,13,17,23,27,29,35,71,73,95,99,198,199,200,201,202,203,204,205,206,207,208,209,
-            210,211,212,213,214,215,216,217,218,219,220,221,222,224,226,228,230];
             int arenaIter = 0;
             // Can go over whole list for arena. Just going to include rather than exclude for arena, since there's a large
             // number for arena list and not many comparatively included.
@@ -78,7 +77,8 @@ namespace WOFFRandomizer.Dependencies
             return allIndividualRewards;
         }
 
-        private static void ShuffleRewardsList(string currDir, string interventionPath, string arenaPath, List<(string, string)> allIndividualRewards)
+        private static void ShuffleRewardsList(string currDir, string interventionPath, string arenaPath, 
+            List<(string, string)> allIndividualRewards, List<int> arenaInclusion)
         {
             // First, put everything into a list of csvs. Start with interventionPath, then do arenaPath
             // it's going to be easier to put them into two separate lists
@@ -110,8 +110,6 @@ namespace WOFFRandomizer.Dependencies
                 interventionIter++;
             }
 
-            List<int> arenaInclusion = [1,3,5,13,17,23,27,29,35,71,73,95,99,198,199,200,201,202,203,204,205,206,207,208,209,
-            210,211,212,213,214,215,216,217,218,219,220,221,222,224,226,228,230];
             int arenaIter = 0;
             // Can go over whole list for arena. Just going to include rather than exclude for arena, since there's a large
             // number for arena list and not many comparatively included.
@@ -132,10 +130,11 @@ namespace WOFFRandomizer.Dependencies
             CsvHandling.CsvWriteDataAddHeadRow(arenaPath, csvDataArena, 11);
 
             // Write data to a log
-            WriteToQuestLog(currDir, csvDataIntervention, csvDataArena);
+            WriteToQuestLog(currDir, csvDataIntervention, csvDataArena, arenaInclusion);
         }
 
-        private static void WriteToQuestLog(string currDir, List<List<string>> csvDataIntervention, List<List<string>> csvDataArena)
+        private static void WriteToQuestLog(string currDir, List<List<string>> csvDataIntervention, List<List<string>> csvDataArena,
+            List<int> arenaInclusion)
         {
             // Convert what's read in the file to a list to read in of the database files
             List<string> arenaDB = [.. File.ReadAllLines(Path.Combine(currDir, "database", "arena.txt"))];
@@ -174,8 +173,6 @@ namespace WOFFRandomizer.Dependencies
                 sw.WriteLine("---");
                 // Go to Coliseum/Arena next
                 sw.WriteLine("Coliseum Battles:");
-                List<int> arenaInclusion = [1,3,5,13,17,23,27,29,35,71,73,95,99,198,199,200,201,202,203,204,205,206,207,208,209,
-                    210,211,212,213,214,215,216,217,218,219,220,221,222,224,226,228,230];
                 int arenaIter = 0;
                 while (arenaIter < csvDataArena.Count)
                 {
@@ -206,10 +203,16 @@ namespace WOFFRandomizer.Dependencies
             // I won't do repeat quests, just the first time quests.
             string interventionPath = Path.Combine(currDir, "quest_data_sub_reward_table_list.csv");
             string arenaPath = Path.Combine(currDir, "arena_reward_table_list.csv");
+            List<int> arenaInclusion = [1,3,5,13,17,23,27,29,35,71,73,95,99,198,199,200,201,202,203,204,205,206,207,208,209,
+                210,211,212,213,214,215,216,217,218,219,220,221,222,224,226,228,230];
+            // Consider adding extra battles into arena for more rewards, although that means rewards may be locked behind them
+            // May make it more interesting as a result
+            arenaInclusion.AddMany(37, 43, 45, 49, 51, 79, 81, 85, 87, 89, 91, 103, 105, 109, 111, 125, 127, 133, 141, 143,
+                147, 175, 176, 177, 178, 223, 225, 227, 229, 231, 232, 233, 234, 235, 236, 237);
 
             // This list will consist of a name to ID the intervention quest/arena name it came from and 
             // a list of the groups of prize/count pairs. Most lists will only have one item in them.
-            List<(string, List<(string, string)>)> rewardsList = CollectRewardsList(interventionPath, arenaPath);
+            List<(string, List<(string, string)>)> rewardsList = CollectRewardsList(interventionPath, arenaPath, arenaInclusion);
 
             // I realized that this will return the original structure of the rewards I need to shuffle
             // However, I want to shuffle all the rewards in them, not just the structures, so I need to collect
@@ -223,7 +226,7 @@ namespace WOFFRandomizer.Dependencies
             allIndividualRewards.Shuffle(Shuffle.ConsistentStringHash(sV));
 
             // Write the shuffled results back in.
-            ShuffleRewardsList(currDir, interventionPath, arenaPath, allIndividualRewards);
+            ShuffleRewardsList(currDir, interventionPath, arenaPath, allIndividualRewards, arenaInclusion);
         }
     }
 }

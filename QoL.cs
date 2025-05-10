@@ -20,7 +20,7 @@ namespace WOFFRandomizer
                 return (float)i;
             }
         }
-        public static void MultiplyFiveBattleSpeedByFive(string currDir, RichTextBox log)
+        public static void IncreaseBattleSpeed(string currDir, RichTextBox log)
         {
             log.AppendText("Increasing battle speed....\n");
 
@@ -28,7 +28,11 @@ namespace WOFFRandomizer
 
             List<List<string>> cpData = CsvHandling.CsvReadData(cpPath);
 
-            cpData[7][3] = "4.0f";
+            cpData[5][3] = "1.2f";
+            cpData[6][3] = "1.5f";
+            cpData[7][3] = "1.8f";
+            cpData[8][3] = "2.1f";
+            cpData[9][3] = "2.4f";
 
             CsvHandling.CsvWriteDataAddHeadRow(cpPath, cpData, 4);
         }
@@ -89,6 +93,30 @@ namespace WOFFRandomizer
                     // Go to the specific code manually that I need to change from 00 to 80
                     // It's like flipping a bit
                     barcReader.BaseStream.Position = 0x608891;
+                    barcStream.WriteByte(0x80);
+                }
+            }
+        }
+
+        public static void AddCSSkipToGigans(string currDir, RichTextBox log)
+        {
+            string scriptBinary = Path.Combine(currDir, "script64.bin");
+            using (FileStream barcStream = new FileStream(scriptBinary, FileMode.Open, FileAccess.ReadWrite))
+            {
+                using (BinaryReader barcReader = new BinaryReader(barcStream))
+                {
+                    // This is the position of lua script ev22_0110.lua, where the first ending cutscene is
+                    barcReader.BaseStream.Position = 0x3F3801;
+
+                    string luaMagic = Encoding.UTF8.GetString(barcReader.ReadBytes(3));
+                    if (luaMagic != "Lua")
+                    {
+                        log.AppendText("Couldn't put skip button in Gigantaur/Gigantrot cutscene.\n");
+                        return;
+                    }
+                    // Go to the specific code manually that I need to change from 00 to 80
+                    // It's like flipping a bit
+                    barcReader.BaseStream.Position = 0x3F3891;
                     barcStream.WriteByte(0x80);
                 }
             }

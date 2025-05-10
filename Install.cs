@@ -114,7 +114,7 @@ namespace WOFFRandomizer
 
         private static void WriteToSeedLog(string currDir, string sV, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
             bool libraShuffle, bool dataseedsShuffle, bool datajewelsShuffle, bool readeritemsShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, 
-            bool murkShuffle, bool statShuffle, bool transfigShuffle, bool doubleExpBool, bool fiveBSBool, bool movementBool, bool dialogueBool, 
+            bool murkShuffle, bool statShuffle, bool transfigShuffle, bool doubleExpBool, bool battleSpeedBool, bool movementBool, bool dialogueBool, 
             bool t2AttackItemsBool)
         {
             string toWrite = sV + Environment.NewLine;
@@ -134,17 +134,24 @@ namespace WOFFRandomizer
             if (statShuffle) toWrite += "Mirage stats randomized...." + Environment.NewLine;
             if (transfigShuffle) toWrite += "Transfigurations/MBs randomized...." + Environment.NewLine;
             if (doubleExpBool) toWrite += "Experience and gil doubled...." + Environment.NewLine;
-            if (fiveBSBool) toWrite += "Battle speed increased...." + Environment.NewLine;
+            if (battleSpeedBool) toWrite += "Battle speed increased...." + Environment.NewLine;
             if (movementBool) toWrite += "Movement speed increased...." + Environment.NewLine;
             if (dialogueBool) toWrite += "Dialogue in battles and field decreased...." + Environment.NewLine;
             if (t2AttackItemsBool) toWrite += "Removed some attack items from shop...." + Environment.NewLine;
 
             System.IO.File.WriteAllText(currDir + "/logs/seed.txt", toWrite);
         }
+
+        private static void ChangeProgressStatus(int currChecks, int totalChecks, RichTextBox percentProgress)
+        {
+            float calc = (currChecks * 1000 / totalChecks);
+            calc = calc / 10;
+            percentProgress.Text = calc.ToString() + "%";
+        }
         public static void Run(string basepath, string sV, string version, RichTextBox log, bool mbShuffle, bool enemShuffle, bool bossShuffle, bool itemShuffle, 
             bool libraShuffle, bool dataseedsShuffle, bool datajewelsShuffle, bool readeritemsShuffle, bool rareShuffle, bool sizesShuffle, bool quPrizesShuffle, bool murkShuffle, 
-            bool statShuffle, bool transfigShuffle, bool doubleExpBool, bool fiveBSBool, bool movementBool, bool dialogueBool,
-            bool t2AttackItemsBool, Button button1, Button button2, Button button3)
+            bool statShuffle, bool transfigShuffle, bool doubleExpBool, bool battleSpeedBool, bool movementBool, bool dialogueBool,
+            bool t2AttackItemsBool, Button button1, Button button2, Button button3, int totalChecks, RichTextBox percentProgress)
         {
             string currDir = Directory.GetCurrentDirectory();
             button1.Enabled = false;
@@ -170,6 +177,7 @@ namespace WOFFRandomizer
             verifyOpenAndCopy(basepath, currDir, "character_list", log);
             verifyOpenAndCopy(basepath, currDir, "config_param", log);
             verifyOpenAndCopyOtherFile(basepath, currDir, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param.csh", log);
+            verifyOpenAndCopy(basepath, currDir, "mirage_library_list", log);
 
             //if input is blank, get current time in unix
             if (sV.Length == 0)
@@ -181,7 +189,7 @@ namespace WOFFRandomizer
 
             // Write to txt file with seed name in it for reference
             WriteToSeedLog(currDir, sV, mbShuffle, enemShuffle, bossShuffle, itemShuffle, libraShuffle, dataseedsShuffle, datajewelsShuffle, readeritemsShuffle,
-                rareShuffle, sizesShuffle, quPrizesShuffle, murkShuffle, statShuffle, transfigShuffle, doubleExpBool, fiveBSBool, movementBool, dialogueBool,
+                rareShuffle, sizesShuffle, quPrizesShuffle, murkShuffle, statShuffle, transfigShuffle, doubleExpBool, battleSpeedBool, movementBool, dialogueBool,
                 t2AttackItemsBool);
 
             // Put the seed name and version number on the title screen by editing menu.csv
@@ -198,32 +206,110 @@ namespace WOFFRandomizer
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "arena_reward_table_list.csh"));
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "quest_data_sub_reward_table_list.csh"));
             if (statShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "character_list.csh"));
-            if (fiveBSBool) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "config_param.csh"));
+            if (battleSpeedBool) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "config_param.csh"));
             if (movementBool) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "map_move_param.csh"));
+            if (enemShuffle) ConversionHelpers.ConvertToCsv(Path.Combine(currDir, "mirage_library_list.csh"));
 
             // QoL to apply before writing values
             Mirageboard.MiragesGiveLureAndStealthStones(currDir);
 
+            int currChecks = 0;
+
+            percentProgress.Text = currChecks.ToString() + ".0%";
+            percentProgress.ForeColor = Color.Green;
+
             // Write the values
-            if (mbShuffle) Mirageboard.mirageboard_dataWriteCsv(currDir, sV, log);
+            if (mbShuffle)
+            {
+                Mirageboard.mirageboard_dataWriteCsv(currDir, sV, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
             if (enemShuffle) Shop.putEldboxInShops(currDir, log);
-            if (enemShuffle|rareShuffle|bossShuffle) Enemy.mirageEncsWriteCsv(currDir, sV, log, enemShuffle, bossShuffle, rareShuffle);
-            if (murkShuffle) Murkrift.MurkriftShuffle(currDir, sV, log);
+            if (enemShuffle | rareShuffle | bossShuffle)
+            {
+                Enemy.mirageEncsWriteCsv(currDir, sV, log, enemShuffle, bossShuffle, rareShuffle);
+                if (enemShuffle) currChecks++;
+                if (rareShuffle) currChecks++;
+                if (bossShuffle) currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (murkShuffle)
+            {
+                Murkrift.MurkriftShuffle(currDir, sV, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
             if (enemShuffle) Mirageboard.modifyForEnemyRandoOnly(currDir);
-            if (itemShuffle) Item.TreasureShuffle(currDir, sV, log, libraShuffle, dataseedsShuffle, datajewelsShuffle, readeritemsShuffle);
-            if (sizesShuffle) Sizes.SizesShuffle(currDir, basepath, sV, log);
-            if (quPrizesShuffle) QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
-            if (statShuffle) Stats.RandomizeMirageStats(currDir, sV, log);
-            if (t2AttackItemsBool) Shop.RemoveT2AttackItems(currDir, log);
-            if (transfigShuffle) Transfig.TransfigMBShuffle(currDir, sV, log);
+            if (itemShuffle)
+            {
+                Item.TreasureShuffle(currDir, sV, log, libraShuffle, dataseedsShuffle, datajewelsShuffle, readeritemsShuffle);
+                currChecks++;
+                if (libraShuffle) currChecks++;
+                if (dataseedsShuffle) currChecks++;
+                if (datajewelsShuffle) currChecks++;
+                if (readeritemsShuffle) currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (sizesShuffle)
+            {
+                Sizes.SizesShuffle(currDir, basepath, sV, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (quPrizesShuffle)
+            {
+                QuOrArenaPrizes.PrizesShuffle(currDir, sV, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (statShuffle)
+            {
+                Stats.RandomizeMirageStats(currDir, sV, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (t2AttackItemsBool)
+            {
+                Shop.RemoveT2AttackItems(currDir, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (transfigShuffle)
+            {
+                Transfig.TransfigMBShuffle(currDir, sV, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
 
             // Apply post-QoL adjustments
             QoL.AddCSSkipToIntroCutscene(currDir, log);
             QoL.AddCSSkipsToEnding(currDir, log);
-            if (doubleExpBool) DoubleExpQoL.DoubleExpGil(currDir, log);
-            if (fiveBSBool) QoL.MultiplyFiveBattleSpeedByFive(currDir, log);
-            if (movementBool) QoL.DoubleMovementSpeed(currDir, log);
-            if (dialogueBool) QoL.DecreaseDialogue(basepath, log);
+            QoL.AddCSSkipToGigans(currDir, log);
+            if (doubleExpBool)
+            {
+                DoubleExpQoL.DoubleExpGil(currDir, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (battleSpeedBool)
+            {
+                QoL.IncreaseBattleSpeed(currDir, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (movementBool)
+            {
+                QoL.DoubleMovementSpeed(currDir, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
+            if (dialogueBool)
+            {
+                QoL.DecreaseDialogue(basepath, log);
+                currChecks++;
+                ChangeProgressStatus(currChecks, totalChecks, percentProgress);
+            }
 
             // Second WoFFCshTool run
             ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirageboard_data.csv"));
@@ -236,8 +322,9 @@ namespace WOFFRandomizer
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "arena_reward_table_list.csv"));
             if (quPrizesShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "quest_data_sub_reward_table_list.csv"));
             if (statShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "character_list.csv"));
-            if (fiveBSBool) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "config_param.csv"));
+            if (battleSpeedBool) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "config_param.csv"));
             if (movementBool) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "map_move_param.csv"));
+            if (enemShuffle) ConversionHelpers.ConvertToCsh(Path.Combine(currDir, "mirage_library_list.csv"));
 
             // In case other randomizer checkboxes are disabled, want to run on all of these
             copyBackAndDeleteOtherCshCsv(basepath, currDir, "/resource/finalizedCommon/mithril/system/csv/message/us", "/menu");
@@ -254,6 +341,7 @@ namespace WOFFRandomizer
             copyBackAndDelete(basepath, currDir, "character_list");
             copyBackAndDelete(basepath, currDir, "config_param");
             copyBackAndDeleteOtherCshCsv(basepath, currDir, "/resource/finalizedCommon/mithril/map/csv", "/map_move_param");
+            copyBackAndDelete(basepath, currDir, "mirage_library_list");
 
             log.SelectionFont = new Font(log.Font, FontStyle.Bold);
             log.AppendText("Finished generating seed " + sV + "!\n");

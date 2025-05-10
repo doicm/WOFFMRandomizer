@@ -246,6 +246,14 @@ namespace WOFFRandomizer.Dependencies
 
             // Next, I need to shuffle the egl rows
             eglBossData.Shuffle(Shuffle.ConsistentStringHash(sV));
+            // Vivi in index 4 of eglBossData, which is the Kupirate fight, causes issues. Need to reshuffle if that happens
+            int i = 0;
+            while (eglBossData[4][1] == "1011")
+            {
+                eglBossData.Shuffle(Shuffle.ConsistentStringHash(sV + i.ToString()));
+                i++;
+            }
+            
 
             // Then I reinsert the egl data back into the file
             List<(string, List<string>)> pairedCeslIDsWithlGEXP = InsertEglData(eglPath, eglBossData, eglBossIDs, lGEXPData);

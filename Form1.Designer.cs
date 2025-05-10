@@ -63,8 +63,8 @@
             label8 = new Label();
             checkBoxStats = new CheckBox();
             toolTipStats = new ToolTip(components);
-            checkBoxFiveBS = new CheckBox();
-            toolTipFiveBS = new ToolTip(components);
+            checkBoxBattleSpeed = new CheckBox();
+            toolTipBattleSpeed = new ToolTip(components);
             checkBoxLibra = new CheckBox();
             toolTipLibra = new ToolTip(components);
             toolTipMovement = new ToolTip(components);
@@ -84,6 +84,7 @@
             checkBoxReaderItems = new CheckBox();
             toolTipTransfig = new ToolTip(components);
             checkBoxTransfig = new CheckBox();
+            richTextBoxPercent = new RichTextBox();
             SuspendLayout();
             // 
             // textBox1
@@ -224,7 +225,7 @@
             label7.Name = "label7";
             label7.Size = new Size(215, 100);
             label7.TabIndex = 14;
-            label7.Text = "World of Final Fantasy Maxima Randomizer v0.2.0";
+            label7.Text = "World of Final Fantasy Maxima Randomizer v0.2.1";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // richTextBox1
@@ -232,7 +233,7 @@
             richTextBox1.Location = new Point(5, 379);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ScrollBars = RichTextBoxScrollBars.ForcedVertical;
-            richTextBox1.Size = new Size(851, 67);
+            richTextBox1.Size = new Size(851, 62);
             richTextBox1.TabIndex = 16;
             richTextBox1.Text = "";
             richTextBox1.TextChanged += richTextBox1_TextChanged;
@@ -330,16 +331,16 @@
             checkBoxStats.UseVisualStyleBackColor = true;
             checkBoxStats.MouseHover += checkBoxStats_MouseHover;
             // 
-            // checkBoxFiveBS
+            // checkBoxBattleSpeed
             // 
-            checkBoxFiveBS.AutoSize = true;
-            checkBoxFiveBS.Location = new Point(458, 316);
-            checkBoxFiveBS.Name = "checkBoxFiveBS";
-            checkBoxFiveBS.Size = new Size(137, 19);
-            checkBoxFiveBS.TabIndex = 25;
-            checkBoxFiveBS.Text = "Increase Battle Speed";
-            checkBoxFiveBS.UseVisualStyleBackColor = true;
-            checkBoxFiveBS.MouseHover += checkBoxFiveBS_MouseHover;
+            checkBoxBattleSpeed.AutoSize = true;
+            checkBoxBattleSpeed.Location = new Point(458, 316);
+            checkBoxBattleSpeed.Name = "checkBoxBattleSpeed";
+            checkBoxBattleSpeed.Size = new Size(137, 19);
+            checkBoxBattleSpeed.TabIndex = 25;
+            checkBoxBattleSpeed.Text = "Increase Battle Speed";
+            checkBoxBattleSpeed.UseVisualStyleBackColor = true;
+            checkBoxBattleSpeed.MouseHover += checkBoxBattleSpeed_MouseHover;
             // 
             // checkBoxLibra
             // 
@@ -455,11 +456,23 @@
             checkBoxTransfig.UseVisualStyleBackColor = true;
             checkBoxTransfig.MouseHover += checkBoxTransfig_MouseHover;
             // 
+            // richTextBoxPercent
+            // 
+            richTextBoxPercent.Location = new Point(5, 447);
+            richTextBoxPercent.Multiline = false;
+            richTextBoxPercent.Name = "richTextBoxPercent";
+            richTextBoxPercent.ScrollBars = RichTextBoxScrollBars.None;
+            richTextBoxPercent.Size = new Size(851, 21);
+            richTextBoxPercent.TabIndex = 37;
+            richTextBoxPercent.Text = "";
+            richTextBoxPercent.WordWrap = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(863, 450);
+            ClientSize = new Size(863, 470);
+            Controls.Add(richTextBoxPercent);
             Controls.Add(checkBoxTransfig);
             Controls.Add(checkBoxReaderItems);
             Controls.Add(checkBoxT2AttackItems);
@@ -471,7 +484,7 @@
             Controls.Add(checkBoxDialogue);
             Controls.Add(checkBoxMovement);
             Controls.Add(checkBoxLibra);
-            Controls.Add(checkBoxFiveBS);
+            Controls.Add(checkBoxBattleSpeed);
             Controls.Add(checkBoxStats);
             Controls.Add(checkBoxMurkrift);
             Controls.Add(checkBoxDoubleExp);
@@ -496,6 +509,7 @@
             Controls.Add(label1);
             Controls.Add(button1);
             Controls.Add(textBox1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -538,8 +552,8 @@
         private Label label8;
         private CheckBox checkBoxStats;
         private ToolTip toolTipStats;
-        private CheckBox checkBoxFiveBS;
-        private ToolTip toolTipFiveBS;
+        private CheckBox checkBoxBattleSpeed;
+        private ToolTip toolTipBattleSpeed;
         private CheckBox checkBoxLibra;
         private ToolTip toolTipLibra;
         private ToolTip toolTipMovement;
@@ -559,5 +573,6 @@
         private CheckBox checkBoxReaderItems;
         private ToolTip toolTipTransfig;
         private CheckBox checkBoxTransfig;
+        private RichTextBox richTextBoxPercent;
     }
 }
