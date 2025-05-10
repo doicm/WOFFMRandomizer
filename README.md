@@ -8,7 +8,7 @@ and Surihia for csv/csh conversion tool that this tool uses.
 
 Version: 
 =====================================================================
-0.2.0
+0.2.1
 
 Notes:
 =====================================================================
@@ -102,11 +102,12 @@ There are also the following optional features for QoL or for fun:
 - **Double Exp and Gil Earned:** This doubles experience and gil
 earned in all battles.
 - **Increase Battle Speed:** This multiplies the battle speed at 
-setting 3. Wait setting recommended.
+all speed. Wait setting recommended.
 - **Double Movement Speed:** This doubles movement speed for both
-unmounted and mounted. WARNING: If you are mounted in Sunken Temple
-and Castle Exnine, you may fall off the stage. If you do, try to
-navigate to a platform's z-axis (y-axis?) to get back.
+unmounted and mounted. WARNING: Use at your own risk. If you are
+mounted in Sunken Temple and Castle Exnine, you may fall off the
+stage. If you do, try to navigate to a platform's z-axis
+(y-axis?) to get back.
 - **Speed Up Dialogue:** This speeds up the dialogue in the field
 and battles. For field dialogue, voiced dialogue in config must
 be set to off. NOTE: This only works in English.
@@ -120,6 +121,8 @@ and skip this cutscene now.
 - **Lure and Stealth Mirajewels at beginning:** The Lure Mirajewel
 is included in Tama's mirageboard, and the Stealth Mirajewel is
 included in Sylph's mirageboard. You can unlock them at 1 cost.
+- **Skip Gigantuar/trot Cutscene:** Skip the cutscene for the
+rare mirage fight in Mako Reactor 0.
 - **Skip ending and credits:** You can pause and skip the credits
 for some reason (at least watch the dance number).
 
@@ -148,6 +151,15 @@ can break things.
 
 Changelog:
 =====================================================================
+2025-10-5 - 0.2.1 - **Beta release.** Changed UI on program including 
+adding progress percent. Fixed major bug for Vivi fight appearing 
+in Kupirates slot by removing that option. Includes higher-level 
+Coliseum rewards in shuffle now. Item drops for most monsters now 
+match in library (beginning Chocochick is exception). Battle speed 
+increase lowered and applied to all options. Added cutscene skip for
+Gigantuar/trot fight. Unlinked dlc mirages for transfig 
+mirageboards.
+
 2025-1-5 - 0.2.0 - Added sped up dialogue. Added mirajewel and 
 ability seed randomization in treasure chests from data. Added 
 mirage transfiguration/MB unlock shuffling. Added option to exclude 
