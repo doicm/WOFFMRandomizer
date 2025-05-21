@@ -144,7 +144,10 @@ it won't come to this, but this is just in case.
 
 For those who are stuck or need additional help, there are log
 files that will show information upon generating a randomizer seed.
-These are available in the logs directory.
+These are available in the logs directory. This includes
+information such as mirageboard node data for all mirages, random
+encounter spawn data, boss locations, item locations, and other
+information.
 
 Please do not modify the files in the database directory, as this
 can break things.
