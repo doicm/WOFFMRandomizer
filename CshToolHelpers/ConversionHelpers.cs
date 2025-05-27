@@ -12,8 +12,8 @@ namespace CshToolHelpers
 
             byte[] dcmpCshData;
 
-            Console.WriteLine("Decompressing csh file....");
-            Console.WriteLine("");
+            SupportMethods.LogMessage("Decompressing csh file....");
+            SupportMethods.LogMessage("");
 
             using (var cmpCshReader = new BinaryReader(File.Open(cshFile, FileMode.Open, FileAccess.Read)))
             {
@@ -59,8 +59,8 @@ namespace CshToolHelpers
                 dcmpStream.Write(dcmpCshData, 0, (int)cshVars.DcmpSize);
                 dcmpStream.Seek(0, SeekOrigin.Begin);
 
-                Console.WriteLine("Reading csh entries....");
-                Console.WriteLine("");
+                SupportMethods.LogMessage("Reading csh entries....");
+                SupportMethods.LogMessage("");
 
                 using (var dcmpCshReader = new BinaryReader(dcmpStream))
                 {
@@ -81,9 +81,9 @@ namespace CshToolHelpers
                     cshVars.FieldCount = dcmpCshReader.ReadBytesUInt32(true);
                     cshVars.RowsCount = dcmpCshReader.ReadBytesUInt32(true);
 
-                    Console.WriteLine($"Field Count: {cshVars.FieldCount}");
-                    Console.WriteLine($"Rows Count: {cshVars.RowsCount}");
-                    Console.WriteLine("");
+                    SupportMethods.LogMessage($"Field Count: {cshVars.FieldCount}");
+                    SupportMethods.LogMessage($"Rows Count: {cshVars.RowsCount}");
+                    SupportMethods.LogMessage("");
 
                     var entryTablePos = dcmpCshReader.BaseStream.Position;
 
@@ -117,7 +117,8 @@ namespace CshToolHelpers
                                 {
                                     // string
                                     case 0:
-                                        cshVars.EntryOnCSV += Encoding.UTF8.GetString(cshVars.EntryData.ToArray()).Replace("\0", "");
+                                        var readStringValue = SupportMethods.FixStringFromCsh(Encoding.UTF8.GetString(cshVars.EntryData.ToArray()));
+                                        cshVars.EntryOnCSV += readStringValue;
                                         break;
 
                                     // int
@@ -164,7 +165,7 @@ namespace CshToolHelpers
                                 currentPos += 8;
                             }
 
-                            Console.WriteLine($"Entry_{i}: {cshVars.EntryOnCSV}");
+                            SupportMethods.LogMessage($"Entry_{i}: {cshVars.EntryOnCSV}");
                             csvWriter.WriteLine(cshVars.EntryOnCSV);
                             cshVars.EntryOnCSV = string.Empty;
                         }
@@ -172,9 +173,9 @@ namespace CshToolHelpers
                 }
             }
 
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("Finished writing csh data to csv file");
+            SupportMethods.LogMessage("");
+            SupportMethods.LogMessage("");
+            SupportMethods.LogMessage("Finished writing csh data to csv file");
         }
         #endregion
 
@@ -194,13 +195,13 @@ namespace CshToolHelpers
             cshVars.FieldCount = (uint)csvData[0].Split(cshVars.CSVDelimiter).Length;
             cshVars.RowsCount = (uint)csvData.Length;
 
-            Console.WriteLine($"Field Count: {cshVars.FieldCount}");
-            Console.WriteLine($"Entries Table Count: {cshVars.RowsCount}");
-            Console.WriteLine("");
-            Console.WriteLine("");
+            SupportMethods.LogMessage($"Field Count: {cshVars.FieldCount}");
+            SupportMethods.LogMessage($"Entries Table Count: {cshVars.RowsCount}");
+            SupportMethods.LogMessage("");
+            SupportMethods.LogMessage("");
 
-            Console.WriteLine("Generating csh header....");
-            Console.WriteLine("");
+            SupportMethods.LogMessage("Generating csh header....");
+            SupportMethods.LogMessage("");
 
             byte[] headerData;
             long headerSize;
@@ -220,8 +221,8 @@ namespace CshToolHelpers
                 }
             }
 
-            Console.WriteLine("Generating csh entry table....");
-            Console.WriteLine("");
+            SupportMethods.LogMessage("Generating csh entry table....");
+            SupportMethods.LogMessage("");
 
             byte[] entryTableData;
             var entryDataDict = new Dictionary<int, List<byte>>();
@@ -290,7 +291,8 @@ namespace CshToolHelpers
                                     cshVars.EntryDataOffset = (uint)offset;
                                     cshVars.EntryDataType = 0;
 
-                                    cshVars.EntryStringVal = entryField + "\0";
+                                    var readStringVal = entryField + "\0";
+                                    cshVars.EntryStringVal = SupportMethods.FixStringFromCsv(readStringVal);
                                     var currentEntryStringList = Encoding.UTF8.GetBytes(cshVars.EntryStringVal).ToList();
                                     var currentEntryStringValSize = currentEntryStringList.Count;
 
@@ -334,8 +336,8 @@ namespace CshToolHelpers
                 }
             }
 
-            Console.WriteLine("Packing csv data....");
-            Console.WriteLine("");
+            SupportMethods.LogMessage("Packing csv data....");
+            SupportMethods.LogMessage("");
 
             byte[] csvEntriesData;
 
@@ -356,8 +358,8 @@ namespace CshToolHelpers
             }
 
 
-            Console.WriteLine("Arranging and compressing csh data....");
-            Console.WriteLine("");
+            SupportMethods.LogMessage("Arranging and compressing csh data....");
+            SupportMethods.LogMessage("");
 
             byte[] dataToCmp;
 
@@ -382,8 +384,8 @@ namespace CshToolHelpers
                 File.Delete(outCshFile);
             }
 
-            Console.WriteLine("Building csh file....");
-            Console.WriteLine("");
+            SupportMethods.LogMessage("Building csh file....");
+            SupportMethods.LogMessage("");
 
             using (var cshStreamWriter = new BinaryWriter(File.Open(outCshFile, FileMode.Append, FileAccess.Write)))
             {
@@ -404,9 +406,9 @@ namespace CshToolHelpers
                 cshStreamWriter.Write(cmpData);
             }
 
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("Finished writing csv data to csh file");
+            SupportMethods.LogMessage("");
+            SupportMethods.LogMessage("");
+            SupportMethods.LogMessage("Finished writing csv data to csh file");
         }
 
 
