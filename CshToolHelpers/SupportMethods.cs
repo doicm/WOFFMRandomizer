@@ -4,12 +4,17 @@ namespace CshToolHelpers
 {
     internal class SupportMethods
     {
+        public static void LogMessage(string msg)
+        {
+            Console.WriteLine(msg);
+        }
+
+
         public static void ErrorExit(string errorMsg)
         {
-            Console.WriteLine($"Error: {errorMsg}");
-            Console.WriteLine("");
-            Console.ReadLine();
-            Environment.Exit(1);
+            LogMessage($"Error: {errorMsg}");
+            MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            throw new Exception();
         }
 
 
@@ -34,6 +39,16 @@ namespace CshToolHelpers
         }
 
 
+        public static string FixStringFromCsh(string cshString)
+        {
+            var fixedString = cshString;
+            fixedString = fixedString.Replace("\0", "");
+            fixedString = fixedString.Replace("\0", "").Replace("\r\n", "{NewLine}");
+
+            return fixedString;
+        }
+
+
         public static byte[] ZlibCompressBuffer(byte[] dataToCmp)
         {
             var compressedDataBuffer = Array.Empty<byte>();
@@ -51,6 +66,15 @@ namespace CshToolHelpers
             }
 
             return compressedDataBuffer;
+        }
+
+
+        public static string FixStringFromCsv(string csvString)
+        {
+            var fixedString = csvString;
+            fixedString = fixedString.Replace("{NewLine}", "\r\n");
+
+            return fixedString;
         }
     }
 }
