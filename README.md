@@ -10,6 +10,9 @@ Version:
 =====================================================================
 0.2.1
 
+*Due to unforeseen challenges, this project has been put on 
+indefinite hold.*
+
 Notes:
 =====================================================================
 
